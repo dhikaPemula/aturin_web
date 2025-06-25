@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+.searchContainer {
+  @apply flex items-center shadow-md my-4 p-4 bg-white border border-gray-300;
+  border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+  .searchContainer {
+    @apply p-2;
+  }
+  .searchIcon {
+    @apply w-4 h-4 mr-1;
+  }
+  .searchInput {
+    @apply p-1 text-sm;
+  }
+}
+
+.searchBox {
+  @apply flex items-center border border-gray-300 px-4 py-2 w-full outline-none;
+  border-radius: 8px;
+}
+
+.searchIcon {
+  @apply w-5 h-5 mr-2 text-gray-400;
+}
+
+.searchInput {
+  @apply p-2 rounded-md w-full outline-none;
+}

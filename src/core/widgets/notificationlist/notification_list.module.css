@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+.notificationOverlay {
+  @apply fixed top-0 left-0 w-screen h-screen z-[1099] flex items-center justify-center backdrop-blur;
+  background: rgba(0,0,0,0.08);
+}
+
+.notificationListContainer {
+  @apply bg-white rounded-2xl shadow-2xl min-w-[320px] max-w-[90vw] max-h-[90vh] overflow-y-auto flex flex-col items-start;
+  z-index: 1100;
+}
+
+.notificationHead {
+  @apply flex flex-col items-start justify-between w-full p-6;
+  background: #5263F3;
+}
+
+.notificationTitle {
+  @apply text-lg font-medium;
+  color: #eef3ff
+}
+
+.notificationSubtitle {
+  @apply text-sm;
+  color: #dfdfdf;
+}
+
+.notificationList {
+  @apply max-h-60 p-6 overflow-y-auto;
+}
+
+.notificationItem {
+  @apply flex items-center justify-between p-2 border-b border-gray-100;
+}
+
+.notificationMessage {
+  @apply text-sm;
+}
+
+.notificationDismiss {
+  @apply text-gray-400 hover:text-gray-600;
+}
