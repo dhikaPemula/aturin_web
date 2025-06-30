@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+.container {
+  @apply relative;
+}
+
+.dateInputWrapper {
+  @apply relative;
+}
+
+.calendarIconWrapper {
+  @apply absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10;
+}
+
+.calendarIcon {
+  @apply h-4 w-4 text-gray-400;
+}
+
+.dateInputWithIcon {
+  @apply w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#5263F3] focus:border-transparent;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Keep existing dateInput for backward compatibility */
+.dateInput {
+  @apply w-full px-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#5263F3] focus:border-transparent;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.categoryButton {
+  @apply w-full px-4 py-3 border border-gray-200 rounded-xl bg-white text-left focus:outline-none focus:ring-2 focus:ring-[#5263F3] focus:border-transparent flex items-center justify-between;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.categoryButtonContent {
+  @apply flex items-center gap-2;
+}
+
+.categoryIconImg {
+  @apply w-4 h-4;
+}
+
+.categoryButtonTextSelected {
+  @apply text-gray-900;
+}
+
+.categoryButtonTextPlaceholder {
+  @apply text-gray-500;
+}
+
+.chevronIcon {
+  @apply w-3 h-3 transition-transform;
+}
+
+.chevronIconRotated {
+  @apply rotate-180;
+}
+
+.dropdown {
+  @apply absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-visible;
+  z-index: 100;
+  max-height: none; /* Remove scroll */
+}
+
+.dropdownItem {
+  @apply w-full px-4 py-3 text-left hover:bg-gray-50 text-gray-900 flex items-center gap-2;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.backdrop {
+  @apply fixed inset-0;
+  z-index: 90;
+}

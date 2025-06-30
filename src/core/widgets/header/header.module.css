@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+.headerContainer {
+  @apply mt-4 mx-16 px-8 py-4 border-[2.5px] border-[#5263F3] rounded-[64px] bg-white shadow flex items-center justify-between;
+}
+
+.leftSection {
+  @apply flex items-center gap-3;
+}
+
+.logoAturin {
+  @apply h-16;
+}
+
+.aturinText {
+  @apply font-semibold text-[32px] text-[#5263F3];
+}
+
+.menuNav {
+  @apply flex items-center mt-2 mx-auto;
+}
+
+.menuList {
+  @apply flex items-center gap-12 list-none m-0 p-0;
+}
+
+.menuItem {
+  @apply relative flex items-center gap-6 text-[20px] font-medium pb-4 text-[#222];
+}
+
+.menuItemActive {
+  @apply text-[#5263F3] font-medium;
+}
+
+.iconActive {
+  filter: brightness(0) saturate(100%) invert(36%) sepia(92%) saturate(749%) hue-rotate(210deg) brightness(97%) contrast(101%);
+}
+
+.menuItemActive::after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  border-radius: 2px;
+  background: #5263F3;
+}
+
+.iconNav {
+  @apply h-8 w-8;
+}
+
+.rightSection {
+  @apply flex items-center gap-4;
+}
+
+.bellWrapper {
+  @apply relative flex items-center;
+}
+
+.bellIcon {
+  @apply h-8 w-8;
+}
+
+.name {
+  @apply ml-2 text-[20px] font-normal text-[#222];
+}
+
+.arrowIcon {
+  @apply h-8 w-8 ml-2 cursor-pointer;
+}
+
+.avatar {
+  @apply inline-block h-14 w-14 rounded-full bg-[#111] ml-4;
+}
+
+@media (max-width: 768px) {
+  .headerContainer {
+    @apply mt-2 mx-2 px-2 py-2 rounded-2xl;
+  }
+  .menuNav {
+    @apply flex-col w-full;
+  }
+  .menuList {
+    @apply flex-col gap-2 w-full;
+  }
+  .menuItem {
+    @apply text-base pb-2 gap-2;
+  }
+  .logoAturin {
+    @apply h-10;
+  }
+  .aturinText {
+    @apply text-lg;
+  }
+  .avatar {
+    @apply h-10 w-10 ml-2;
+  }
+  .name {
+    @apply text-base ml-1;
+  }
+}

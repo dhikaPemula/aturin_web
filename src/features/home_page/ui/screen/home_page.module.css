@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+.container {
+  @apply mt-8 mx-12;
+}
+
+.upperSection {
+  @apply flex flex-row items-start justify-between w-full;
+}
+
+@media (max-width: 768px) {
+  .container {
+    @apply mx-2 mt-4;
+  }
+  .upperSection {
+    @apply flex-col gap-4;
+  }
+}

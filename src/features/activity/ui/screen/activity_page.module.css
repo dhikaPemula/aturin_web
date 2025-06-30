@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+.container {
+  @apply min-h-screen;
+  background-color: #ffffff;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.wrapper {
+  /* 🔧 UPDATED: Follow homepage margin style (mx-12) */
+  width: auto;
+  max-width: none;
+  margin: 0 48px; /* mx-12 = 48px */
+  padding: 24px 0;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.headerContent {
+  @apply flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4;
+}
+
+.headerText {
+  @apply flex flex-col gap-2;
+}
+
+.title {
+  @apply text-3xl font-semibold text-black;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.2;
+}
+
+.subtitle {
+  @apply text-[#5263f3] text-sm flex items-center gap-2;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.infoIcon {
+  @apply w-4 h-4;
+}
+
+.filterSection {
+  /* 🔧 UPDATED: Equal width layout with consistent spacing */
+  @apply w-full mb-6;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; /* Equal width for all 3 elements */
+  gap: 16px; /* Consistent spacing */
+}
+
+.filterGrid {
+  display: contents;
+}
+
+.selectedDate {
+  @apply mb-6 w-full;
+}
+
+.dateActivityCard {
+  /* 🔧 EXPANDED: Full width date card with better padding */
+  @apply w-full bg-[#5263F3] text-white px-8 py-5 rounded-2xl flex items-center justify-between;
+  box-shadow: 0 4px 12px rgba(82, 99, 243, 0.15);
+}
+
+.dateSection {
+  @apply flex items-center gap-4;
+}
+
+.calendarIconWrapper {
+  @apply w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center;
+}
+
+.calendarIcon {
+  @apply w-7 h-7;
+  filter: brightness(0) invert(1);
+}
+
+.dateInfo {
+  @apply flex flex-col gap-1;
+}
+
+.dateText {
+  font-size: 18px;
+  @apply font-medium text-white;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.todayBadge {
+  @apply bg-[#FFC550] text-black px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+.activityCountBadge {
+  background-color: #ffc550;
+  /* 🔧 UPDATED: Smaller badge size */
+  font-size: 14px;
+  @apply text-black px-3 py-2 rounded-full font-bold min-w-[40px] text-center;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* 🔧 OPTIMIZED: Mobile responsive */
+@media (max-width: 768px) {
+  .wrapper {
+    margin: 0 16px; /* 🔧 UPDATED: Changed from 8px to 16px */
+    padding: 16px 0;
+  }
+
+  .filterSection {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .title {
+    @apply text-2xl;
+  }
+
+  .dateActivityCard {
+    @apply px-4 py-3;
+  }
+
+  .calendarIconWrapper {
+    @apply w-10 h-10;
+  }
+
+  .calendarIcon {
+    @apply w-6 h-6;
+  }
+
+  .dateText {
+    font-size: 16px;
+  }
+
+  .activityCountBadge {
+    font-size: 12px;
+    @apply px-2 py-1 min-w-[32px];
+  }
+}
+
+/* 🔧 OPTIMIZED: Tablet responsive */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .wrapper {
+    margin: 0 32px;
+    padding: 20px 0;
+  }
+
+  .filterSection {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+  }
+}
+
+/* 🔧 ADDED: Large screen optimization */
+@media (min-width: 1400px) {
+  .wrapper {
+    width: 94vw;
+    max-width: 1600px;
+    padding: 24px 32px;
+  }
+
+  .filterSection {
+    gap: 24px;
+  }
+
+  .dateActivityCard {
+    @apply px-10 py-6;
+  }
+}

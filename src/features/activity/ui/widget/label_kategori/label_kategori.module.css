@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+.labelContainer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.labelContent {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.labelIcon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.labelText {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Specific category styles */
+.labelContainer[data-category="akademik"] {
+  background-color: #dbeafe;
+  border-color: #3b82f6;
+}
+
+.labelContainer[data-category="hiburan"] {
+  background-color: #f3e8ff;
+  border-color: #a855f7;
+}
+
+.labelContainer[data-category="pekerjaan"] {
+  background-color: #fef3c7;
+  border-color: #f59e0b;
+}
+
+.labelContainer[data-category="olahraga"] {
+  background-color: #fee2e2;
+  border-color: #ef4444;
+}
+
+.labelContainer[data-category="sosial"] {
+  background-color: #ffedd5;
+  border-color: #f97316;
+}
+
+.labelContainer[data-category="spiritual"] {
+  background-color: #d1fae5;
+  border-color: #10b981;
+}
+
+.labelContainer[data-category="pribadi"] {
+  background-color: #fef3c7;
+  border-color: #eab308;
+}
+
+.labelContainer[data-category="istirahat"] {
+  background-color: #e0e7ff;
+  border-color: #6366f1;
+}
