@@ -1,0 +1,56 @@
+/* App.css - Styles for page transitions */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+.page-container {
+  min-height: calc(100vh - 12.5vh);
+  width: 100%;
+  margin: 0;
+  padding: 0 0.5rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .page-container {
+    padding: 0 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .page-container {
+    min-height: calc(100vh - 10vh);
+  }
+}
+
+@media (min-width: 1280px) {
+  .page-container {
+    min-height: calc(100vh - 13vh);
+  }
+}

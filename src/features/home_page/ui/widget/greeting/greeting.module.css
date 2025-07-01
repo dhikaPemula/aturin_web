@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 .greetingcontainer {
-  @apply flex flex-col items-start gap-2;
+  @apply flex flex-col items-start -mr-12 gap-1;
 }
 
 .greeting {
-  @apply flex flex-row items-center gap-2;
+  @apply flex flex-row items-center gap-1;
 }
 
 .today {
-  @apply flex flex-row items-center gap-3;
+  @apply flex flex-row items-center gap-1;
 }
 
 .todayItem {
@@ -17,19 +17,19 @@
 }
 
 .greetingTitle {
-  @apply text-xl font-normal;
+  @apply font-normal sm:text-xl max-sm:text-base;
   color: #5263F3;
 }
 
 .greetingName {
-  @apply text-xl font-normal;
+  @apply font-normal sm:text-xl max-sm:text-base;
 }
 
 .todayo {
-  @apply text-2xl font-medium;
+  @apply font-medium sm:text-xl max-sm:text-base;
 }
 
 .todayDate {
-  @apply text-2xl font-medium;
+  @apply font-medium sm:text-xl max-sm:text-base;
   color: #B74206;
 }

@@ -1,18 +1,48 @@
 @import "tailwindcss";
 
 .container {
-  @apply mt-8 mx-12;
+  @apply mt-4 mx-4;
+}
+
+.headerSection {
+  @apply flex flex-col md:flex-row gap-6;
+}
+
+.greetingSection {
+  @apply flex-1 min-w-0;
+}
+
+.addSection {
+  @apply flex-1 min-w-0 flex items-center justify-end;
 }
 
 .upperSection {
-  @apply flex flex-row items-start justify-between w-full;
+  @apply flex md:flex-col gap-4;
 }
 
-@media (max-width: 768px) {
-  .container {
-    @apply mx-2 mt-4;
-  }
-  .upperSection {
-    @apply flex-col gap-4;
-  }
+.calendarMobile {
+  @apply block lg:hidden mb-6;
+}
+
+.listandCalendar {
+  display: flex;
+  gap: 1rem;
+}
+
+.listandCalendar > :first-child {
+  flex: 2 2 0;
+  min-width: 0;
+}
+
+.listandCalendar > :last-child {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.calendarDesktop {
+  @apply hidden lg:block;
+}
+
+.taskCountContainer {
+  @apply mb-6;
 }

@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+.taskCountContainer {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full mt-6;
+}
+
+.card {
+  @apply relative flex flex-col rounded-xl shadow-sm px-4 pt-5 pb-4 min-w-0 transition hover:scale-[1.03] hover:shadow-lg;
+}
+
+.iconWrapper {
+  @apply absolute top-1/2 right-4 -translate-y-1/2 w-8 h-8 flex items-center justify-center z-10;
+}
+
+.icon {
+  @apply w-8 h-8;
+  filter: var(--icon-filter, none);
+}
+
+.count {
+  @apply mt-8 text-2xl font-bold text-left;
+}
+
+.label {
+  @apply absolute top-4 left-4 text-base font-medium z-20 text-left;
+  color: inherit;
+}
+
+.cardBlue {
+  @apply bg-[#DFEAFF] text-[#5263F3];
+}
+
+.cardGreen {
+  @apply bg-[#C5E9CD] text-[#3DA755];
+}
+
+.cardOrange {
+  @apply bg-[#FFEDD9] text-[#CC6D00];
+}
+
+.cardRed {
+  @apply bg-[#FAC5C3] text-[#D93E39];
+}
+
+.cardGray {
+  @apply bg-[#e0e0e0] text-[#888];
+}
+
+.countPrimary {
+  color: #5263F3 !important;
+}
+
+.countSuccess {
+  color: #3DA755 !important;
+}
+
+.countWarning {
+  color: #CC6D00 !important;
+}
+
+.countDanger {
+  color: #D93E39 !important;
+}
+.countPrimary {
+  color: #5263F3 !important;
+}
+.countSuccess {
+  color: #3DA755 !important;
+}
+.countWarning {
+  color: #CC6D00 !important;
+}
+.countDanger {
+  color: #D93E39 !important;
+}
+

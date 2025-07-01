@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 .headerContainer {
-  @apply mt-4 mx-16 px-8 py-4 border-[2.5px] border-[#5263F3] rounded-[64px] bg-white shadow flex items-center justify-between;
+  @apply mt-4 mx-auto px-6 py-4 border-[2.5px] border-[#5263F3] rounded-[64px] bg-white shadow flex items-center justify-between;
+  width: 100%;
 }
 
 .leftSection {
@@ -17,7 +18,7 @@
 }
 
 .menuNav {
-  @apply flex items-center mt-2 mx-auto;
+  @apply flex items-center mt-2 mx-auto relative;
 }
 
 .menuList {
@@ -25,27 +26,28 @@
 }
 
 .menuItem {
-  @apply relative flex items-center gap-6 text-[20px] font-medium pb-4 text-[#222];
+  @apply relative flex items-center gap-6 text-[20px] font-medium pb-4 text-[#222] transition-colors duration-300 cursor-pointer;
 }
 
 .menuItemActive {
   @apply text-[#5263F3] font-medium;
 }
 
-.iconActive {
-  filter: brightness(0) saturate(100%) invert(36%) sepia(92%) saturate(749%) hue-rotate(210deg) brightness(97%) contrast(101%);
-}
-
-.menuItemActive::after {
+/* Garis animasi yang bergeser */
+.menuNav::after {
   content: '';
-  display: block;
   position: absolute;
-  left: 0;
-  right: 0;
   bottom: 0;
   height: 4px;
   border-radius: 2px;
   background: #5263F3;
+  transition: all 0.3s ease-in-out;
+  width: var(--underline-width, 0px);
+  left: var(--underline-left, 0px);
+}
+
+.iconActive {
+  filter: brightness(0) saturate(100%) invert(36%) sepia(92%) saturate(749%) hue-rotate(210deg) brightness(97%) contrast(101%);
 }
 
 .iconNav {
@@ -61,7 +63,7 @@
 }
 
 .bellIcon {
-  @apply h-8 w-8;
+  @apply h-8 w-8 cursor-pointer;
 }
 
 .name {
@@ -73,9 +75,8 @@
 }
 
 .avatar {
-  @apply inline-block h-14 w-14 rounded-full bg-[#111] ml-4;
+  @apply h-12 w-12 rounded-full cursor-pointer;
 }
-
 @media (max-width: 768px) {
   .headerContainer {
     @apply mt-2 mx-2 px-2 py-2 rounded-2xl;
@@ -96,9 +97,81 @@
     @apply text-lg;
   }
   .avatar {
-    @apply h-10 w-10 ml-2;
+    @apply h-12 w-12 ml-2;
   }
   .name {
     @apply text-base ml-1;
   }
+}
+
+/* Mobile navigation styles */
+.mobileNavPanel {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  background: #fff;
+  border: 2.5px solid #5263F3;
+  border-radius: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 16px 0;
+  z-index: 1000;
+}
+
+.mobileNavContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.mobileNavButton {
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #222;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mobileNavButtonActive {
+  color: #5263F3;
+}
+
+.mobileNavIcon {
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+}
+
+.mobileNavIconActive {
+  filter: invert(32%) sepia(92%) saturate(749%) hue-rotate(210deg) brightness(97%) contrast(101%);
+}
+
+.mobileLogoutButton {
+  background: #fff;
+  color: #D93E39;
+  border: 2px solid #D93E39;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 12px 16px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.cursorPointer {
+  cursor: pointer;
 }

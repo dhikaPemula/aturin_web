@@ -1,5 +1,3 @@
-import Header from "../../../core/widgets/header/header.jsx";
-
 function ActivityPage() {
   return (
     <>

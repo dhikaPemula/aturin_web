@@ -1,3 +1,4 @@
+
 @import "tailwindcss";
 
 .notificationOverlay {
@@ -17,7 +18,7 @@
 
 .notificationTitle {
   @apply text-lg font-medium;
-  color: #eef3ff
+  color: #eef3ff;
 }
 
 .notificationSubtitle {

@@ -16,7 +16,7 @@ function Greeting() {
   return (
     <div className={styles.greetingcontainer}>
         <div className={styles.greeting}>
-            <h1 className={styles.greetingTitle}>Selamat Datang, </h1>
+            <h1 className={styles.greetingTitle}>Halo, </h1>
             <h1 className={styles.greetingName}>{name}!</h1>
         </div>
         <div className={styles.today}>

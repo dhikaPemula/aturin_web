@@ -1,8 +1,19 @@
 @import "tailwindcss";
 
 .searchContainer {
-  @apply flex items-center shadow-md my-4 p-4 bg-white border border-gray-300;
-  border-radius: 12px;
+  @apply flex items-center shadow-md my-4 p-4 bg-white border border-gray-300 rounded-2xl;
+}
+
+.searchBox {
+  @apply flex items-center border border-gray-300 px-4 py-2 w-full outline-none rounded-lg;
+}
+
+.searchIcon {
+  @apply w-5 h-5 mr-2 text-gray-400;
+}
+
+.searchInput {
+  @apply p-2 rounded-md w-full outline-none;
 }
 
 @media (max-width: 768px) {
@@ -15,17 +26,4 @@
   .searchInput {
     @apply p-1 text-sm;
   }
-}
-
-.searchBox {
-  @apply flex items-center border border-gray-300 px-4 py-2 w-full outline-none;
-  border-radius: 8px;
-}
-
-.searchIcon {
-  @apply w-5 h-5 mr-2 text-gray-400;
-}
-
-.searchInput {
-  @apply p-2 rounded-md w-full outline-none;
 }

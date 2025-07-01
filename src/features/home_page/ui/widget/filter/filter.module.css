@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+.filterContainer {
+    @apply flex flex-row items-center rounded-lg bg-[#F1F5F9] relative mt-6 my-6 md:py-1;
+}
+
+.activeBar {
+  @apply absolute top-0 left-0 h-full rounded-lg bg-[#5263F3] z-0 transition-all duration-300;
+}
+
+.filterItem {
+    @apply flex items-center justify-center px-4 py-2 rounded-lg cursor-pointer flex-1 text-center relative z-10 font-medium;
+    color: #64748B;
+    transition: color 0.3s;
+    min-width: 0;
+    min-height: 40px;
+}
+
+.active {
+  color: #fff;
+}
