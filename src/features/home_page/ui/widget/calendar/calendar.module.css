@@ -29,15 +29,39 @@
 }
 
 .calendarDayShort {
-  @apply text-gray-500 font-semibold text-center text-sm;
+  @apply text-gray-500 font-semibold text-center flex items-center justify-center mb-2;
+  /* Sama dengan calendarCell untuk alignment */
+  @apply h-8 w-8 text-sm;
+  @apply md:h-9 md:w-9 md:text-base;
+  @apply lg:h-10 lg:w-10 lg:text-base;
+  @apply xl:h-11 xl:w-11 xl:text-lg;
+  @apply 2xl:h-12 2xl:w-12 2xl:text-xl;
 }
 
 .calendarEmpty {
-  @apply text-gray-300 text-center text-base select-none;
+  @apply text-gray-300 text-center text-base select-none flex items-center justify-center;
+  /* Sama dengan calendarCell untuk alignment */
+  @apply aspect-square;
+  @apply h-8 w-8 text-sm;
+  @apply md:h-10 md:w-10 md:text-xl;
+  @apply lg:h-10 lg:w-10 lg:text-lg;
+  @apply xl:h-11 xl:w-11 xl:text-xl;
+  @apply 2xl:h-12 2xl:w-12 2xl:text-2xl;
 }
 
 .calendarCell {
-  @apply text-center font-medium text-base text-gray-900 relative min-h-[38px] flex items-center justify-center m-0.5 transition-colors duration-200;
+  @apply text-center font-medium text-gray-900 relative flex items-center justify-center transition-colors duration-200 cursor-pointer;
+  @apply aspect-square;
+  /* Mobile: 32x32px */
+  @apply h-10 w-10 text-sm;
+  /* Medium (768px+): 36x36px */
+  @apply md:h-9 md:w-9 md:text-base;
+  /* Large (1024px+): 40x40px */
+  @apply lg:h-10 lg:w-10 lg:text-lg;
+  /* Extra Large (1280px+): 44x44px */
+  @apply xl:h-11 xl:w-11 xl:text-xl;
+  /* 2XL (1536px+): 48x48px */
+  @apply 2xl:h-12 2xl:w-12 2xl:text-2xl;
 }
 
 .today {

@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+.badge {
+  @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-full font-medium cursor-pointer transition-all duration-200;
+  @apply hover:scale-105 hover:shadow-md;
+}
+
+.badge:active {
+  @apply scale-95;
+}
+
+/* Badge sizes */
+.small {
+  @apply px-2 py-1 text-xs gap-1;
+}
+
+.medium {
+  @apply px-3 py-1.5 text-sm gap-2;
+}
+
+.large {
+  @apply px-4 py-2 text-base gap-3;
+}
+
+/* Badge icon */
+.badgeIcon {
+  @apply flex-shrink-0;
+}
+
+.small .badgeIcon {
+  @apply w-4 h-4;
+}
+
+.medium .badgeIcon {
+  @apply w-4 h-4;
+}
+
+.large .badgeIcon {
+  @apply w-5 h-5;
+}
+
+/* Badge label */
+.badgeLabel {
+  @apply whitespace-nowrap;
+}
+
+/* Badge variants */
+.badge.outlined {
+  @apply border-2;
+  background-color: transparent !important;
+}
+
+.badge.rounded {
+  @apply rounded-lg;
+}
+
+.badge.square {
+  @apply rounded;
+}
+
+.badge.disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.badge.disabled:hover {
+  @apply scale-100 shadow-none;
+}
+
+/* Badge icon only (no label) - center the icon */
+.badge:not(:has(.badgeLabel)) {
+  @apply justify-center;
+}
+
+.badge:not(:has(.badgeLabel)) .badgeIcon {
+  @apply m-0;
+}
+
+/* Badge with both icon and label */
+.badge:has(.badgeLabel) {
+  @apply justify-start;
+}

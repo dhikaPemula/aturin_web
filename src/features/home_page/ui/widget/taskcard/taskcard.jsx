@@ -1,114 +1,171 @@
-import React from 'react';
-import styles from './taskcard.module.css';
+import React from "react";
+import styles from "./taskcard.module.css";
+import Badge from "../../../../../core/widgets/badge/buildbadge/badge.jsx";
+import StatusBadge from "../../../../../core/widgets/status/statusbadge.jsx";
 
-function TaskCard({ 
-  title, 
-  categories = [], 
-  deadline, 
-  status = 'belum_dikerjakan', 
+function TaskCard({
+  title,
+  categories = [],
+  deadline,
+  status = "belum_dikerjakan",
+  alarm_id = null,
   onClick,
-  onToggleStatus 
+  onToggleStatus,
 }) {
-  const isCompleted = status === 'selesai';
-  
+  const isCompleted = status === "selesai";
+
+  // Debug: Log alarm_id untuk melihat nilainya
+  console.log("TaskCard alarm_id:", alarm_id, "type:", typeof alarm_id);
+
+  // Fungsi untuk menentukan status badge berdasarkan kondisi
+  const getStatusName = () => {
+    // Jika completed, selalu tampilkan selesai
+    if (isCompleted) {
+      return "selesai";
+    }
+
+    // Jika tidak ada deadline, default belum_dikerjakan
+    if (!deadline) {
+      return "belum_dikerjakan";
+    }
+
+    try {
+      const now = new Date();
+      const deadlineDate = new Date(deadline);
+
+      // Set jam ke 00:00:00 untuk perbandingan hari
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const deadlineDay = new Date(
+        deadlineDate.getFullYear(),
+        deadlineDate.getMonth(),
+        deadlineDate.getDate()
+      );
+
+      // Hitung selisih hari
+      const diffTime = deadlineDay.getTime() - today.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      // Debug log
+      console.log("Status calculation:", {
+        title,
+        deadline,
+        now: now.toISOString(),
+        deadlineDate: deadlineDate.toISOString(),
+        diffDays,
+        isCompleted,
+      });
+
+      // Jika deadline sudah lewat dan belum selesai
+      if (deadlineDate < now) {
+        return "terlambat";
+      }
+
+      // Berdasarkan selisih hari
+      if (diffDays === 0) {
+        return "hari_ini";
+      } else if (diffDays === 1) {
+        return "besok";
+      } else if (diffDays === 2) {
+        return "lusa";
+      } else {
+        return "belum_dikerjakan";
+      }
+    } catch (e) {
+      console.error("Error parsing deadline:", e);
+      return "belum_dikerjakan";
+    }
+  };
+
   // Format deadline
   const formatDeadline = (deadlineStr) => {
-    if (!deadlineStr) return 'Tidak ada deadline';
-    
+    if (!deadlineStr) return "Tidak ada deadline";
+
     try {
       const date = new Date(deadlineStr);
-      return date.toLocaleDateString('id-ID', {
-        day: '2-digit',
-        month: '2-digit', 
-        year: 'numeric'
-      }) + ', ' + date.toLocaleTimeString('id-ID', {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+      return (
+        date.toLocaleDateString("id-ID", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }) +
+        ", " +
+        date.toLocaleTimeString("id-ID", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
     } catch (e) {
       return deadlineStr;
     }
   };
 
-  // Tentukan class badge berdasarkan kategori
-  const getBadgeClass = (category) => {
-    const categoryLower = category.toLowerCase();
-    if (categoryLower.includes('akademik')) return styles.badgeAkademik;
-    if (categoryLower.includes('tugas')) return styles.badgeTugas;
-    if (categoryLower.includes('aktivitas')) return styles.badgeAktivitas;
-    return styles.badgeDefault;
-  };
-
-  // Tentukan class status
-  const getStatusClass = () => {
-    switch (status) {
-      case 'selesai':
-        return styles.statusSelesai;
-      case 'belum_dikerjakan':
-        return styles.statusBelumDikerjakan;
-      case 'terlambat':
-        return styles.statusTerlambat;
-      default:
-        return styles.statusBelumDikerjakan;
-    }
-  };
-
-  const getStatusText = () => {
-    switch (status) {
-      case 'selesai':
-        return 'Selesai';
-      case 'belum_dikerjakan':
-        return 'Belum Dikerjakan';
-      case 'terlambat':
-        return 'Terlambat';
-      default:
-        return 'Belum Dikerjakan';
-    }
-  };
-
   return (
-    <div 
-      className={`${styles.taskCard} ${isCompleted ? styles.completed : ''}`}
+    <div
+      className={`${styles.taskCard} ${isCompleted ? styles.completed : ""}`}
       onClick={onClick}
     >
-      {/* Header dengan badges */}
-      <div className={styles.taskHeader}>
-        <div className={styles.badges}>
-          {categories.map((category, index) => (
-            <span 
-              key={index}
-              className={`${styles.badge} ${getBadgeClass(category)}`}
-            >
-              {category}
-            </span>
-          ))}
-        </div>
-      </div>
+      <div className={styles.taskContainer}>
+        <div className={styles.taskContent}>
+          {/* Header dengan badges */}
+          <div className={styles.taskHeader}>
+            <div className={styles.badges}>
+              {/* Badge untuk categories */}
+              {categories
+                .filter(
+                  (category) =>
+                    category.toLowerCase() !== "tugas" &&
+                    category.toLowerCase() !== "task"
+                )
+                .map((category, index) => (
+                  <Badge
+                    key={`category-${index}`}
+                    name={category.toLowerCase()}
+                    size="small"
+                  />
+                ))}
 
-      {/* Title */}
-      <h3 className={`${styles.taskTitle} ${isCompleted ? styles.completedText : ''}`}>
-        {title}
-      </h3>
+              {/* Badge untuk task */}
+              <Badge name="task" size="small" />
 
-      {/* Footer dengan deadline dan status */}
-      <div className={styles.taskFooter}>
-        <div className={styles.deadline}>
-          <span className={styles.dateIcon}>📅</span>
-          <span className={styles.dateText}>
-            {formatDeadline(deadline)}
-          </span>
-        </div>
-        
-        <div className={styles.statusContainer}>
-          <span 
-            className={`${styles.status} ${getStatusClass()}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onToggleStatus) onToggleStatus();
-            }}
+              {/* Badge untuk alarm (hanya jika alarm_id tidak null dan bukan 0) */}
+              {alarm_id && alarm_id !== null && alarm_id !== 0 && (
+                <Badge name="alarm" size="small" />
+              )}
+            </div>
+          </div>
+
+          {/* Title */}
+          <h3
+            className={`${styles.taskTitle} ${
+              isCompleted ? styles.completedText : ""
+            }`}
           >
-            {getStatusText()}
-          </span>
+            {title}
+          </h3>
+
+          {/* Footer dengan deadline dan status */}
+          <div className={styles.taskFooter}>
+            <div className={styles.deadline}>
+              <img
+                src="/src/assets/home/jadwal.svg"
+                alt="Jadwal"
+                className={styles.dateIcon}
+              />
+              <span className={styles.dateText}>
+                {formatDeadline(deadline)}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className={styles.statusSection}>
+          <div className={styles.statusContainer}>
+            <StatusBadge
+              name={getStatusName()}
+              onClick={(name, label) => {
+                if (onToggleStatus) onToggleStatus();
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

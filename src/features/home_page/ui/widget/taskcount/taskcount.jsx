@@ -93,26 +93,45 @@ function TaskCount({ selectedDate }) {
 			return { total: 0, completed: 0, uncompleted: 0, late: 0 };
 		}
 
+		// Filter tasks for the selected date
 		const tasksForDate = allTasks.filter(task => {
 			const taskDate = parseDeadlineDate(task.task_deadline);
 			return taskDate && isSameDate(taskDate, selectedDate);
 		});
 
+		// Count completed tasks
 		const completed = tasksForDate.filter(task => task.task_status === 'selesai').length;
-		const uncompleted = tasksForDate.filter(task => task.task_status !== 'selesai').length;
 		
-		// Calculate late tasks (tasks with deadline before today and not completed)
+		// Calculate late tasks (deadline < today AND not completed)
 		const today = new Date();
 		today.setHours(0, 0, 0, 0); // Set to start of today for accurate comparison
 		
-		const late = tasksForDate.filter(task => {
+		const lateTasks = tasksForDate.filter(task => {
 			if (task.task_status === 'selesai') return false;
 			
 			const taskDate = parseDeadlineDate(task.task_deadline);
 			if (!taskDate) return false;
 			
-			taskDate.setHours(0, 0, 0, 0); // Set to start of day for comparison
-			return taskDate < today;
+			const taskDateCopy = new Date(taskDate);
+			taskDateCopy.setHours(0, 0, 0, 0); // Set to start of day for comparison
+			return taskDateCopy < today;
+		});
+		
+		const late = lateTasks.length;
+		
+		// Calculate uncompleted tasks (not completed AND not late)
+		// This includes tasks with deadline today or in the future, and tasks without deadline
+		const uncompleted = tasksForDate.filter(task => {
+			if (task.task_status === 'selesai') return false;
+			
+			const taskDate = parseDeadlineDate(task.task_deadline);
+			if (!taskDate) return true; // Tasks without deadline are considered uncompleted but not late
+			
+			const taskDateCopy = new Date(taskDate);
+			taskDateCopy.setHours(0, 0, 0, 0);
+			
+			// Only count as uncompleted if not late (deadline is today or in the future)
+			return taskDateCopy >= today;
 		}).length;
 
 		const result = {
@@ -123,11 +142,18 @@ function TaskCount({ selectedDate }) {
 		};
 
 		console.log(`TaskCount for ${selectedDate.toLocaleDateString('id-ID')}:`, result);
-		console.log(`Tasks for this date:`, tasksForDate.map(task => ({
-			title: task.task_title,
-			deadline: task.task_deadline,
-			status: task.task_status
-		})));
+		console.log(`Tasks breakdown:`, {
+			completed: tasksForDate.filter(task => task.task_status === 'selesai').map(t => t.task_title),
+			uncompleted: tasksForDate.filter(task => {
+				if (task.task_status === 'selesai') return false;
+				const taskDate = parseDeadlineDate(task.task_deadline);
+				if (!taskDate) return true;
+				const taskDateCopy = new Date(taskDate);
+				taskDateCopy.setHours(0, 0, 0, 0);
+				return taskDateCopy >= today;
+			}).map(t => t.task_title),
+			late: lateTasks.map(t => t.task_title)
+		});
 
 		return result;
 	}, [allTasks, selectedDate, loading]);
@@ -169,28 +195,28 @@ function TaskCount({ selectedDate }) {
 
 	const cardData = [
 		{
-			label: `Total Tugas ${dateLabel}`,
+			label: `Total Tugas`,
 			count: taskCounts.total,
 			icon: countIcon,
 			color: styles.cardBlue,
 			countClass: styles.countPrimary,
 		},
 		{
-			label: `Selesai ${dateLabel}`,
+			label: `Selesai`,
 			count: taskCounts.completed,
 			icon: checkCircleIcon,
 			color: styles.cardGreen,
 			countClass: styles.countSuccess,
 		},
 		{
-			label: `Belum dikerjakan ${dateLabel}`,
+			label: `Belum Dikerjakan`,
 			count: taskCounts.uncompleted,
 			icon: clockIcon,
 			color: styles.cardOrange,
 			countClass: styles.countWarning,
 		},
 		{
-			label: `Terlambat ${dateLabel}`,
+			label: `Terlambat`,
 			count: taskCounts.late,
 			icon: warningCircleIcon,
 			color: styles.cardRed,

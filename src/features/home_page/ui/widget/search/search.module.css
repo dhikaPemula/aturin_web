@@ -13,7 +13,19 @@
 }
 
 .searchInput {
-  @apply p-2 rounded-md w-full outline-none;
+  @apply p-2 rounded-md w-full outline-none border-none;
+}
+
+.clearButton {
+  @apply bg-transparent border-none text-xl text-gray-500 cursor-pointer px-2 py-1 ml-2 rounded flex items-center justify-center min-w-[24px] h-6 transition-all duration-200 ease-in-out;
+}
+
+.clearButton:hover {
+  @apply bg-gray-100 text-gray-700;
+}
+
+.clearButton:active {
+  @apply bg-gray-200;
 }
 
 @media (max-width: 768px) {
@@ -25,5 +37,8 @@
   }
   .searchInput {
     @apply p-1 text-sm;
+  }
+  .clearButton {
+    @apply text-lg min-w-[20px] h-5 ml-1;
   }
 }

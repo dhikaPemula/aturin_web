@@ -92,9 +92,11 @@ function Calendar({ today, currentDate, onDateChange }) {
         </div>
       </div>
       <div className={styles.calendarGrid}>
-        {daysShort.map(day => (
+       
+             {daysShort.map(day => (
           <div key={day} className={styles.calendarDayShort}>{day}</div>
         ))}
+        
         {days.map((d, i) => {
           if (d === null) return <div key={i} className={styles.calendarEmpty}>&nbsp;</div>;
           const isToday = isTodayCell(d);

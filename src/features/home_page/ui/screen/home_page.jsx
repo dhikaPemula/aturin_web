@@ -1,4 +1,3 @@
-import Header from "../../../../core/widgets/header/header.jsx";
 import styles from "./home_page.module.css";
 import Greeting from "../widget/greeting/greeting.jsx";
 import AddSection from "../widget/addsection/add_section.jsx";
@@ -12,6 +11,7 @@ import React from "react";
 function HomePage() {
   const [filterIndex, setFilterIndex] = React.useState(0);
   const [calendarDate, setCalendarDate] = React.useState(new Date());
+  const [searchQuery, setSearchQuery] = React.useState('');
   const today = React.useMemo(() => new Date(), []);
 
   // Handler untuk update currentDate dari Calendar
@@ -19,18 +19,28 @@ function HomePage() {
     setCalendarDate(date);
   };
 
+  // Handler untuk search input
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+    console.log('Search query changed:', query);
+  };
+
   return (
     <>
       <div className={styles.container}>
-        <div style={{ display: 'flex', gap: 24 }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
+        <div className={styles.headerSection}>
+          <div className={styles.greetingSection}>
             <Greeting />
           </div>
-          <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <div className={styles.addSection}>
             <AddSection />
           </div>
         </div>
-        <Search />
+        <Search 
+          onSearchChange={handleSearchChange}
+          value={searchQuery}
+          placeholder="Cari tugas, jadwal, atau aktivitas..."
+        />
         <Filter currentIndex={filterIndex} setCurrentIndex={setFilterIndex} />
         {(filterIndex === 0 || filterIndex === 1) && <div className={styles.taskCountContainer}><TaskCount selectedDate={calendarDate} /></div>}
         <div className={styles.calendarMobile}>
@@ -41,7 +51,11 @@ function HomePage() {
           />
         </div>
         <div className={styles.listandCalendar}>
-            <List currentIndex={filterIndex} selectedDate={calendarDate} />
+            <List 
+              currentIndex={filterIndex} 
+              selectedDate={calendarDate}
+              searchQuery={searchQuery}
+            />
             <div className={styles.calendarDesktop}>
               <Calendar
                 today={today}
@@ -54,6 +68,7 @@ function HomePage() {
         <p>Tanggal kalender: {calendarDate.toLocaleDateString('id-ID')}</p>
         <p>Filter index: {filterIndex}</p>
         <p>TaskCount akan menghitung untuk tanggal: {calendarDate.toLocaleDateString('id-ID')}</p>
+        <p>Search query: "{searchQuery}"</p>
       </div>
     </>
   );

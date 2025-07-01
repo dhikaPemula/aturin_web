@@ -45,7 +45,8 @@ function List({ currentIndex, searchQuery = '', selectedDate }) {
       deadline: task.task_deadline,
       status: task.task_status,
       done: task.task_status === 'selesai',
-      slug: task.slug
+      slug: task.slug,
+      alarm_id: task.alarm_id  // Tambahkan alarm_id
     }));
   };
 
@@ -320,6 +321,7 @@ function List({ currentIndex, searchQuery = '', selectedDate }) {
               categories={item.kategori}
               deadline={item.deadline || item.time}
               status={item.status || (item.done ? 'selesai' : 'belum_dikerjakan')}
+              alarm_id={item.alarm_id}
               onClick={() => handleTaskClick(item)}
               onToggleStatus={() => handleToggleStatus(item)}
             />
