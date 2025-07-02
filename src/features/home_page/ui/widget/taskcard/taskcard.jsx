@@ -161,6 +161,7 @@ function TaskCard({
           <div className={styles.statusContainer}>
             <StatusBadge
               name={getStatusName()}
+              size="medium"
               onClick={(name, label) => {
                 if (onToggleStatus) onToggleStatus();
               }}

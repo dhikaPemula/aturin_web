@@ -28,7 +28,7 @@ function App() {
       <Header currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
       <div className="h-[12.5vh] sm:h-[13vh] xl:h-[13.5vh]" />
       <div className="overflow-hidden w-screen" style={{ margin: 0, padding: 0 }}>
-        <div 
+        <div
           className="flex transition-transform duration-500 ease-in-out"
           style={{
             transform: `translateX(-${currentIndex * 33.333}%)`,

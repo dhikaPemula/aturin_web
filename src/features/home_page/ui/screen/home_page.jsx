@@ -12,7 +12,17 @@ function HomePage() {
   const [filterIndex, setFilterIndex] = React.useState(0);
   const [calendarDate, setCalendarDate] = React.useState(new Date());
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [currentTime, setCurrentTime] = React.useState(new Date());
   const today = React.useMemo(() => new Date(), []);
+
+  // Update waktu setiap detik
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   // Handler untuk update currentDate dari Calendar
   const handleCalendarChange = (date) => {
@@ -69,6 +79,15 @@ function HomePage() {
         <p>Filter index: {filterIndex}</p>
         <p>TaskCount akan menghitung untuk tanggal: {calendarDate.toLocaleDateString('id-ID')}</p>
         <p>Search query: "{searchQuery}"</p>
+        <p>Waktu sekarang: {currentTime.toLocaleString('id-ID', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        })}</p>
       </div>
     </>
   );

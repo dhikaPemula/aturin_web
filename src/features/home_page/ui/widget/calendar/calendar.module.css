@@ -17,7 +17,9 @@
 }
 
 .calendarNavBtn {
-  @apply bg-transparent border-0 text-xl cursor-pointer px-2;
+  @apply bg-transparent border-0 cursor-pointer px-2;
+  /* Ukuran icon - bisa diubah sesuai kebutuhan */
+  @apply text-2xl;  /* Pilihan: text-sm, text-base, text-lg, text-xl, text-2xl, text-3xl */
 }
 
 .calendarMonth {
@@ -46,7 +48,7 @@
   @apply md:h-10 md:w-10 md:text-xl;
   @apply lg:h-10 lg:w-10 lg:text-lg;
   @apply xl:h-11 xl:w-11 xl:text-xl;
-  @apply 2xl:h-12 2xl:w-12 2xl:text-2xl;
+  @apply 2xl:h-12 2xl:w-12 2xl:text-xl;
 }
 
 .calendarCell {
@@ -61,7 +63,7 @@
   /* Extra Large (1280px+): 44x44px */
   @apply xl:h-11 xl:w-11 xl:text-xl;
   /* 2XL (1536px+): 48x48px */
-  @apply 2xl:h-12 2xl:w-12 2xl:text-2xl;
+  @apply 2xl:h-12 2xl:w-12 2xl:text-xl;
 }
 
 .today {

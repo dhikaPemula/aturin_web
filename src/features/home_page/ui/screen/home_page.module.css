@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 .container {
-  @apply mt-4 mx-4;
+  @apply mt-4 mx-2 md:mx-4;
 }
 
 .headerSection {

@@ -17,7 +17,22 @@
 }
 
 .purpleButton {
-  @apply bg-[#5263F3] text-white hover:bg-[#3d4db3] transition;
+  @apply bg-[#5263F3] text-white transition-all duration-200;
+  /* 3D effect */
+  box-shadow: 0 6px 0 #3d4db3, 0 8px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(0);
+}
+
+.purpleButton:hover {
+  /* Pressed effect - move down and reduce shadow */
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 #3d4db3, 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+.purpleButton:active {
+  /* Full pressed effect */
+  transform: translateY(6px);
+  box-shadow: 0 0 0 #3d4db3, 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .whiteIcon {

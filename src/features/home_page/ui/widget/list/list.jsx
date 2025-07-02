@@ -5,8 +5,12 @@ import { getAllTasks } from "../../../../../core/services/api/task_api_service";
 import TaskCard from "../taskcard/taskcard.jsx";
 import noDataIcon from "../../../../../assets/home/nodata.svg";
 
-function List({ currentIndex, searchQuery = '', selectedDate }) {
-  const { dashboardData, loading: dashboardLoading, error: dashboardError } = useTaskDashboard();
+function List({ currentIndex, searchQuery = "", selectedDate }) {
+  const {
+    dashboardData,
+    loading: dashboardLoading,
+    error: dashboardError,
+  } = useTaskDashboard();
   const [allTasks, setAllTasks] = useState([]);
   const [tasksLoading, setTasksLoading] = useState(false);
   const [tasksError, setTasksError] = useState(null);
@@ -18,16 +22,19 @@ function List({ currentIndex, searchQuery = '', selectedDate }) {
         setTasksLoading(true);
         setTasksError(null);
         const tasks = await getAllTasks();
-        console.log('Raw tasks from API:', tasks);
-        console.log('Sample task deadlines:', tasks.slice(0, 5).map(task => ({
-          title: task.task_title,
-          deadline: task.task_deadline,
-          type: typeof task.task_deadline
-        })));
+        console.log("Raw tasks from API:", tasks);
+        console.log(
+          "Sample task deadlines:",
+          tasks.slice(0, 5).map((task) => ({
+            title: task.task_title,
+            deadline: task.task_deadline,
+            type: typeof task.task_deadline,
+          }))
+        );
         setAllTasks(tasks);
       } catch (error) {
-        setTasksError('Gagal mengambil data tugas');
-        console.error('Error fetching all tasks:', error);
+        setTasksError("Gagal mengambil data tugas");
+        console.error("Error fetching all tasks:", error);
       } finally {
         setTasksLoading(false);
       }
@@ -38,116 +45,170 @@ function List({ currentIndex, searchQuery = '', selectedDate }) {
 
   // Fungsi untuk mengkonversi data API ke format yang diharapkan komponen
   const convertApiDataToListFormat = (apiData) => {
-    return apiData.map(task => ({
+    return apiData.map((task) => ({
       type: "tugas",
       kategori: [task.task_category || "Umum", "Tugas"],
       title: task.task_title || "Tugas Tanpa Judul",
       deadline: task.task_deadline,
       status: task.task_status,
-      done: task.task_status === 'selesai',
+      done: task.task_status === "selesai",
       slug: task.slug,
-      alarm_id: task.alarm_id  // Tambahkan alarm_id
+      alarm_id: task.alarm_id, // Tambahkan alarm_id
     }));
   };
 
   // Utility function untuk membandingkan tanggal tanpa timezone issues
   const isSameDate = (date1, date2) => {
     if (!date1 || !date2) return false;
-    return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
+    
+    // Pastikan kedua tanggal dalam timezone yang sama (WIB)
+    const d1 = new Date(date1.getTime());
+    const d2 = new Date(date2.getTime());
+    
+    return (
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate()
+    );
   };
 
-  // Utility function untuk parsing tanggal dari berbagai format
+  // Utility function untuk parsing tanggal dari berbagai format dengan timezone handling
   const parseDeadlineDate = (deadline) => {
     if (!deadline) return null;
-    
+
     if (deadline instanceof Date) {
       return deadline;
     }
-    
-    if (typeof deadline === 'string') {
+
+    if (typeof deadline === "string") {
       // Handle DD/MM/YYYY format (Indonesian format)
-      if (deadline.includes('/')) {
-        const parts = deadline.trim().split('/');
+      if (deadline.includes("/")) {
+        const parts = deadline.trim().split("/");
         if (parts.length === 3) {
           const day = parseInt(parts[0], 10);
           const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
           const year = parseInt(parts[2], 10);
-          
+
           if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-            return new Date(year, month, day);
+            // Buat date dengan timezone lokal (Indonesia) - jam 00:00:00
+            return new Date(year, month, day, 0, 0, 0, 0);
           }
         }
       }
-      
-      // Handle YYYY-MM-DD format
-      if (deadline.includes('-')) {
-        const dateOnly = deadline.split('T')[0]; // Remove time part if exists
-        const parts = dateOnly.split('-');
-        if (parts.length === 3) {
-          const year = parseInt(parts[0], 10);
-          const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
-          const day = parseInt(parts[2], 10);
-          
+
+      // Handle YYYY-MM-DD format dengan ISO string parsing (lebih akurat)
+      if (deadline.includes("-")) {
+        // Gunakan Date constructor untuk ISO strings, sudah handle timezone dengan benar
+        const parsed = new Date(deadline);
+        if (!isNaN(parsed.getTime())) {
+          return parsed;
+        }
+        
+        // Fallback manual parsing jika Date constructor gagal
+        const parts = deadline.split("T"); // Split date and time
+        const datePart = parts[0]; // YYYY-MM-DD
+        const timePart = parts[1]; // HH:MM:SS atau undefined
+        
+        const dateComponents = datePart.split("-");
+        if (dateComponents.length === 3) {
+          const year = parseInt(dateComponents[0], 10);
+          const month = parseInt(dateComponents[1], 10) - 1; // Month is 0-indexed
+          const day = parseInt(dateComponents[2], 10);
+
           if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-            return new Date(year, month, day);
+            if (timePart) {
+              // Jika ada time component, parse jam:menit:detik
+              const timeComponents = timePart.replace('Z', '').split(':');
+              const hour = parseInt(timeComponents[0], 10) || 0;
+              const minute = parseInt(timeComponents[1], 10) || 0;
+              const second = parseInt(timeComponents[2], 10) || 0;
+              
+              if (deadline.endsWith('Z')) {
+                // UTC time - buat date dalam UTC kemudian konversi otomatis ke local timezone
+                return new Date(Date.UTC(year, month, day, hour, minute, second));
+              } else {
+                // Local time
+                return new Date(year, month, day, hour, minute, second);
+              }
+            } else {
+              // Tanpa time component, gunakan jam 00:00:00 local time
+              return new Date(year, month, day, 0, 0, 0, 0);
+            }
           }
         }
       }
-      
-      // Try parsing as ISO string (fallback)
+
+      // Try parsing as ISO string
       const parsed = new Date(deadline);
       if (!isNaN(parsed.getTime())) {
         return parsed;
       }
     }
-    
+
     return null;
   };
 
   // Fungsi untuk memfilter data berdasarkan tanggal yang dipilih
   const filterItemsByDate = (items, targetDate) => {
     if (!targetDate) return items;
-    
-    console.log(`Filtering for target date: ${targetDate.toLocaleDateString('id-ID')} (${targetDate.getFullYear()}-${targetDate.getMonth() + 1}-${targetDate.getDate()})`);
-    
-    return items.filter(item => {
+
+    console.log(
+      `Filtering for target date: ${targetDate.toLocaleDateString(
+        "id-ID"
+      )} (${targetDate.getFullYear()}-${
+        targetDate.getMonth() + 1
+      }-${targetDate.getDate()})`
+    );
+
+    return items.filter((item) => {
       if (!item.deadline) {
         console.log(`Item "${item.title}" has no deadline`);
         return false;
       }
-      
+
       const itemDate = parseDeadlineDate(item.deadline);
-      
+
       if (!itemDate) {
-        console.log(`Item "${item.title}" has invalid deadline: "${item.deadline}"`);
+        console.log(
+          `Item "${item.title}" has invalid deadline: "${item.deadline}"`
+        );
         return false;
       }
-      
+
       const matches = isSameDate(itemDate, targetDate);
-      
-      console.log(`Item: "${item.title}", Original deadline: "${item.deadline}", Parsed date: ${itemDate.toLocaleDateString('id-ID')} (${itemDate.getFullYear()}-${itemDate.getMonth() + 1}-${itemDate.getDate()}), Matches: ${matches}`);
-      
+
+      console.log(
+        `Item: "${item.title}"\n` +
+        `  Original deadline: "${item.deadline}"\n` +
+        `  Parsed date: ${itemDate.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })} (${itemDate.getFullYear()}-${itemDate.getMonth() + 1}-${itemDate.getDate()})\n` +
+        `  Target date: ${targetDate.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })} (${targetDate.getFullYear()}-${targetDate.getMonth() + 1}-${targetDate.getDate()})\n` +
+        `  Item date in UTC: ${itemDate.toISOString()}\n` +
+        `  Target date in UTC: ${targetDate.toISOString()}\n` +
+        `  Timezone offset: ${itemDate.getTimezoneOffset()} minutes\n` +
+        `  Matches: ${matches}`
+      );
+
       return matches;
     });
   };
 
   // Fungsi untuk memfilter data berdasarkan search query
   const filterItemsBySearch = (items, query) => {
-    if (!query || query.trim() === '') return items;
-    
+    if (!query || query.trim() === "") return items;
+
     const lowerQuery = query.toLowerCase().trim();
-    return items.filter(item => 
-      item.title.toLowerCase().includes(lowerQuery) ||
-      (item.kategori && item.kategori.some(cat => cat.toLowerCase().includes(lowerQuery)))
+    return items.filter(
+      (item) =>
+        item.title.toLowerCase().includes(lowerQuery) ||
+        (item.kategori &&
+          item.kategori.some((cat) => cat.toLowerCase().includes(lowerQuery)))
     );
   };
 
   // Tentukan data yang akan ditampilkan berdasarkan currentIndex
   const loading = dashboardLoading || tasksLoading;
   const error = dashboardError || tasksError;
-  
+
   let items = [];
   if (loading) {
     items = [];
@@ -169,44 +230,64 @@ function List({ currentIndex, searchQuery = '', selectedDate }) {
       default:
         items = [];
     }
-    
+
     // Filter berdasarkan tanggal yang dipilih
     if (selectedDate) {
       const beforeFilter = items.length;
-      console.log('All tasks before date filter:', items.map(item => ({
-        title: item.title,
-        deadline: item.deadline,
-        type: typeof item.deadline
-      })));
-      
+      console.log(
+        "All tasks before date filter:",
+        items.map((item) => ({
+          title: item.title,
+          deadline: item.deadline,
+          type: typeof item.deadline,
+        }))
+      );
+
       items = filterItemsByDate(items, selectedDate);
-      console.log(`Date filter: ${beforeFilter} -> ${items.length} items for date ${selectedDate.toLocaleDateString('id-ID')}`);
-      console.log('Tasks after date filter:', items.map(item => ({
-        title: item.title,
-        deadline: item.deadline
-      })));
+      console.log(
+        `Date filter: ${beforeFilter} -> ${
+          items.length
+        } items for date ${selectedDate.toLocaleDateString("id-ID")}`
+      );
+      console.log(
+        "Tasks after date filter:",
+        items.map((item) => ({
+          title: item.title,
+          deadline: item.deadline,
+        }))
+      );
     }
-    
+
     // Filter berdasarkan search query
-    if (searchQuery && searchQuery.trim() !== '') {
+    if (searchQuery && searchQuery.trim() !== "") {
       const beforeFilter = items.length;
       items = filterItemsBySearch(items, searchQuery);
-      console.log(`Search filter: ${beforeFilter} -> ${items.length} items for query "${searchQuery}"`);
+      console.log(
+        `Search filter: ${beforeFilter} -> ${items.length} items for query "${searchQuery}"`
+      );
     }
   }
 
   // Fungsi untuk mendapatkan pesan empty state berdasarkan currentIndex dan search query
   const getEmptyMessage = () => {
-    if (searchQuery && searchQuery.trim() !== '') {
+    if (searchQuery && searchQuery.trim() !== "") {
       return `Tidak ditemukan hasil untuk "${searchQuery}"`;
     }
-    
+
     // Format tanggal untuk pesan
-    const isToday = selectedDate && selectedDate.toDateString() === new Date().toDateString();
-    const dateStr = selectedDate 
-      ? (isToday ? 'hari ini' : selectedDate.toLocaleDateString('id-ID'))
-      : 'hari ini';
-    
+    const isToday =
+      selectedDate && selectedDate.toDateString() === new Date().toDateString();
+    const dateStr = selectedDate
+      ? isToday
+        ? "Hari Ini"
+        : selectedDate.toLocaleDateString("id-ID", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+      : "hari ini";
+
     switch (currentIndex) {
       case 0:
         return `Tidak ada data tugas dan aktivitas untuk ${dateStr}`;
@@ -221,29 +302,32 @@ function List({ currentIndex, searchQuery = '', selectedDate }) {
 
   // Judul sesuai index dan tanggal
   let title = "";
-  const isToday = selectedDate && selectedDate.toDateString() === new Date().toDateString();
-  const dateStr = selectedDate 
-    ? (isToday ? 'Hari Ini' : selectedDate.toLocaleDateString('id-ID', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      }))
-    : 'Hari Ini';
-  
+  const isToday =
+    selectedDate && selectedDate.toDateString() === new Date().toDateString();
+  const dateStr = selectedDate
+    ? isToday
+      ? "Hari Ini"
+      : selectedDate.toLocaleDateString("id-ID", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+    : "Hari Ini";
+
   if (currentIndex === 0) title = `Jadwal ${dateStr}`;
   else if (currentIndex === 1) title = `Tugas ${dateStr}`;
   else if (currentIndex === 2) title = `Aktivitas ${dateStr}`;
 
   // Handle task click
   const handleTaskClick = (task) => {
-    console.log('Task clicked:', task);
+    console.log("Task clicked:", task);
     // TODO: Navigate to task detail or open modal
   };
 
   // Handle status toggle
   const handleToggleStatus = (task) => {
-    console.log('Toggle status for:', task);
+    console.log("Toggle status for:", task);
     // TODO: Implement status toggle functionality
   };
 
@@ -255,14 +339,12 @@ function List({ currentIndex, searchQuery = '', selectedDate }) {
         </div>
         <div className={styles.listContainer}>
           <div className={styles.loadingState}>
-            <img 
-              src={noDataIcon} 
-              alt="Loading" 
+            <img
+              src={noDataIcon}
+              alt="Loading"
               className={styles.loadingIcon}
             />
-            <span className={styles.loadingText}>
-              Loading...
-            </span>
+            <span className={styles.loadingText}>Loading...</span>
           </div>
         </div>
       </div>
@@ -277,14 +359,8 @@ function List({ currentIndex, searchQuery = '', selectedDate }) {
         </div>
         <div className={styles.listContainer}>
           <div className={styles.errorState}>
-            <img 
-              src={noDataIcon} 
-              alt="Error" 
-              className={styles.errorIcon}
-            />
-            <span className={styles.errorText}>
-              Gagal memuat data: {error}
-            </span>
+            <img src={noDataIcon} alt="Error" className={styles.errorIcon} />
+            <span className={styles.errorText}>Gagal memuat data: {error}</span>
           </div>
         </div>
       </div>
@@ -296,22 +372,14 @@ function List({ currentIndex, searchQuery = '', selectedDate }) {
       <div className={styles.header}>
         <span className={styles.headerTitle}>{title}</span>
         {items.length > 0 && (
-          <span className={styles.count}>
-            {items.length}
-          </span>
+          <span className={styles.count}>{items.length}</span>
         )}
       </div>
       <div className={styles.listContainer}>
         {items.length === 0 ? (
           <div className={styles.emptyState}>
-            <img 
-              src={noDataIcon} 
-              alt="No data" 
-              className={styles.emptyIcon}
-            />
-            <span className={styles.emptyText}>
-              {getEmptyMessage()}
-            </span>
+            <img src={noDataIcon} alt="No data" className={styles.emptyIcon} />
+            <span className={styles.emptyText}>{getEmptyMessage()}</span>
           </div>
         ) : (
           items.map((item, idx) => (
@@ -320,7 +388,9 @@ function List({ currentIndex, searchQuery = '', selectedDate }) {
               title={item.title}
               categories={item.kategori}
               deadline={item.deadline || item.time}
-              status={item.status || (item.done ? 'selesai' : 'belum_dikerjakan')}
+              status={
+                item.status || (item.done ? "selesai" : "belum_dikerjakan")
+              }
               alarm_id={item.alarm_id}
               onClick={() => handleTaskClick(item)}
               onToggleStatus={() => handleToggleStatus(item)}

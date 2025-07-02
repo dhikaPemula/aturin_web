@@ -40,6 +40,10 @@
   @apply bg-gray-50 text-gray-600 border-gray-200;
 }
 
+.taskContent {
+    @apply -mr-12
+}
+
 .taskTitle {
   @apply text-base font-semibold text-gray-900 mb-3 leading-tight;
 }

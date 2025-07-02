@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../badge/buildbadge/badge.module.css';
+import styles from './statusbadge.module.css';
 import { getStatusByName } from './status.jsx';
 
 /**
@@ -43,7 +43,7 @@ export const StatusBadge = ({
   if (!statusData) {
     return (
       <span 
-        className={`${styles.badge} ${styles[size]} ${className}`}
+        className={`${styles.statusBadge} ${styles[size]} ${styles.unknown} ${className}`}
         style={{
           backgroundColor: "#E4E4E7",
           color: "#999999"
@@ -68,7 +68,7 @@ export const StatusBadge = ({
 
   return (
     <span 
-      className={`${styles.badge} ${styles[size]} ${className}`}
+      className={`${styles.statusBadge} ${styles[size]} ${className}`}
       style={badgeStyle}
       onClick={handleClick}
       role={onClick ? 'button' : undefined}

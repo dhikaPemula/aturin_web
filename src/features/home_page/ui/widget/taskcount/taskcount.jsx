@@ -34,12 +34,17 @@ function TaskCount({ selectedDate }) {
 	// Utility function to check if two dates are the same day
 	const isSameDate = (date1, date2) => {
 		if (!date1 || !date2) return false;
-		return date1.getFullYear() === date2.getFullYear() &&
-			   date1.getMonth() === date2.getMonth() &&
-			   date1.getDate() === date2.getDate();
+		
+		// Pastikan kedua tanggal dalam timezone yang sama (WIB)
+		const d1 = new Date(date1.getTime());
+		const d2 = new Date(date2.getTime());
+		
+		return d1.getFullYear() === d2.getFullYear() &&
+			   d1.getMonth() === d2.getMonth() &&
+			   d1.getDate() === d2.getDate();
 	};
 
-	// Utility function to parse deadline date
+	// Utility function to parse deadline date dengan timezone handling
 	const parseDeadlineDate = (deadline) => {
 		if (!deadline) return null;
 		
@@ -48,36 +53,64 @@ function TaskCount({ selectedDate }) {
 		}
 		
 		if (typeof deadline === 'string') {
-			// Handle DD/MM/YYYY format
+			// Handle DD/MM/YYYY format (Indonesian format)
 			if (deadline.includes('/')) {
 				const parts = deadline.trim().split('/');
 				if (parts.length === 3) {
 					const day = parseInt(parts[0], 10);
-					const month = parseInt(parts[1], 10) - 1;
+					const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
 					const year = parseInt(parts[2], 10);
 					
 					if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-						return new Date(year, month, day);
+						// Buat date dengan timezone lokal (Indonesia) - jam 00:00:00
+						return new Date(year, month, day, 0, 0, 0, 0);
 					}
 				}
 			}
 			
-			// Handle YYYY-MM-DD format
+			// Handle YYYY-MM-DD format dengan ISO string parsing (lebih akurat)
 			if (deadline.includes('-')) {
-				const dateOnly = deadline.split('T')[0];
-				const parts = dateOnly.split('-');
-				if (parts.length === 3) {
-					const year = parseInt(parts[0], 10);
-					const month = parseInt(parts[1], 10) - 1;
-					const day = parseInt(parts[2], 10);
-					
+				// Gunakan Date constructor untuk ISO strings, sudah handle timezone dengan benar
+				const parsed = new Date(deadline);
+				if (!isNaN(parsed.getTime())) {
+					return parsed;
+				}
+				
+				// Fallback manual parsing jika Date constructor gagal
+				const parts = deadline.split('T'); // Split date and time
+				const datePart = parts[0]; // YYYY-MM-DD
+				const timePart = parts[1]; // HH:MM:SS atau undefined
+				
+				const dateComponents = datePart.split('-');
+				if (dateComponents.length === 3) {
+					const year = parseInt(dateComponents[0], 10);
+					const month = parseInt(dateComponents[1], 10) - 1; // Month is 0-indexed
+					const day = parseInt(dateComponents[2], 10);
+
 					if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-						return new Date(year, month, day);
+						if (timePart) {
+							// Jika ada time component, parse jam:menit:detik
+							const timeComponents = timePart.replace('Z', '').split(':');
+							const hour = parseInt(timeComponents[0], 10) || 0;
+							const minute = parseInt(timeComponents[1], 10) || 0;
+							const second = parseInt(timeComponents[2], 10) || 0;
+							
+							if (deadline.endsWith('Z')) {
+								// UTC time - buat date dalam UTC kemudian konversi otomatis ke local timezone
+								return new Date(Date.UTC(year, month, day, hour, minute, second));
+							} else {
+								// Local time
+								return new Date(year, month, day, hour, minute, second);
+							}
+						} else {
+							// Tanpa time component, gunakan jam 00:00:00 local time
+							return new Date(year, month, day, 0, 0, 0, 0);
+						}
 					}
 				}
 			}
 			
-			// Fallback
+			// Try parsing as ISO string
 			const parsed = new Date(deadline);
 			if (!isNaN(parsed.getTime())) {
 				return parsed;
