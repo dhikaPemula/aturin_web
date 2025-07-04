@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+/* Backdrop */
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+/* Modal */
+.modal {
+  background-color: white;
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 28rem;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Header */
+.header {
+  @apply flex items-center justify-between p-6 border-b border-gray-200;
+}
+
+.title {
+  @apply text-xl font-semibold text-gray-900;
+}
+
+.closeButton {
+  @apply w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-200 text-gray-500 hover:text-gray-700 text-2xl;
+}
+
+/* Form */
+.form {
+  @apply p-6 overflow-y-auto max-h-[calc(90vh-80px)];
+}
+
+/* Field Groups */
+.fieldGroup {
+  @apply mb-6;
+}
+
+.label {
+  @apply block text-sm font-medium text-gray-900 mb-2;
+}
+
+/* Inputs */
+.input {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
+}
+
+.textarea {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 resize-none;
+}
+
+.select {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white;
+}
+
+/* Input variants */
+.dateInput {
+  @apply flex-1;
+}
+
+.timeInput {
+  @apply flex-1;
+}
+
+.dateTimeGroup {
+  @apply flex gap-3;
+}
+
+/* Error states */
+.inputError {
+  @apply border-red-500 focus:ring-red-500 focus:border-red-500;
+}
+
+.errorText {
+  @apply text-red-500 text-sm mt-1;
+}
+
+/* Character count */
+.charCount {
+  @apply text-xs text-gray-500 mt-1;
+}
+
+/* Buttons */
+.buttonGroup {
+  @apply flex gap-3 mt-8;
+}
+
+.cancelButton {
+  @apply flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium;
+}
+
+.submitButton {
+  @apply flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .modal {
+    @apply mx-2 max-w-none;
+  }
+  
+  .header {
+    @apply p-4;
+  }
+  
+  .form {
+    @apply p-4;
+  }
+  
+  .title {
+    @apply text-lg;
+  }
+  
+  .dateTimeGroup {
+    @apply flex-col gap-2;
+  }
+  
+  .buttonGroup {
+    @apply flex-col;
+  }
+}

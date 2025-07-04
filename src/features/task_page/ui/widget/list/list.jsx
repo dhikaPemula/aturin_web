@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import styles from './list.module.css';
-import useTaskList from '../../../../../core/hooks/useTaskList.js';
 import SubList from '../sublist/sublist.jsx';
 import noDataIcon from '../../../../../assets/home/nodata.svg';
 
 function List({ 
+  tasks = [],
+  loading = false,
+  error = null,
   searchQuery = "", 
   currentStatus = "", 
   currentCategory = "",
   onEditTask,
   onDeleteTask 
 }) {
-  const { tasks, loading, error, fetchTasks } = useTaskList();
   const [filteredTasks, setFilteredTasks] = useState([]);
-
-  // Fetch tasks when component mounts
-  useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
 
   // Filter tasks based on search query and current filters
   useEffect(() => {
@@ -55,7 +51,7 @@ function List({
     }));
 
     setFilteredTasks(convertedTasks);
-  }, [tasks, searchQuery, currentCategory]);
+  }, [tasks, searchQuery, currentStatus, currentCategory]);
 
   // Get unique statuses to display
   const getStatusesToDisplay = () => {
@@ -91,13 +87,9 @@ function List({
     return (
       <div className={styles.errorContainer}>
         <div className={styles.errorText}>{error}</div>
-        <button 
-          onClick={fetchTasks} 
-          className={styles.retryButton}
-          type="button"
-        >
-          Coba Lagi
-        </button>
+        <div className={styles.errorSubtext}>
+          Silakan refresh halaman untuk mencoba lagi
+        </div>
       </div>
     );
   }

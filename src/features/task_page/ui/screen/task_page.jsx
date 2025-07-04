@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./task_page.module.css";
 import useTaskList from "../../../../core/hooks/useTaskList.js";
 import Badge from "../../../../core/widgets/badge/buildbadge/badge.jsx";
@@ -9,6 +9,7 @@ import Search from "../widget/search/search.jsx";
 import StatusFilter from "../widget/statusfilter/statusfilter.jsx";
 import CategoryFilter from "../widget/categoryfilter/categoryfilter.jsx";
 import List from "../widget/list/list.jsx";
+import AddEditForm from "../../../crudtask/screen/addeditform.jsx";
 // Import icons
 import clockIcon from "../../../../assets/home/clock.svg";
 import jadwalIcon from "../../../../assets/home/jadwal.svg";
@@ -19,6 +20,34 @@ function TaskPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [isAddEditFormOpen, setIsAddEditFormOpen] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  // Set up user ID in localStorage (temporary solution)
+  useEffect(() => {
+    if (!localStorage.getItem('userId')) {
+      // Set a default user ID for demo purposes
+      localStorage.setItem('userId', '97');
+    }
+  }, []);
+
+  // Use the task list hook
+  const {
+    tasks,
+    loading,
+    error,
+    createTask,
+    updateTask,
+    deleteTask,
+    clearError
+  } = useTaskList();
+
+  // Toast helper function
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const handleSearchChange = (query) => {
     setSearchQuery(query);
@@ -35,14 +64,75 @@ function TaskPage() {
     console.log("Category filter:", category);
   };
 
-  const handleEditTask = (task) => {
-    console.log("Edit task:", task);
-    // TODO: Implement edit task functionality
+  const handleAddNewTask = () => {
+    setTaskToEdit(null);
+    setIsAddEditFormOpen(true);
   };
 
-  const handleDeleteTask = (task) => {
+  const handleEditTask = (task) => {
+    console.log("Edit task:", task);
+    setTaskToEdit(task);
+    setIsAddEditFormOpen(true);
+  };
+
+  const handleDeleteTask = async (task) => {
     console.log("Delete task:", task);
-    // TODO: Implement delete task functionality
+    if (window.confirm(`Apakah Anda yakin ingin menghapus tugas "${task.task_title}"?`)) {
+      const result = await deleteTask(task.slug);
+      if (result.success) {
+        showToast('Tugas berhasil dihapus', 'success');
+      } else {
+        showToast(result.error || 'Gagal menghapus tugas', 'error');
+      }
+    }
+  };
+
+  const handleCloseAddEditForm = () => {
+    setIsAddEditFormOpen(false);
+    setTaskToEdit(null);
+  };
+
+  const handleSaveTask = async (taskData) => {
+    try {
+      let result;
+      
+      if (taskToEdit) {
+        // Update existing task
+        const updateData = {
+          title: taskData.task_title,
+          description: taskData.task_description,
+          deadline: taskData.task_deadline,
+          estimatedDuration: taskData.estimated_task_duration,
+          category: taskData.task_category,
+          status: taskData.task_status
+        };
+        result = await updateTask(taskToEdit.slug, updateData);
+      } else {
+        // Create new task
+        const createData = {
+          title: taskData.task_title,
+          description: taskData.task_description,
+          deadline: taskData.task_deadline,
+          estimatedDuration: taskData.estimated_task_duration,
+          category: taskData.task_category,
+          status: taskData.task_status || 'belum_selesai'
+        };
+        result = await createTask(createData);
+      }
+
+      if (result.success) {
+        showToast(
+          taskToEdit ? 'Tugas berhasil diperbarui' : 'Tugas berhasil ditambahkan', 
+          'success'
+        );
+        handleCloseAddEditForm();
+      } else {
+        showToast(result.error || 'Gagal menyimpan tugas', 'error');
+      }
+    } catch (error) {
+      console.error('Error saving task:', error);
+      showToast('Terjadi kesalahan saat menyimpan tugas', 'error');
+    }
   };
 
   return (
@@ -53,7 +143,7 @@ function TaskPage() {
             <UpperSection />
           </div>
           <div className={styles.addSection}>
-            <AddSection />
+            <AddSection onAddTask={handleAddNewTask} />
           </div>
         </div>
         <div className={styles.filteringSection}>
@@ -78,6 +168,9 @@ function TaskPage() {
         </div>
         <div className={styles.listSection}>
           <List
+            tasks={tasks}
+            loading={loading}
+            error={error}
             searchQuery={searchQuery}
             currentStatus={statusFilter}
             currentCategory={categoryFilter}
@@ -86,6 +179,22 @@ function TaskPage() {
           />
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`${styles.toast} ${styles[toast.type]}`}>
+          {toast.message}
+        </div>
+      )}
+
+      {/* Add/Edit Form Modal */}
+      <AddEditForm 
+        isOpen={isAddEditFormOpen}
+        onClose={handleCloseAddEditForm}
+        task={taskToEdit}
+        onSave={handleSaveTask}
+      />
+
       <p>
         Query Search: <strong>"{searchQuery}"</strong>
       </p>
