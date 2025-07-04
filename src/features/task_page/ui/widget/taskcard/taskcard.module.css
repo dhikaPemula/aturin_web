@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+.taskCard {
+  @apply bg-white border border-gray-200 rounded-lg p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow duration-200 mb-4;
+}
+
+.taskHeader {
+  @apply mb-3;
+}
+
+.categoryBadges {
+  @apply flex flex-wrap gap-2;
+}
+
+.taskContent {
+  @apply mb-4;
+}
+
+.taskTitle {
+  @apply text-lg md:text-xl font-semibold text-gray-900 mb-2;
+}
+
+.taskDescription {
+  @apply text-sm md:text-base leading-relaxed;
+}
+
+.taskDetails {
+  @apply space-y-2;
+}
+
+.detailItem {
+  @apply flex items-center justify-between;
+}
+
+.detailIcon {
+  @apply w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3 flex-shrink-0;
+}
+
+.deadlineIcon {
+  filter: brightness(0) saturate(100%);
+}
+
+.durationIcon {
+  filter: brightness(0) saturate(100%);
+}
+
+.detailText {
+  @apply text-sm md:text-base flex-1;
+}
+
+.inlineActionButtons {
+  @apply flex space-x-2 ml-4;
+}
+
+.editButton {
+  @apply p-2 rounded-lg text-blue-500 hover:bg-blue-50 transition-colors duration-200;
+}
+
+.deleteButton {
+  @apply p-2 rounded-lg text-red-500 hover:bg-red-50 transition-colors duration-200;
+}
+
+.actionIcon {
+  @apply w-5 h-5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .taskCard {
+    @apply p-3;
+  }
+  
+  .taskTitle {
+    @apply text-base;
+  }
+  
+  .taskDescription {
+    @apply text-xs;
+  }
+  
+  .detailText {
+    @apply text-xs;
+  }
+  
+  .detailIcon {
+    @apply w-3 h-3 mr-2;
+  }
+  
+  .actionIcon {
+    @apply w-4 h-4;
+  }
+}

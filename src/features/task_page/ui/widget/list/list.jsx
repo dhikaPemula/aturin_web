@@ -48,6 +48,7 @@ function List({
       categories: task.task_category ? [task.task_category] : [],
       deadline: task.task_deadline,
       estimation: task.task_estimation || '',
+      estimated_task_duration: task.estimated_task_duration || '',
       task_status: task.task_status || 'belum_selesai',
       alarm_id: task.alarm_id,
       slug: task.slug
