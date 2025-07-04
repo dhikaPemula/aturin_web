@@ -61,7 +61,7 @@
 }
 
 .count {
-  @apply bg-yellow-200 text-yellow-800 font-bold rounded-full px-3.5 py-0.5 text-sm md:text-base;
+  @apply bg-yellow-200 text-yellow-800 font-bold rounded-full px-3 py-0.5 text-sm md:text-base;
 }
 
 .emptyState {

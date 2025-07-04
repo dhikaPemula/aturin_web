@@ -4,15 +4,9 @@ import { categories, getCategoryByName } from '../categories/categories.jsx';
 import { activityTaskAlarm, getItemByName } from '../activitytaskalarm/activitytaskalarm.jsx';
 
 /**
- * Function untuk membuat badge berdasarkan nama
- * Secara otomatis mencari data dari categories atau activityTaskAlarm
- * @param {string} name - Nama badge (akan dicari di categories atau activityTaskAlarm)
- * @param {string} size - Ukuran badge ('small', 'medium', 'large')
- * @param {function} onClick - Handler ketika badge diklik
- * @param {string} className - Class CSS tambahan
- * @returns {JSX.Element} Komponen badge
+ * Komponen Badge yang dapat digunakan langsung dengan props
  */
-export const buildBadge = ({
+const Badge = ({
   name,
   size = 'medium',
   onClick,
@@ -69,25 +63,6 @@ export const buildBadge = ({
       )}
     </div>
   );
-};
-
-/**
- * Komponen Badge yang dapat digunakan langsung dengan props
- */
-const Badge = ({
-  name,
-  size = 'medium',
-  onClick,
-  className = '',
-  ...props
-}) => {
-  return buildBadge({
-    name,
-    size,
-    onClick,
-    className,
-    ...props
-  });
 };
 
 export default Badge; 

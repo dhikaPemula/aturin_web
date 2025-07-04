@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+.container {
+  @apply mt-4 mx-2 md:mx-4;
+}
+
+.addSection {
+  @apply mt-4;
+}
+
+/* Search Section */
+.searchSection {
+  @apply my-6 md:my-0;
+}
+
+/* Filter Section */
+.filterSection {
+  @apply my-6 md:my-0;
+}
+
+/* Category Section */
+.categorySection {
+  @apply my-6 md:my-0;
+}
+
+.filteringSection {
+  @apply my-6 md:grid md:grid-cols-3 md:gap-4;
+}
+
+.upperSection {
+  @apply my-6 md:flex md:justify-between md:items-center;
+}
+
+/* List Section */
+.listSection {
+  @apply my-8;
+}

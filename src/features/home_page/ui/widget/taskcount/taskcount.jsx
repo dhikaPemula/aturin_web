@@ -132,40 +132,10 @@ function TaskCount({ selectedDate }) {
 			return taskDate && isSameDate(taskDate, selectedDate);
 		});
 
-		// Count completed tasks
+		// Count berdasarkan task_status dari API
 		const completed = tasksForDate.filter(task => task.task_status === 'selesai').length;
-		
-		// Calculate late tasks (deadline < today AND not completed)
-		const today = new Date();
-		today.setHours(0, 0, 0, 0); // Set to start of today for accurate comparison
-		
-		const lateTasks = tasksForDate.filter(task => {
-			if (task.task_status === 'selesai') return false;
-			
-			const taskDate = parseDeadlineDate(task.task_deadline);
-			if (!taskDate) return false;
-			
-			const taskDateCopy = new Date(taskDate);
-			taskDateCopy.setHours(0, 0, 0, 0); // Set to start of day for comparison
-			return taskDateCopy < today;
-		});
-		
-		const late = lateTasks.length;
-		
-		// Calculate uncompleted tasks (not completed AND not late)
-		// This includes tasks with deadline today or in the future, and tasks without deadline
-		const uncompleted = tasksForDate.filter(task => {
-			if (task.task_status === 'selesai') return false;
-			
-			const taskDate = parseDeadlineDate(task.task_deadline);
-			if (!taskDate) return true; // Tasks without deadline are considered uncompleted but not late
-			
-			const taskDateCopy = new Date(taskDate);
-			taskDateCopy.setHours(0, 0, 0, 0);
-			
-			// Only count as uncompleted if not late (deadline is today or in the future)
-			return taskDateCopy >= today;
-		}).length;
+		const uncompleted = tasksForDate.filter(task => task.task_status === 'belum_selesai').length;
+		const late = tasksForDate.filter(task => task.task_status === 'terlambat').length;
 
 		const result = {
 			total: tasksForDate.length,
@@ -175,17 +145,10 @@ function TaskCount({ selectedDate }) {
 		};
 
 		console.log(`TaskCount for ${selectedDate.toLocaleDateString('id-ID')}:`, result);
-		console.log(`Tasks breakdown:`, {
-			completed: tasksForDate.filter(task => task.task_status === 'selesai').map(t => t.task_title),
-			uncompleted: tasksForDate.filter(task => {
-				if (task.task_status === 'selesai') return false;
-				const taskDate = parseDeadlineDate(task.task_deadline);
-				if (!taskDate) return true;
-				const taskDateCopy = new Date(taskDate);
-				taskDateCopy.setHours(0, 0, 0, 0);
-				return taskDateCopy >= today;
-			}).map(t => t.task_title),
-			late: lateTasks.map(t => t.task_title)
+		console.log(`Tasks breakdown by status:`, {
+			selesai: tasksForDate.filter(task => task.task_status === 'selesai').map(t => ({ title: t.task_title, status: t.task_status })),
+			belum_selesai: tasksForDate.filter(task => task.task_status === 'belum_selesai').map(t => ({ title: t.task_title, status: t.task_status })),
+			terlambat: tasksForDate.filter(task => task.task_status === 'terlambat').map(t => ({ title: t.task_title, status: t.task_status }))
 		});
 
 		return result;

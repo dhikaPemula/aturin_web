@@ -74,7 +74,7 @@ function HomePage() {
               />
             </div>
         </div>
-        <p>Token: {localStorage.getItem('token')}</p>
+        {/* <p>Token: {localStorage.getItem('token')}</p>
         <p>Tanggal kalender: {calendarDate.toLocaleDateString('id-ID')}</p>
         <p>Filter index: {filterIndex}</p>
         <p>TaskCount akan menghitung untuk tanggal: {calendarDate.toLocaleDateString('id-ID')}</p>
@@ -87,7 +87,7 @@ function HomePage() {
           hour: '2-digit',
           minute: '2-digit',
           second: '2-digit'
-        })}</p>
+        })}</p> */}
       </div>
     </>
   );

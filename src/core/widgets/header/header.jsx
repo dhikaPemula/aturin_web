@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './header.module.css';
 import logoAturin from '../../../assets/home/logo-aturin.svg';
@@ -27,9 +27,11 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
   const bellRef = useRef();
   const menuNavRef = useRef();
 
-  // Sync with prop changes
+  // Sync with prop changes and update underline position
   useEffect(() => {
+    console.log('Prop currentIndex changed:', propCurrentIndex);
     if (propCurrentIndex !== undefined) {
+      console.log('Setting currentIndex to:', propCurrentIndex);
       setCurrentIndex(propCurrentIndex);
     }
   }, [propCurrentIndex]);
@@ -40,26 +42,62 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Update underline position based on currentIndex
+  // Single effect to handle underline position based on currentIndex
+  useLayoutEffect(() => {
+    const updateUnderlinePosition = () => {
+      if (!isMobile && menuNavRef.current) {
+        const menuItems = menuNavRef.current.querySelectorAll('li');
+        const activeItem = menuItems[currentIndex];
+        
+        console.log('Updating underline position:', {
+          currentIndex,
+          totalItems: menuItems.length,
+          activeItem: activeItem ? 'found' : 'not found'
+        });
+        
+        if (activeItem) {
+          const { offsetLeft, offsetWidth } = activeItem;
+          console.log('Setting underline position:', { offsetLeft, offsetWidth });
+          menuNavRef.current.style.setProperty('--underline-left', `${offsetLeft}px`);
+          menuNavRef.current.style.setProperty('--underline-width', `${offsetWidth}px`);
+        }
+      }
+    };
+
+    // Update immediately with layoutEffect (after DOM paint)
+    updateUnderlinePosition();
+    
+    // Also update after small delay for safety
+    const timeout = setTimeout(updateUnderlinePosition, 10);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [currentIndex, isMobile]);
+
+  // Additional effect for backup updates
   useEffect(() => {
     if (!isMobile && menuNavRef.current) {
-      const menuItems = menuNavRef.current.querySelectorAll('li');
-      const activeItem = menuItems[currentIndex];
-      
-      if (activeItem) {
-        const { offsetLeft, offsetWidth } = activeItem;
-        // Update CSS custom properties for the underline position
-        menuNavRef.current.style.setProperty('--underline-left', `${offsetLeft}px`);
-        menuNavRef.current.style.setProperty('--underline-width', `${offsetWidth}px`);
-      }
+      const timeout = setTimeout(() => {
+        const menuItems = menuNavRef.current.querySelectorAll('li');
+        const activeItem = menuItems[currentIndex];
+        
+        if (activeItem) {
+          const { offsetLeft, offsetWidth } = activeItem;
+          console.log('Backup update - Setting underline position:', { offsetLeft, offsetWidth });
+          menuNavRef.current.style.setProperty('--underline-left', `${offsetLeft}px`);
+          menuNavRef.current.style.setProperty('--underline-width', `${offsetWidth}px`);
+        }
+      }, 100);
+
+      return () => clearTimeout(timeout);
     }
   }, [currentIndex, isMobile]);
 
-  // Initialize underline position on mount
+  // Handle window resize
   useEffect(() => {
-    if (!isMobile && menuNavRef.current) {
-      // Small delay to ensure elements are rendered
-      setTimeout(() => {
+    const handleResizeAndReposition = () => {
+      if (!isMobile && menuNavRef.current) {
         const menuItems = menuNavRef.current.querySelectorAll('li');
         const activeItem = menuItems[currentIndex];
         
@@ -68,9 +106,12 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
           menuNavRef.current.style.setProperty('--underline-left', `${offsetLeft}px`);
           menuNavRef.current.style.setProperty('--underline-width', `${offsetWidth}px`);
         }
-      }, 100);
-    }
-  }, []);
+      }
+    };
+
+    window.addEventListener('resize', handleResizeAndReposition);
+    return () => window.removeEventListener('resize', handleResizeAndReposition);
+  }, [currentIndex, isMobile]);
 
   // Tentukan avatar dan nama dari banner jika ada
   let bannerAvatar = defaultAvatar;

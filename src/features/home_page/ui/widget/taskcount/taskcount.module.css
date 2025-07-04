@@ -39,7 +39,7 @@
 }
 
 .cardRed {
-  @apply bg-[#FAC5C3] text-[#D93E39];
+  @apply bg-[#DFDFDF] text-[#999999];
 }
 
 .cardGray {
@@ -59,7 +59,7 @@
 }
 
 .countDanger {
-  color: #D93E39 !important;
+  color: #999999 !important;
 }
 .countPrimary {
   color: #5263F3 !important;
@@ -71,6 +71,6 @@
   color: #CC6D00 !important;
 }
 .countDanger {
-  color: #D93E39 !important;
+  color: #999999 !important;
 }
 

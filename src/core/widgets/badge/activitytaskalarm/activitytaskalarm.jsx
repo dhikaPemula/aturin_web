@@ -16,6 +16,7 @@ export const activityTaskAlarm = [
   },
   {
     name: "alarm",
+    label: "Alarm",
     foreground: "#5263F3",
     background: "#DFEAFF",
     iconPath: "/src/assets/home/categories/alarm.svg"

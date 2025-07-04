@@ -1,111 +1,102 @@
+import React, { useState, useMemo } from "react";
+import styles from "./task_page.module.css";
 import useTaskList from "../../../../core/hooks/useTaskList.js";
+import Badge from "../../../../core/widgets/badge/buildbadge/badge.jsx";
+import StatusBadge from "../../../../core/widgets/status/statusbadge.jsx";
+import UpperSection from "../widget/uppersection/uppersection.jsx";
+import AddSection from "../widget/addbutton/addbutton.jsx";
+import Search from "../widget/search/search.jsx";
+import StatusFilter from "../widget/statusfilter/statusfilter.jsx";
+import CategoryFilter from "../widget/categoryfilter/categoryfilter.jsx";
+import List from "../widget/list/list.jsx";
+// Import icons
+import clockIcon from "../../../../assets/home/clock.svg";
+import jadwalIcon from "../../../../assets/home/jadwal.svg";
+import checkCircleIcon from "../../../../assets/home/check-circle.svg";
+import warningCircleIcon from "../../../../assets/home/warning-circle.svg";
 
 function TaskPage() {
-  const { tasks, loading, error, toggleTaskStatus } = useTaskList();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
 
-  const handleToggleStatus = async (slug) => {
-    const result = await toggleTaskStatus(slug);
-    if (!result.success) {
-      alert(result.error);
-    }
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+    console.log("Search query:", query);
   };
 
-  if (loading) {
-    return (
-      <>
-        <div style={{ padding: '20px' }}>
-          <h1>Halaman Tugas</h1>
-          <p>Memuat data tugas...</p>
-        </div>
-      </>
-    );
-  }
+  const handleStatusChange = (status) => {
+    setStatusFilter(status);
+    console.log("Status filter:", status);
+  };
 
-  if (error) {
-    return (
-      <>
-        <div style={{ padding: '20px' }}>
-          <h1>Halaman Tugas</h1>
-          <p style={{ color: 'red' }}>Error: {error}</p>
-        </div>
-      </>
-    );
-  }
+  const handleCategoryChange = (category) => {
+    setCategoryFilter(category);
+    console.log("Category filter:", category);
+  };
+
+  const handleEditTask = (task) => {
+    console.log("Edit task:", task);
+    // TODO: Implement edit task functionality
+  };
+
+  const handleDeleteTask = (task) => {
+    console.log("Delete task:", task);
+    // TODO: Implement delete task functionality
+  };
 
   return (
-    <>
-      <div style={{ padding: '20px' }}>
-        <h1>Halaman Tugas</h1>
-        <p>Daftar semua tugas Anda ({tasks.length} tugas)</p>
-        
-        {tasks.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-            Belum ada tugas yang dibuat
+    <div className={styles.container}>
+      <div>
+        <div className={styles.upperSection}>
+          <div className={styles.tugas}>
+            <UpperSection />
           </div>
-        ) : (
-          <div style={{ display: 'grid', gap: '16px', marginTop: '20px' }}>
-            {tasks.map((task) => (
-              <div 
-                key={task.slug}
-                style={{
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  padding: '16px',
-                  backgroundColor: task.task_status === 'selesai' ? '#f0f9f0' : '#fff',
-                  opacity: task.task_status === 'selesai' ? 0.8 : 1
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                  <div style={{ flex: 1 }}>
-                    <h3 style={{ 
-                      margin: '0 0 8px 0',
-                      textDecoration: task.task_status === 'selesai' ? 'line-through' : 'none',
-                      color: task.task_status === 'selesai' ? '#666' : '#333'
-                    }}>
-                      {task.task_title}
-                    </h3>
-                    {task.task_description && (
-                      <p style={{ margin: '0 0 8px 0', color: '#666', fontSize: '14px' }}>
-                        {task.task_description}
-                      </p>
-                    )}
-                    <div style={{ fontSize: '12px', color: '#888' }}>
-                      <span>Kategori: {task.task_category}</span>
-                      {task.task_deadline && (
-                        <span style={{ marginLeft: '16px' }}>
-                          Deadline: {new Date(task.task_deadline).toLocaleDateString('id-ID')}
-                        </span>
-                      )}
-                      {task.estimated_task_duration && (
-                        <span style={{ marginLeft: '16px' }}>
-                          Durasi: {task.estimated_task_duration}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div style={{ marginLeft: '16px' }}>
-                    <button
-                      onClick={() => handleToggleStatus(task.slug)}
-                      style={{
-                        padding: '8px 16px',
-                        borderRadius: '4px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        backgroundColor: task.task_status === 'selesai' ? '#dc3545' : '#28a745',
-                        color: 'white',
-                        fontSize: '12px'
-                      }}
-                    >
-                      {task.task_status === 'selesai' ? 'Tandai Belum Selesai' : 'Tandai Selesai'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className={styles.addSection}>
+            <AddSection />
           </div>
-        )}
+        </div>
+        <div className={styles.filteringSection}>
+          <div className={styles.searchSection}>
+            <Search
+              onSearchChange={handleSearchChange}
+              placeholder="Mencari Tugas..."
+            />
+          </div>
+          <div className={styles.filterSection}>
+            <StatusFilter
+              onStatusChange={handleStatusChange}
+              placeholder="Semua status"
+            />
+          </div>
+          <div className={styles.categorySection}>
+            <CategoryFilter
+              onCategoryChange={handleCategoryChange}
+              placeholder="Semua kategori"
+            />
+          </div>
+        </div>
+        <div className={styles.listSection}>
+          <List
+            searchQuery={searchQuery}
+            currentStatus={statusFilter}
+            currentCategory={categoryFilter}
+            onEditTask={handleEditTask}
+            onDeleteTask={handleDeleteTask}
+          />
+        </div>
       </div>
-    </>
+      <p>
+        Query Search: <strong>"{searchQuery}"</strong>
+      </p>
+      <p>
+        Status Filter: <strong>"{statusFilter || "Semua status"}"</strong>
+      </p>
+      <p>
+        Category Filter: <strong>"{categoryFilter || "Semua kategori"}"</strong>
+      </p>
+    </div>
   );
 }
+
 export default TaskPage;
