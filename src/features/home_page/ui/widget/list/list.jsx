@@ -4,6 +4,9 @@ import useTaskDashboard from "../../../../../core/hooks/useTaskDashboard";
 import { getAllTasks } from "../../../../../core/services/api/task_api_service";
 import TaskCard from "../taskcard/taskcard.jsx";
 import noDataIcon from "../../../../../assets/home/nodata.svg";
+import jadwalIcon from "../../../../../assets/home/list/jadwal.svg";
+import taskIcon from "../../../../../assets/home/list/task.svg";
+import activityIcon from "../../../../../assets/home/list/activity.svg";
 
 function List({ currentIndex, searchQuery = "", selectedDate }) {
   const {
@@ -331,6 +334,20 @@ function List({ currentIndex, searchQuery = "", selectedDate }) {
     // TODO: Implement status toggle functionality
   };
 
+  // Get icon based on currentIndex
+  const getHeaderIcon = () => {
+    switch (currentIndex) {
+      case 0:
+        return jadwalIcon; // Jadwal icon
+      case 1:
+        return taskIcon; // Task icon
+      case 2:
+        return activityIcon; // Activity icon
+      default:
+        return jadwalIcon;
+    }
+  };
+
   if (loading) {
     return (
       <div className={styles.listWrapper}>
@@ -370,6 +387,7 @@ function List({ currentIndex, searchQuery = "", selectedDate }) {
   return (
     <div className={styles.listWrapper}>
       <div className={styles.header}>
+        <img src={getHeaderIcon()} alt="Icon" className={styles.headerIcon} />
         <span className={styles.headerTitle}>{title}</span>
         {items.length > 0 && (
           <span className={styles.count}>{items.length}</span>

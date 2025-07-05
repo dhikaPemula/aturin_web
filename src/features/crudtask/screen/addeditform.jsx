@@ -131,11 +131,11 @@ function AddEditForm({
         deadline_time: deadlineTime,
         estimated_duration: task.estimated_task_duration ? 
           (() => {
-            // Convert from "05:30:00" or "5:30:00" format to "H:i" format
+            // Keep format as received from backend (no conversion)
             const duration = task.estimated_task_duration;
             if (duration.includes(':')) {
               const parts = duration.split(':');
-              const hours = parseInt(parts[0], 10); // Remove leading zero
+              const hours = parts[0]; // Keep original format (with leading zero if exists)
               const minutes = parts[1];
               return `${hours}:${minutes}`;
             }
@@ -158,7 +158,7 @@ function AddEditForm({
     setErrors({});
   }, [task, isOpen]);
 
-  // Convert time format to H:i format for backend
+  // Convert time format - keep original format (no leading zero removal)
   const convertToBackendTimeFormat = (timeString) => {
     if (!timeString) return '';
     
@@ -166,10 +166,10 @@ function AddEditForm({
       const parts = timeString.split(':');
       if (!parts[0] || !parts[1]) return timeString;
       
-      // Convert "05:30:00" or "05:30" to "5:30" (remove leading zero from hour and seconds)
-      const hourNum = parseInt(parts[0], 10);
+      // Keep original format as is (don't remove leading zeros)
+      const hours = parts[0]; // Keep as is (05 stays 05, 5 stays 5)
       const minutes = parts[1];
-      return `${hourNum}:${minutes}`;
+      return `${hours}:${minutes}`;
     } catch (e) {
       console.warn('Error converting time format:', e);
       return timeString;
@@ -290,9 +290,9 @@ function AddEditForm({
 
       // Only include estimated_task_duration if it's provided and valid
       if (formData.estimated_duration && formData.estimated_duration.trim()) {
-        // Convert to H:i format (remove leading zeros from hours and seconds) for backend
+        // Keep original format (no conversion needed)
         const convertedDuration = convertToBackendTimeFormat(formData.estimated_duration);
-        console.log('Duration conversion - Original:', formData.estimated_duration, 'Converted:', convertedDuration);
+        console.log('Duration - Original:', formData.estimated_duration, 'Sent to backend:', convertedDuration);
         taskData.estimated_task_duration = convertedDuration;
       }
 
@@ -306,7 +306,6 @@ function AddEditForm({
       // Call success callback
       if (onSuccess) {
         onSuccess({
-          type: 'success',
           title: task ? 'Berhasil Mengubah Tugas' : 'Berhasil Menambahkan Tugas',
           message: task ? 'Tugas berhasil diperbarui' : 'Tugas baru berhasil ditambahkan'
         });
@@ -320,7 +319,6 @@ function AddEditForm({
       // Call error callback
       if (onError) {
         onError({
-          type: 'error',
           title: 'Gagal Menyimpan Tugas',
           message: error.response?.data?.message || 'Terjadi kesalahan saat menyimpan tugas'
         });
@@ -356,13 +354,6 @@ function AddEditForm({
           <h2 className={styles.title}>
             {task ? 'Edit Tugas' : 'Tambah Tugas'}
           </h2>
-          <button 
-            onClick={handleClose}
-            className={styles.closeButton}
-            disabled={isSubmitting}
-          >
-            ×
-          </button>
         </div>
 
         {/* Form */}
@@ -524,10 +515,10 @@ function AddEditForm({
                   type="text"
                   name="estimated_duration"
                   value={formData.estimated_duration ? (() => {
-                    // Format duration for display - show HH:MM but store H:i
+                    // Display as received from backend (no forced formatting)
                     try {
                       const [hours, minutes] = formData.estimated_duration.split(':');
-                      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+                      return `${hours}:${minutes}`;
                     } catch (e) {
                       return formData.estimated_duration;
                     }
@@ -555,9 +546,6 @@ function AddEditForm({
                   error={!!errors.estimated_duration}
                 />
               )}
-            </div>
-            <div className={styles.helpText}>
-              Format: HH:MM (contoh: 02:30 untuk 2 jam 30 menit)
             </div>
             {errors.estimated_duration && <div className={styles.errorText}>{errors.estimated_duration}</div>}
           </div>

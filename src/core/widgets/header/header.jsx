@@ -1,23 +1,26 @@
-import React, { useRef, useState, useEffect, useLayoutEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styles from './header.module.css';
-import logoAturin from '../../../assets/home/logo-aturin.svg';
-import homeIcon from '../../../assets/home/home.svg';
-import taskIcon from '../../../assets/home/task-list.svg';
-import activityIcon from '../../../assets/home/activity.svg';
-import bellIcon from '../../../assets/home/bell.svg';
-import arrowDownIcon from '../../../assets/home/arrow-down.svg';
-import menuIcon from '../../../assets/home/menu.svg';
-import logoutIcon from '../../../assets/home/log-out.svg';
-import useBannerProfile from '../../hooks/useBannerProfile';
-import { avatarMap, defaultAvatar } from '../avatars/avatars';
-import Menu from '../menu/menu';
-import NotificationList from '../notificationlist/notification_list';
-import Alert from '../alert/alert';
+import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import styles from "./header.module.css";
+import logoAturin from "../../../assets/home/logo-aturin.svg";
+import homeIcon from "../../../assets/home/home.svg";
+import taskIcon from "../../../assets/home/task-list.svg";
+import activityIcon from "../../../assets/home/activity.svg";
+import bellIcon from "../../../assets/home/bell.svg";
+import arrowDownIcon from "../../../assets/home/arrow-down.svg";
+import menuIcon from "../../../assets/home/menu.svg";
+import logoutIcon from "../../../assets/home/log-out.svg";
+import useBannerProfile from "../../hooks/useBannerProfile";
+import { avatarMap, defaultAvatar } from "../avatars/avatars";
+import Menu from "../menu/menu";
+import NotificationList from "../notificationlist/notification_list";
+import Alert from "../alert/alert";
 
-function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurrentIndex }) {
+function Header({
+  currentIndex: propCurrentIndex,
+  setCurrentIndex: propSetCurrentIndex,
+}) {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   const { banner } = useBannerProfile(token);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -31,44 +34,53 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
 
   // Sync with prop changes and update underline position
   useEffect(() => {
-    console.log('Prop currentIndex changed:', propCurrentIndex);
+    console.log("Prop currentIndex changed:", propCurrentIndex);
     if (propCurrentIndex !== undefined) {
-      console.log('Setting currentIndex to:', propCurrentIndex);
+      console.log("Setting currentIndex to:", propCurrentIndex);
       setCurrentIndex(propCurrentIndex);
     }
   }, [propCurrentIndex]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 1280);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Single effect to handle underline position based on currentIndex
   useLayoutEffect(() => {
     const updateUnderlinePosition = () => {
       if (!isMobile && menuNavRef.current) {
-        const menuItems = menuNavRef.current.querySelectorAll('li');
+        const menuItems = menuNavRef.current.querySelectorAll("li");
         const activeItem = menuItems[currentIndex];
-        
-        console.log('Updating underline position:', {
+
+        console.log("Updating underline position:", {
           currentIndex,
           totalItems: menuItems.length,
-          activeItem: activeItem ? 'found' : 'not found'
+          activeItem: activeItem ? "found" : "not found",
         });
-        
+
         if (activeItem) {
           const { offsetLeft, offsetWidth } = activeItem;
-          console.log('Setting underline position:', { offsetLeft, offsetWidth });
-          menuNavRef.current.style.setProperty('--underline-left', `${offsetLeft}px`);
-          menuNavRef.current.style.setProperty('--underline-width', `${offsetWidth}px`);
+          console.log("Setting underline position:", {
+            offsetLeft,
+            offsetWidth,
+          });
+          menuNavRef.current.style.setProperty(
+            "--underline-left",
+            `${offsetLeft}px`
+          );
+          menuNavRef.current.style.setProperty(
+            "--underline-width",
+            `${offsetWidth}px`
+          );
         }
       }
     };
 
     // Update immediately with layoutEffect (after DOM paint)
     updateUnderlinePosition();
-    
+
     // Also update after small delay for safety
     const timeout = setTimeout(updateUnderlinePosition, 10);
 
@@ -81,14 +93,23 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
   useEffect(() => {
     if (!isMobile && menuNavRef.current) {
       const timeout = setTimeout(() => {
-        const menuItems = menuNavRef.current.querySelectorAll('li');
+        const menuItems = menuNavRef.current.querySelectorAll("li");
         const activeItem = menuItems[currentIndex];
-        
+
         if (activeItem) {
           const { offsetLeft, offsetWidth } = activeItem;
-          console.log('Backup update - Setting underline position:', { offsetLeft, offsetWidth });
-          menuNavRef.current.style.setProperty('--underline-left', `${offsetLeft}px`);
-          menuNavRef.current.style.setProperty('--underline-width', `${offsetWidth}px`);
+          console.log("Backup update - Setting underline position:", {
+            offsetLeft,
+            offsetWidth,
+          });
+          menuNavRef.current.style.setProperty(
+            "--underline-left",
+            `${offsetLeft}px`
+          );
+          menuNavRef.current.style.setProperty(
+            "--underline-width",
+            `${offsetWidth}px`
+          );
         }
       }, 100);
 
@@ -100,35 +121,42 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
   useEffect(() => {
     const handleResizeAndReposition = () => {
       if (!isMobile && menuNavRef.current) {
-        const menuItems = menuNavRef.current.querySelectorAll('li');
+        const menuItems = menuNavRef.current.querySelectorAll("li");
         const activeItem = menuItems[currentIndex];
-        
+
         if (activeItem) {
           const { offsetLeft, offsetWidth } = activeItem;
-          menuNavRef.current.style.setProperty('--underline-left', `${offsetLeft}px`);
-          menuNavRef.current.style.setProperty('--underline-width', `${offsetWidth}px`);
+          menuNavRef.current.style.setProperty(
+            "--underline-left",
+            `${offsetLeft}px`
+          );
+          menuNavRef.current.style.setProperty(
+            "--underline-width",
+            `${offsetWidth}px`
+          );
         }
       }
     };
 
-    window.addEventListener('resize', handleResizeAndReposition);
-    return () => window.removeEventListener('resize', handleResizeAndReposition);
+    window.addEventListener("resize", handleResizeAndReposition);
+    return () =>
+      window.removeEventListener("resize", handleResizeAndReposition);
   }, [currentIndex, isMobile]);
 
   // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   // Tentukan avatar dan nama dari banner jika ada
   let bannerAvatar = defaultAvatar;
-  let bannerName = '';
+  let bannerName = "";
   let todayTasks = null;
   let todayActivities = null;
   if (banner && banner.data && banner.data.user) {
     // Ambil nama file avatar dari path (misal: 'assets/avatars/profile1.jpg' => 'profile1.jpg')
-    const avatarFile = banner.data.user.avatar.split('/').pop();
+    const avatarFile = banner.data.user.avatar.split("/").pop();
     bannerAvatar = avatarMap[avatarFile] || defaultAvatar;
     bannerName = banner.data.user.name;
     todayTasks = banner.data.today_tasks;
@@ -148,44 +176,64 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
       <header
         className={styles.headerContainer}
         style={{
-          width: '92vw',
+          width: "92vw",
           borderRadius: 9999, // sangat membulat, seperti lingkaran/pill
-          boxSizing: 'border-box',
-          position: 'fixed',
+          boxSizing: "border-box",
+          position: "fixed",
           top: 0,
           left: 0,
           right: 0,
           zIndex: 100,
-          background: '#fff',
-          paddingLeft: '4vw',
-          paddingRight: '4vw',
-          marginLeft: '4vw',
-          marginRight: '4vw',
+          background: "#fff",
+          paddingLeft: "4vw",
+          paddingRight: "4vw",
+          marginLeft: "4vw",
+          marginRight: "4vw",
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4vw' }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "4vw" }}>
           <img
             src={menuIcon}
             alt="Menu"
             className={styles.menuIcon}
-            style={{ width: iconSize, height: iconSize, cursor: 'pointer' }}
+            style={{ width: iconSize, height: iconSize, cursor: "pointer" }}
             onClick={() => setShowMobileNav((v) => !v)}
           />
-          <img src={logoAturin} alt="logo aturin" className={styles.logoAturin} style={{ width: '12.5vw', height: '12.5vw', minWidth: 24, minHeight: 24, maxWidth: 64, maxHeight: 64 }} />
-          <span className={styles.aturinText} style={{ fontSize, }}>
+          <img
+            src={logoAturin}
+            alt="logo aturin"
+            className={styles.logoAturin}
+            style={{
+              width: "12.5vw",
+              height: "12.5vw",
+              minWidth: 24,
+              minHeight: 24,
+              maxWidth: 64,
+              maxHeight: 64,
+            }}
+          />
+          <span className={styles.aturinText} style={{ fontSize }}>
             Aturin
           </span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4vw' }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "4vw" }}>
           <img
             ref={bellRef}
             src={bellIcon}
             alt="Notifikasi"
             className={styles.bellIcon}
-            style={{ width: iconNotifSize, height: iconNotifSize, cursor: 'pointer'}}
+            style={{
+              width: iconNotifSize,
+              height: iconNotifSize,
+              cursor: "pointer",
+            }}
             onClick={() => setNotifOpen(true)}
           />
-          <NotificationList open={notifOpen} onClose={() => setNotifOpen(false)} anchorRef={bellRef} />
+          <NotificationList
+            open={notifOpen}
+            onClose={() => setNotifOpen(false)}
+            anchorRef={bellRef}
+          />
           <span className={styles.avatar}>
             <img
               src={bannerAvatar}
@@ -197,62 +245,78 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
         {showMobileNav && (
           <div className={styles.mobileNavPanel}>
             <nav className={styles.mobileNavContainer}>
-              <button 
-                className={`${styles.mobileNavButton} ${currentIndex === 0 ? styles.mobileNavButtonActive : ''}`}
-                onClick={() => { 
+              <button
+                className={`${styles.mobileNavButton} ${
+                  currentIndex === 0 ? styles.mobileNavButtonActive : ""
+                }`}
+                onClick={() => {
                   const newIndex = 0;
-                  setCurrentIndex(newIndex); 
+                  setCurrentIndex(newIndex);
                   propSetCurrentIndex && propSetCurrentIndex(newIndex);
-                  setShowMobileNav(false); 
-                  navigate('/home'); 
+                  setShowMobileNav(false);
+                  navigate("/home");
                 }}
               >
-                <img 
-                  src={homeIcon} 
-                  alt="Home" 
-                  className={`${styles.mobileNavIcon} ${currentIndex === 0 ? styles.mobileNavIconActive : ''}`}
+                <img
+                  src={homeIcon}
+                  alt="Home"
+                  className={`${styles.mobileNavIcon} ${
+                    currentIndex === 0 ? styles.mobileNavIconActive : ""
+                  }`}
                 />
                 Beranda
               </button>
-              <button 
-                className={`${styles.mobileNavButton} ${currentIndex === 1 ? styles.mobileNavButtonActive : ''}`}
-                onClick={() => { 
+              <button
+                className={`${styles.mobileNavButton} ${
+                  currentIndex === 1 ? styles.mobileNavButtonActive : ""
+                }`}
+                onClick={() => {
                   const newIndex = 1;
-                  setCurrentIndex(newIndex); 
+                  setCurrentIndex(newIndex);
                   propSetCurrentIndex && propSetCurrentIndex(newIndex);
-                  setShowMobileNav(false); 
-                  navigate('/task'); 
+                  setShowMobileNav(false);
+                  navigate("/task");
                 }}
               >
-                <img 
-                  src={taskIcon} 
-                  alt="Task" 
-                  className={`${styles.mobileNavIcon} ${currentIndex === 1 ? styles.mobileNavIconActive : ''}`}
+                <img
+                  src={taskIcon}
+                  alt="Task"
+                  className={`${styles.mobileNavIcon} ${
+                    currentIndex === 1 ? styles.mobileNavIconActive : ""
+                  }`}
                 />
                 Tugas
               </button>
-              <button 
-                className={`${styles.mobileNavButton} ${currentIndex === 2 ? styles.mobileNavButtonActive : ''}`}
-                onClick={() => { 
+              <button
+                className={`${styles.mobileNavButton} ${
+                  currentIndex === 2 ? styles.mobileNavButtonActive : ""
+                }`}
+                onClick={() => {
                   const newIndex = 2;
-                  setCurrentIndex(newIndex); 
+                  setCurrentIndex(newIndex);
                   propSetCurrentIndex && propSetCurrentIndex(newIndex);
-                  setShowMobileNav(false); 
-                  navigate('/activity'); 
+                  setShowMobileNav(false);
+                  navigate("/activity");
                 }}
               >
-                <img 
-                  src={activityIcon} 
-                  alt="Activity" 
-                  className={`${styles.mobileNavIcon} ${currentIndex === 2 ? styles.mobileNavIconActive : ''}`}
+                <img
+                  src={activityIcon}
+                  alt="Activity"
+                  className={`${styles.mobileNavIcon} ${
+                    currentIndex === 2 ? styles.mobileNavIconActive : ""
+                  }`}
                 />
                 Aktivitas
               </button>
-              <button 
+              <button
                 className={styles.mobileLogoutButton}
                 onClick={() => setShowLogoutAlert(true)}
               >
-                <img src={logoutIcon} alt="Keluar" style={{ width: 22, height: 22}} />
+                <img
+                  src={logoutIcon}
+                  alt="Keluar"
+                  style={{ width: 22, height: 22 }}
+                />
                 Keluar
               </button>
             </nav>
@@ -262,8 +326,8 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
           isOpen={showLogoutAlert}
           onCancel={() => setShowLogoutAlert(false)}
           onSubmit={handleLogout}
-          title="Konfirmasi Logout"
-          message="Apakah Anda yakin ingin keluar dari aplikasi?"
+          title="Upaya Keluar"
+          message="Yakin, kamu mau keluar dari aturin? Jangan lupa untuk login."
           submitLabel="Keluar"
           cancelText="Batal"
         />
@@ -272,20 +336,25 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
   }
 
   return (
-    <header className={`${styles.headerContainer}`}
+    <header
+      className={`${styles.headerContainer}`}
       style={{
-        position: 'fixed',
+        position: "fixed",
         top: 0,
         left: 0,
         right: 0,
         zIndex: 100,
-        background: '#fff',
-        width: '92vw',
-        boxSizing: 'border-box',
+        background: "#fff",
+        width: "92vw",
+        boxSizing: "border-box",
       }}
     >
       <div className={`${styles.leftSection}`}>
-        <img src={logoAturin} alt="logo aturin" className={`${styles.logoAturin}`} />
+        <img
+          src={logoAturin}
+          alt="logo aturin"
+          className={`${styles.logoAturin}`}
+        />
         <span className={`${styles.aturinText}`}>Aturin</span>
       </div>
       <nav className={`${styles.menuNav}`} ref={menuNavRef}>
@@ -300,14 +369,16 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
               const newIndex = 0;
               setCurrentIndex(newIndex);
               propSetCurrentIndex && propSetCurrentIndex(newIndex);
-              navigate('/home');
+              navigate("/home");
             }}
           >
             <img
               src={homeIcon}
               alt="Home"
-              className={`${styles.iconNav} ${currentIndex === 0 ? styles.iconActive : ''}`}
-            />{' '}
+              className={`${styles.iconNav} ${
+                currentIndex === 0 ? styles.iconActive : ""
+              }`}
+            />{" "}
             Beranda
           </li>
           <li
@@ -320,14 +391,16 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
               const newIndex = 1;
               setCurrentIndex(newIndex);
               propSetCurrentIndex && propSetCurrentIndex(newIndex);
-              navigate('/task');
+              navigate("/task");
             }}
           >
             <img
               src={taskIcon}
               alt="Task"
-              className={`${styles.iconNav} ${currentIndex === 1 ? styles.iconActive : ''}`}
-            />{' '}
+              className={`${styles.iconNav} ${
+                currentIndex === 1 ? styles.iconActive : ""
+              }`}
+            />{" "}
             Tugas
           </li>
           <li
@@ -340,14 +413,16 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
               const newIndex = 2;
               setCurrentIndex(newIndex);
               propSetCurrentIndex && propSetCurrentIndex(newIndex);
-              navigate('/activity');
+              navigate("/activity");
             }}
           >
             <img
               src={activityIcon}
               alt="Activity"
-              className={`${styles.iconNav} ${currentIndex === 2 ? styles.iconActive : ''}`}
-            />{' '}
+              className={`${styles.iconNav} ${
+                currentIndex === 2 ? styles.iconActive : ""
+              }`}
+            />{" "}
             Aktivitas
           </li>
         </ul>
@@ -360,11 +435,15 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
           className={styles.bellIcon}
           onClick={() => setNotifOpen(true)}
         />
-        <NotificationList open={notifOpen} onClose={() => setNotifOpen(false)} anchorRef={bellRef} />
+        <NotificationList
+          open={notifOpen}
+          onClose={() => setNotifOpen(false)}
+          anchorRef={bellRef}
+        />
         <span className={styles.avatar}>
           <img src={bannerAvatar} alt="avatar" className={styles.avatarImage} />
         </span>
-        <span className={styles.name}>{bannerName || 'Rakha Sigma'}</span>
+        <span className={styles.name}>{bannerName || "Rakha Sigma"}</span>
         <img
           ref={arrowRef}
           src={arrowDownIcon}
@@ -372,10 +451,10 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
           className={styles.arrowIcon}
           onClick={() => setMenuOpen(true)}
         />
-        <Menu 
-          open={menuOpen} 
-          onClose={() => setMenuOpen(false)} 
-          anchorRef={arrowRef} 
+        <Menu
+          open={menuOpen}
+          onClose={() => setMenuOpen(false)}
+          anchorRef={arrowRef}
           onLogout={() => setShowLogoutAlert(true)}
         />
       </div>
@@ -383,8 +462,8 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
         isOpen={showLogoutAlert}
         onCancel={() => setShowLogoutAlert(false)}
         onSubmit={handleLogout}
-        title="Konfirmasi Logout"
-        message="Apakah Anda yakin ingin keluar dari aplikasi?"
+        title="Upaya Keluar"
+        message="Yakin, kamu mau keluar dari aturin? Jangan lupa untuk login."
         submitLabel="Keluar"
         cancelText="Batal"
       />

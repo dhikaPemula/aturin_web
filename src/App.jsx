@@ -25,7 +25,7 @@ function App() {
   return (
     <>
       <Header currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
-      <div className="h-[15vh]" />
+      <div className="h-[16vh]" />
       <div className="overflow-hidden w-full" style={{ margin: 0, padding: 0 }}>
         <div
           className="flex transition-transform duration-500 ease-in-out"

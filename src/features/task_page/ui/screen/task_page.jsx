@@ -151,19 +151,18 @@ function TaskPage() {
         handleCloseAddEditForm();
       } else {
         // Error handling - could also be moved to onError callback
-        displayToast({
-          type: 'error',
-          title: 'Gagal Menyimpan Tugas',
-          message: result.error || 'Terjadi kesalahan saat menyimpan tugas'
-        });
+        console.error('Failed to save task:', result.error || 'Unknown error');
+        // displayToast({
+        //   title: 'Gagal Menyimpan Tugas',
+        //   message: result.error || 'Terjadi kesalahan saat menyimpan tugas'
+        // });
       }
     } catch (error) {
       console.error('Error saving task:', error);
-      displayToast({
-        type: 'error',
-        title: 'Gagal Menyimpan Tugas',
-        message: 'Terjadi kesalahan saat menyimpan tugas'
-      });
+      // displayToast({
+      //   title: 'Gagal Menyimpan Tugas',
+      //   message: 'Terjadi kesalahan saat menyimpan tugas'
+      // });
     }
   };
 
@@ -228,14 +227,13 @@ function TaskPage() {
       {/* Toast Component */}
       <Toast
         isOpen={showToastNotification}
-        type={toastConfig.type}
         title={toastConfig.title}
         message={toastConfig.message}
         onClose={() => setShowToastNotification(false)}
         duration={3000}
       />
 
-      <p>
+      {/* <p>
         Query Search: <strong>"{searchQuery}"</strong>
       </p>
       <p>
@@ -243,7 +241,7 @@ function TaskPage() {
       </p>
       <p>
         Category Filter: <strong>"{categoryFilter || "Semua kategori"}"</strong>
-      </p>
+      </p> */}
     </div>
   );
 }

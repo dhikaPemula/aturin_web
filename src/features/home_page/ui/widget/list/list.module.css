@@ -56,6 +56,10 @@
   @apply flex items-center gap-2 mb-3;
 }
 
+.headerIcon {
+  @apply w-6 h-6 mr-2 flex-shrink-0;
+}
+
 .headerTitle {
   @apply font-bold text-base md:text-xl text-gray-800;
 }

@@ -155,9 +155,9 @@
 }
 
 .mobileLogoutButton {
-  background: #fff;
-  color: #D93E39;
-  border: 2px solid #D93E39;
+  background: #ffffff;
+  color: #dc2626;
+  border: 2px solid #dc2626;
   border-radius: 12px;
   padding: 12px 24px;
   font-size: 18px;
@@ -166,6 +166,28 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  /* 3D effect */
+  box-shadow: 0 4px 0 #b91c1c, 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(0);
+}
+
+.mobileLogoutButton:hover {
+  /* Pressed effect - move down and reduce shadow */
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #b91c1c, 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.mobileLogoutButton:active {
+  /* Full pressed effect */
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #b91c1c, 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mobileLogoutButton img {
+  /* Keep icon red to match text color */
+  filter: invert(20%) sepia(94%) saturate(1845%) hue-rotate(345deg) brightness(88%) contrast(93%);
 }
 
 .avatarImage {

@@ -85,8 +85,8 @@ function DurationPickerPopup({
 
   // Handle duration selection
   const handleDurationSelect = () => {
-    // Format as H:i (backend format) - no leading zeros for hours
-    const formattedDuration = `${selectedHour}:${String(selectedMinute).padStart(2, '0')}`;
+    // Format as HH:MM (consistent with backend format) - keep leading zeros
+    const formattedDuration = `${String(selectedHour).padStart(2, '0')}:${String(selectedMinute).padStart(2, '0')}`;
     
     console.log('DurationPicker: Selected duration:', formattedDuration);
     onChange(formattedDuration);
