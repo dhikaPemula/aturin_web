@@ -1,72 +1,152 @@
 @import "tailwindcss";
 
+/* Custom Properties */
+:root {
+  --primary-color: #5263F3;
+  --primary-hover: #4B5CEA;
+}
+
 /* Backdrop */
 .backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(2px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @apply fixed inset-0 w-screen h-screen bg-black/50 backdrop-blur-sm flex items-center justify-center p-4;
   z-index: 9999;
-  padding: 1rem;
 }
 
 /* Modal */
 .modal {
-  background-color: white;
-  border-radius: 1rem;
-  width: 100%;
-  max-width: 28rem;
-  max-height: 90vh;
-  overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  @apply bg-white rounded-2xl w-full max-w-md max-h-screen overflow-hidden;
+  z-index: 10000;
+}
+
+/* Responsive modal width */
+@media (min-width: 1024px) {
+  .modal {
+    @apply max-w-xl; /* Lebih lebar untuk lg screen */
+  }
 }
 
 /* Header */
 .header {
-  @apply flex items-center justify-between p-6 border-b border-gray-200;
+  @apply flex items-center justify-between px-6 py-4;
+  /* Removed border-b */
 }
 
 .title {
-  @apply text-xl font-semibold text-gray-900;
+  @apply text-lg font-semibold text-gray-900;
 }
 
 .closeButton {
-  @apply w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-200 text-gray-500 hover:text-gray-700 text-2xl;
+  @apply w-8 h-8 flex items-center justify-center rounded-full transition-colors duration-200 text-gray-500 text-2xl bg-transparent border-0 cursor-pointer;
+}
+
+.closeButton:hover {
+  @apply bg-gray-100 text-gray-700;
 }
 
 /* Form */
 .form {
-  @apply p-6 overflow-y-auto max-h-[calc(90vh-80px)];
+  @apply px-6 pb-6 overflow-y-auto;
+  max-height: calc(90vh - 60px);
 }
 
-/* Field Groups */
+/* Field Groups - reduced margin */
 .fieldGroup {
-  @apply mb-6;
+  @apply mb-4;
 }
 
 .label {
-  @apply block text-sm font-medium text-gray-900 mb-2;
+  @apply block text-sm font-medium text-gray-900 mb-1.5;
 }
 
-/* Inputs */
+/* Inputs - reduced padding */
 .input {
-  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
+  @apply w-full px-3 py-2 border-2 border-gray-300 rounded-lg transition-all duration-200;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
 .textarea {
-  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 resize-none;
+  @apply w-full px-3 py-2 border-2 border-gray-300 rounded-lg transition-all duration-200 resize-none;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
 .select {
-  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white;
+  @apply w-full px-3 py-2 border-2 border-gray-300 rounded-lg transition-all duration-200 bg-white;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Custom Select/Dropdown */
+.customSelectContainer {
+  @apply relative;
+}
+
+.customSelect {
+  @apply w-full px-3 py-2 border-2 border-gray-300 rounded-lg transition-all duration-200 bg-white text-left cursor-pointer flex items-center justify-between;
+}
+
+.customSelect:hover {
+  @apply border-gray-400;
+}
+
+.customSelect:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.selectedOption {
+  @apply flex items-center gap-2;
+}
+
+.categoryIcon {
+  @apply w-5 h-5 flex-shrink-0;
+}
+
+.dropdownArrow {
+  @apply transition-transform duration-200 text-gray-500;
+}
+
+.dropdownArrowOpen {
+  @apply rotate-180;
+}
+
+.dropdownOptions {
+  @apply absolute bottom-full left-0 right-0 bg-white border-2 border-gray-300 rounded-lg max-h-48 overflow-y-auto mb-1;
+  z-index: 10001;
+}
+
+.dropdownOption {
+  @apply w-full px-3 py-2 border-0 bg-transparent text-left cursor-pointer flex items-center gap-2 transition-colors duration-150;
+}
+
+.dropdownOption:hover {
+  @apply bg-gray-100;
+}
+
+.dropdownOption:first-child {
+  @apply rounded-t-lg;
+}
+
+.dropdownOption:last-child {
+  @apply rounded-b-lg;
+}
+
+.dropdownOptionSelected {
+  @apply bg-blue-50 text-blue-800;
+}
+
+.dropdownOptionSelected:hover {
+  @apply bg-blue-100;
 }
 
 /* Input variants */
@@ -79,34 +159,159 @@
 }
 
 .dateTimeGroup {
-  @apply flex gap-3;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.dateTimeGroup > * {
+  flex: 1;
+}
+
+.dateInputContainer {
+  position: relative;
+  flex: 1;
+}
+
+.dateInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dateIcon {
+  position: absolute;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.dateInput {
+  padding-right: 40px !important; /* Make space for icon on the right */
+  cursor: pointer;
+}
+
+.dateInput:read-only {
+  cursor: pointer;
+  background-color: white;
+}
+
+.dateInput:read-only:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Hide the default date picker icon */
+.dateInput::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
+
+.dateInput::-webkit-inner-spin-button,
+.dateInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* Error states */
 .inputError {
-  @apply border-red-500 focus:ring-red-500 focus:border-red-500;
+  border-color: #ef4444 !important;
+}
+
+.inputError:focus {
+  border-color: #ef4444 !important;
 }
 
 .errorText {
-  @apply text-red-500 text-sm mt-1;
+  @apply text-sm text-red-600 mt-1;
 }
 
 /* Character count */
 .charCount {
-  @apply text-xs text-gray-500 mt-1;
+  @apply text-sm text-gray-500 mt-1;
 }
 
-/* Buttons */
+.charCountWarning {
+  @apply text-yellow-500; /* Yellow when approaching limit */
+}
+
+.charCountLimit {
+  @apply text-red-500; /* Red when at limit */
+}
+
+/* Help text */
+.helpText {
+  @apply text-sm text-gray-500 mt-1;
+}
+
+/* Buttons - reduced margin */
 .buttonGroup {
-  @apply flex gap-3 mt-8;
+  @apply flex gap-3 mt-6;
 }
 
 .cancelButton {
-  @apply flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium;
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid #d1d5db;
+  color: #374151;
+  border-radius: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: white;
+  transition: all 0.2s;
+  /* 3D effect */
+  box-shadow: 0 6px 0 #9ca3af, 0 8px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(0);
+}
+
+.cancelButton:hover {
+  background-color: #f9fafb;
+  /* Pressed effect - move down and reduce shadow */
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 #9ca3af, 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cancelButton:active {
+  /* Full pressed effect */
+  transform: translateY(6px);
+  box-shadow: 0 0 0 #9ca3af, 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .submitButton {
-  @apply flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed;
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 1rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  /* 3D effect */
+  box-shadow: 0 6px 0 #3d4db3, 0 8px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(0);
+}
+
+.submitButton:hover {
+  background-color: var(--primary-hover);
+  /* Pressed effect - move down and reduce shadow */
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 #3d4db3, 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+.submitButton:active {
+  /* Full pressed effect */
+  transform: translateY(6px);
+  box-shadow: 0 0 0 #3d4db3, 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  /* Reset 3D effect when disabled */
+  transform: translateY(0);
+  box-shadow: 0 2px 0 #9ca3af, 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive */

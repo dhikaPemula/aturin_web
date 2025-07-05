@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './taskcard.module.css';
 import Badge from '../../../../../core/widgets/badge/buildbadge/badge.jsx';
+import Alert from '../../../../../core/widgets/alert/alert.jsx';
 
 // Import icons
 import clockIcon from '../../../../../assets/home/clock.svg';
@@ -13,6 +14,35 @@ function TaskCard({
   onEditTask, 
   onDeleteTask 
 }) {
+  // State for delete confirmation alert
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+
+  // Cleanup effect when component unmounts
+  useEffect(() => {
+    return () => {
+      // Ensure alert is closed when component unmounts
+      setShowDeleteAlert(false);
+    };
+  }, []);
+
+  // Handle delete button click
+  const handleDeleteClick = () => {
+    setShowDeleteAlert(true);
+  };
+
+  // Handle delete confirmation
+  const handleDeleteConfirm = () => {
+    if (onDeleteTask) {
+      onDeleteTask(task);
+    }
+    // Close alert after action
+    setShowDeleteAlert(false);
+  };
+
+  // Handle delete cancellation
+  const handleDeleteCancel = () => {
+    setShowDeleteAlert(false);
+  };
   // Format deadline
   const formatDeadline = (deadlineStr) => {
     if (!deadlineStr) return 'Tidak ada deadline';
@@ -49,15 +79,15 @@ function TaskCard({
       const m = parseInt(minutes);
       
       if (h > 0 && m > 0) {
-        return `Durasi: ${h} jam ${m} menit`;
+        return `Estimasi: ${h} jam ${m} menit`;
       } else if (h > 0) {
-        return `Durasi: ${h} jam`;
+        return `Estimasi: ${h} jam`;
       } else if (m > 0) {
-        return `Durasi: ${m} menit`;
+        return `Estimasi: ${m} menit`;
       }
     }
     
-    return `Durasi: ${duration}`;
+    return `Estimasi: ${duration}`;
   };
 
   if (!task) {
@@ -137,7 +167,7 @@ function TaskCard({
             )}
             {onDeleteTask && (
               <button 
-                onClick={() => onDeleteTask(task)}
+                onClick={handleDeleteClick}
                 className={styles.deleteButton}
                 type="button"
                 title="Hapus Tugas"
@@ -148,6 +178,19 @@ function TaskCard({
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Alert */}
+      {showDeleteAlert && (
+        <Alert
+          isOpen={showDeleteAlert}
+          title="Hapus Tugas"
+          message={`Apakah Anda yakin ingin menghapus tugas "${task?.title}"? Perubahan ini bersifat permanen.`}
+          cancelText="Batal"
+          submitLabel="Hapus"
+          onCancel={handleDeleteCancel}
+          onSubmit={handleDeleteConfirm}
+        />
+      )}
     </div>
   );
 }

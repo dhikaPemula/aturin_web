@@ -52,6 +52,8 @@ export default function useTaskList() {
     try {
       setLoading(true);
       setError(null);
+      console.log('Updating task with slug:', slug);
+      console.log('Update data:', updateData);
       const result = await updateTask(slug, updateData);
       
       // Update task in the list
@@ -61,9 +63,10 @@ export default function useTaskList() {
       
       return { success: true, data: result };
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Gagal mengupdate tugas';
+      const errorMessage = err.response?.data?.message || err.message || 'Gagal mengupdate tugas';
       setError(errorMessage);
       console.error('Error updating task:', err);
+      console.error('Error response:', err.response?.data);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);

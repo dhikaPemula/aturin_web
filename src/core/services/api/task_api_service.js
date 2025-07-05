@@ -66,6 +66,10 @@ export async function updateTask(slug, {
   if (category !== undefined) updateData.task_category = category;
   if (alarmId !== undefined) updateData.alarm_id = alarmId;
 
+  console.log('API updateTask - slug:', slug);
+  console.log('API updateTask - updateData:', updateData);
+  console.log('API updateTask - token:', token ? 'Present' : 'Missing');
+
   const res = await axios.patch(`${BASE_URL}/${slug}`, updateData, {
     headers: {
       "Content-Type": "application/json",

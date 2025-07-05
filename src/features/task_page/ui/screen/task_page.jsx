@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./task_page.module.css";
 import useTaskList from "../../../../core/hooks/useTaskList.js";
+import useProfile from "../../../../core/hooks/useProfile.js";
 import Badge from "../../../../core/widgets/badge/buildbadge/badge.jsx";
 import StatusBadge from "../../../../core/widgets/status/statusbadge.jsx";
 import UpperSection from "../widget/uppersection/uppersection.jsx";
@@ -24,13 +25,8 @@ function TaskPage() {
   const [taskToEdit, setTaskToEdit] = useState(null);
   const [toast, setToast] = useState(null);
 
-  // Set up user ID in localStorage (temporary solution)
-  useEffect(() => {
-    if (!localStorage.getItem('userId')) {
-      // Set a default user ID for demo purposes
-      localStorage.setItem('userId', '97');
-    }
-  }, []);
+  // Get user profile data
+  const { profile, loading: profileLoading, error: profileError } = useProfile();
 
   // Use the task list hook
   const {
@@ -77,13 +73,11 @@ function TaskPage() {
 
   const handleDeleteTask = async (task) => {
     console.log("Delete task:", task);
-    if (window.confirm(`Apakah Anda yakin ingin menghapus tugas "${task.task_title}"?`)) {
-      const result = await deleteTask(task.slug);
-      if (result.success) {
-        showToast('Tugas berhasil dihapus', 'success');
-      } else {
-        showToast(result.error || 'Gagal menghapus tugas', 'error');
-      }
+    const result = await deleteTask(task.slug);
+    if (result.success) {
+      showToast('Tugas berhasil dihapus', 'success');
+    } else {
+      showToast(result.error || 'Gagal menghapus tugas', 'error');
     }
   };
 
@@ -102,10 +96,16 @@ function TaskPage() {
           title: taskData.task_title,
           description: taskData.task_description,
           deadline: taskData.task_deadline,
-          estimatedDuration: taskData.estimated_task_duration,
           category: taskData.task_category,
           status: taskData.task_status
         };
+        
+        // Only include estimatedDuration if it's not empty
+        if (taskData.estimated_task_duration && taskData.estimated_task_duration.trim() !== '') {
+          updateData.estimatedDuration = taskData.estimated_task_duration;
+        }
+        
+        console.log('Sending update data:', updateData);
         result = await updateTask(taskToEdit.slug, updateData);
       } else {
         // Create new task
@@ -113,10 +113,16 @@ function TaskPage() {
           title: taskData.task_title,
           description: taskData.task_description,
           deadline: taskData.task_deadline,
-          estimatedDuration: taskData.estimated_task_duration,
           category: taskData.task_category,
           status: taskData.task_status || 'belum_selesai'
         };
+        
+        // Only include estimatedDuration if it's not empty
+        if (taskData.estimated_task_duration && taskData.estimated_task_duration.trim() !== '') {
+          createData.estimatedDuration = taskData.estimated_task_duration;
+        }
+        
+        console.log('Sending create data:', createData);
         result = await createTask(createData);
       }
 

@@ -1,7 +1,12 @@
 @import "tailwindcss";
 
 .taskCard {
-  @apply bg-white border border-gray-200 rounded-lg p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow duration-200 mb-4;
+  @apply bg-white border border-gray-200 rounded-lg p-4 m-2 shadow-sm hover:shadow-md transition-all duration-200 mb-4 cursor-pointer;
+  transform: scale(1);
+}
+
+.taskCard:hover {
+  transform: scale(1.02);
 }
 
 .taskHeader {
@@ -53,11 +58,11 @@
 }
 
 .editButton {
-  @apply p-2 rounded-lg text-blue-500 hover:bg-blue-50 transition-colors duration-200;
+  @apply p-2 rounded-lg text-blue-500 hover:bg-blue-50 transition-colors duration-200 cursor-pointer;
 }
 
 .deleteButton {
-  @apply p-2 rounded-lg text-red-500 hover:bg-red-50 transition-colors duration-200;
+  @apply p-2 rounded-lg text-red-500 hover:bg-red-50 transition-colors duration-200 cursor-pointer;
 }
 
 .actionIcon {

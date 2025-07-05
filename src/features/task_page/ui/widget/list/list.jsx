@@ -36,8 +36,11 @@ function List({
       );
     }
 
-    // Convert API data to component format
+    // Convert API data to component format, but keep original API fields for editing
     const convertedTasks = filtered.map(task => ({
+      // Original API fields (needed for editing)
+      ...task,
+      // Component-friendly fields (for display)
       id: task.id,
       title: task.task_title || 'Tugas Tanpa Judul',
       description: task.task_description || '',
