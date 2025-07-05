@@ -4,7 +4,6 @@ import TaskPage from './features/task_page/ui/screen/task_page.jsx';
 import ActivityPage from './features/activity/ui/activity_page.jsx';
 import Header from './core/widgets/header/header.jsx';
 import React, { useState, useEffect } from 'react';
-import './App.css';
 
 function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -26,8 +25,8 @@ function App() {
   return (
     <>
       <Header currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
-      <div className="h-[12.5vh] sm:h-[13vh] xl:h-[13.5vh]" />
-      <div className="overflow-hidden w-screen" style={{ margin: 0, padding: 0 }}>
+      <div className="h-[15vh]" />
+      <div className="overflow-hidden w-full" style={{ margin: 0, padding: 0 }}>
         <div
           className="flex transition-transform duration-500 ease-in-out"
           style={{
@@ -37,13 +36,13 @@ function App() {
             padding: 0
           }}
         >
-          <div className="flex-shrink-0 page-container" style={{ width: '33.333%' }}>
+          <div style={{ width: '33.333%' }}>
             <HomePage />
           </div>
-          <div className="flex-shrink-0 page-container" style={{ width: '33.333%' }}>
+          <div style={{ width: '33.333%' }}>
             <TaskPage />
           </div>
-          <div className="flex-shrink-0 page-container" style={{ width: '33.333%' }}>
+          <div style={{ width: '33.333%' }}>
             <ActivityPage />
           </div>
         </div>

@@ -12,7 +12,8 @@ import deleteIcon from '../../../../../assets/task/delete.svg';
 function TaskCard({ 
   task,
   onEditTask, 
-  onDeleteTask 
+  onDeleteTask,
+  onDeleteSuccess
 }) {
   // State for delete confirmation alert
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -31,9 +32,31 @@ function TaskCard({
   };
 
   // Handle delete confirmation
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (onDeleteTask) {
-      onDeleteTask(task);
+      try {
+        await onDeleteTask(task);
+        
+        // Call success callback untuk menampilkan toast
+        if (onDeleteSuccess) {
+          onDeleteSuccess({
+            type: 'success',
+            title: 'Berhasil Menghapus Tugas',
+            message: `Tugas "${task?.title}" berhasil dihapus`
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting task:', error);
+        
+        // Call error callback jika ada
+        if (onDeleteSuccess) {
+          onDeleteSuccess({
+            type: 'error',
+            title: 'Gagal Menghapus Tugas',
+            message: 'Terjadi kesalahan saat menghapus tugas'
+          });
+        }
+      }
     }
     // Close alert after action
     setShowDeleteAlert(false);

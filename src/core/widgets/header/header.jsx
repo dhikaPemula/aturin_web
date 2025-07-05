@@ -13,6 +13,7 @@ import useBannerProfile from '../../hooks/useBannerProfile';
 import { avatarMap, defaultAvatar } from '../avatars/avatars';
 import Menu from '../menu/menu';
 import NotificationList from '../notificationlist/notification_list';
+import Alert from '../alert/alert';
 
 function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurrentIndex }) {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
   const { banner } = useBannerProfile(token);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [showLogoutAlert, setShowLogoutAlert] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(propCurrentIndex || 0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1280);
   const [showMobileNav, setShowMobileNav] = useState(false);
@@ -112,6 +114,12 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
     window.addEventListener('resize', handleResizeAndReposition);
     return () => window.removeEventListener('resize', handleResizeAndReposition);
   }, [currentIndex, isMobile]);
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
 
   // Tentukan avatar dan nama dari banner jika ada
   let bannerAvatar = defaultAvatar;
@@ -240,13 +248,25 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
                 />
                 Aktivitas
               </button>
-              <button className={styles.mobileLogoutButton}>
+              <button 
+                className={styles.mobileLogoutButton}
+                onClick={() => setShowLogoutAlert(true)}
+              >
                 <img src={logoutIcon} alt="Keluar" style={{ width: 22, height: 22}} />
                 Keluar
               </button>
             </nav>
           </div>
         )}
+        <Alert
+          isOpen={showLogoutAlert}
+          onCancel={() => setShowLogoutAlert(false)}
+          onSubmit={handleLogout}
+          title="Konfirmasi Logout"
+          message="Apakah Anda yakin ingin keluar dari aplikasi?"
+          submitLabel="Keluar"
+          cancelText="Batal"
+        />
       </header>
     );
   }
@@ -352,8 +372,22 @@ function Header({ currentIndex: propCurrentIndex, setCurrentIndex: propSetCurren
           className={styles.arrowIcon}
           onClick={() => setMenuOpen(true)}
         />
-        <Menu open={menuOpen} onClose={() => setMenuOpen(false)} anchorRef={arrowRef} />
+        <Menu 
+          open={menuOpen} 
+          onClose={() => setMenuOpen(false)} 
+          anchorRef={arrowRef} 
+          onLogout={() => setShowLogoutAlert(true)}
+        />
       </div>
+      <Alert
+        isOpen={showLogoutAlert}
+        onCancel={() => setShowLogoutAlert(false)}
+        onSubmit={handleLogout}
+        title="Konfirmasi Logout"
+        message="Apakah Anda yakin ingin keluar dari aplikasi?"
+        submitLabel="Keluar"
+        cancelText="Batal"
+      />
     </header>
   );
 }

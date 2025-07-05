@@ -11,7 +11,8 @@ function List({
   currentStatus = "", 
   currentCategory = "",
   onEditTask,
-  onDeleteTask 
+  onDeleteTask,
+  onDeleteSuccess
 }) {
   const [filteredTasks, setFilteredTasks] = useState([]);
 
@@ -124,6 +125,7 @@ function List({
             currentCategory={currentCategory}
             onEditTask={onEditTask}
             onDeleteTask={onDeleteTask}
+            onDeleteSuccess={onDeleteSuccess}
           />
         );
       })}

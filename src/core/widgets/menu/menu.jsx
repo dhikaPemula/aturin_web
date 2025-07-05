@@ -5,7 +5,7 @@ import settingsIcon from '../../../assets/home/settings.svg';
 import logoutIcon from '../../../assets/home/log-out.svg';
 import styles from './menu.module.css';
 
-function Menu({ open, onClose, anchorRef }) {
+function Menu({ open, onClose, anchorRef, onLogout }) {
   const { profile, loading, error } = useProfile();
   const popupRef = useRef(null);
 
@@ -54,7 +54,15 @@ function Menu({ open, onClose, anchorRef }) {
           <img src={settingsIcon} alt="settings" className={styles.menuActionIcon} />
           <span className={styles.menuActionTextSettings}>Pengaturan</span>
         </div>
-        <div className={styles.menuAction} tabIndex={0} role="button">
+        <div 
+          className={styles.menuAction} 
+          tabIndex={0} 
+          role="button"
+          onClick={() => {
+            onClose();
+            onLogout && onLogout();
+          }}
+        >
           <img src={logoutIcon} alt="logout" className={styles.menuActionIcon} />
           <span className={styles.menuActionTextOut}>Keluar</span>
         </div>

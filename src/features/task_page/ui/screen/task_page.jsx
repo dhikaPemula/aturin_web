@@ -11,6 +11,7 @@ import StatusFilter from "../widget/statusfilter/statusfilter.jsx";
 import CategoryFilter from "../widget/categoryfilter/categoryfilter.jsx";
 import List from "../widget/list/list.jsx";
 import AddEditForm from "../../../crudtask/screen/addeditform.jsx";
+import Toast from "../../../../core/widgets/toast/toast.jsx";
 // Import icons
 import clockIcon from "../../../../assets/home/clock.svg";
 import jadwalIcon from "../../../../assets/home/jadwal.svg";
@@ -23,7 +24,12 @@ function TaskPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [isAddEditFormOpen, setIsAddEditFormOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
-  const [toast, setToast] = useState(null);
+  const [showToastNotification, setShowToastNotification] = useState(false);
+  const [toastConfig, setToastConfig] = useState({
+    type: 'success',
+    title: '',
+    message: ''
+  });
 
   // Get user profile data
   const { profile, loading: profileLoading, error: profileError } = useProfile();
@@ -39,10 +45,18 @@ function TaskPage() {
     clearError
   } = useTaskList();
 
-  // Toast helper function
-  const showToast = (message, type = 'success') => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
+  // Toast notification functions
+  const displayToast = (config) => {
+    setToastConfig(config);
+    setShowToastNotification(true);
+  };
+
+  const handleToastSuccess = (config) => {
+    displayToast(config);
+  };
+
+  const handleToastError = (config) => {
+    displayToast(config);
   };
 
   const handleSearchChange = (query) => {
@@ -73,11 +87,17 @@ function TaskPage() {
 
   const handleDeleteTask = async (task) => {
     console.log("Delete task:", task);
-    const result = await deleteTask(task.slug);
-    if (result.success) {
-      showToast('Tugas berhasil dihapus', 'success');
-    } else {
-      showToast(result.error || 'Gagal menghapus tugas', 'error');
+    try {
+      const result = await deleteTask(task.slug);
+      if (result.success) {
+        // Success akan ditangani oleh callback onDeleteSuccess di TaskCard
+        return result;
+      } else {
+        throw new Error(result.error || 'Gagal menghapus tugas');
+      }
+    } catch (error) {
+      // Error akan ditangani oleh TaskCard
+      throw error;
     }
   };
 
@@ -127,17 +147,23 @@ function TaskPage() {
       }
 
       if (result.success) {
-        showToast(
-          taskToEdit ? 'Tugas berhasil diperbarui' : 'Tugas berhasil ditambahkan', 
-          'success'
-        );
+        // Success will be handled by onSuccess callback from form
         handleCloseAddEditForm();
       } else {
-        showToast(result.error || 'Gagal menyimpan tugas', 'error');
+        // Error handling - could also be moved to onError callback
+        displayToast({
+          type: 'error',
+          title: 'Gagal Menyimpan Tugas',
+          message: result.error || 'Terjadi kesalahan saat menyimpan tugas'
+        });
       }
     } catch (error) {
       console.error('Error saving task:', error);
-      showToast('Terjadi kesalahan saat menyimpan tugas', 'error');
+      displayToast({
+        type: 'error',
+        title: 'Gagal Menyimpan Tugas',
+        message: 'Terjadi kesalahan saat menyimpan tugas'
+      });
     }
   };
 
@@ -182,23 +208,31 @@ function TaskPage() {
             currentCategory={categoryFilter}
             onEditTask={handleEditTask}
             onDeleteTask={handleDeleteTask}
+            onDeleteSuccess={displayToast}
           />
         </div>
       </div>
 
-      {/* Toast Notification */}
-      {toast && (
-        <div className={`${styles.toast} ${styles[toast.type]}`}>
-          {toast.message}
-        </div>
-      )}
-
+      {/* Toast Notification - Remove old toast */}
+      
       {/* Add/Edit Form Modal */}
       <AddEditForm 
         isOpen={isAddEditFormOpen}
         onClose={handleCloseAddEditForm}
         task={taskToEdit}
         onSave={handleSaveTask}
+        onSuccess={handleToastSuccess}
+        onError={handleToastError}
+      />
+
+      {/* Toast Component */}
+      <Toast
+        isOpen={showToastNotification}
+        type={toastConfig.type}
+        title={toastConfig.title}
+        message={toastConfig.message}
+        onClose={() => setShowToastNotification(false)}
+        duration={3000}
       />
 
       <p>

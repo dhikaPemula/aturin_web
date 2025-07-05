@@ -1,11 +1,7 @@
 @import "tailwindcss";
 
 .container {
-  @apply mt-4 mx-2 md:mx-4;
-}
-
-.addSection {
-  @apply mt-4;
+  @apply mx-4 md:mx-8;
 }
 
 /* Search Section */
@@ -23,12 +19,16 @@
   @apply my-6 md:my-0;
 }
 
+.tugas{
+  @apply mb-2;
+}
+
 .filteringSection {
   @apply my-6 md:grid md:grid-cols-3 md:gap-4;
 }
 
 .upperSection {
-  @apply my-6 md:flex md:justify-between md:items-center;
+  @apply md:flex md:justify-between md:items-center;
 }
 
 /* List Section */

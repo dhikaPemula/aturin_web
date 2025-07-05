@@ -12,7 +12,8 @@ function SubList({
   title, 
   currentCategory = "",
   onEditTask, 
-  onDeleteTask 
+  onDeleteTask,
+  onDeleteSuccess
 }) {
   // Filter tasks by status and category
   let filteredTasks = tasks.filter(task => task.task_status === task_status);
@@ -75,6 +76,7 @@ function SubList({
               task={task}
               onEditTask={onEditTask}
               onDeleteTask={onDeleteTask}
+              onDeleteSuccess={onDeleteSuccess}
             />
           ))
         )}

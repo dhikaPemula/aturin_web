@@ -21,7 +21,9 @@ function AddEditForm({
   isOpen, 
   onClose, 
   task = null, 
-  onSave 
+  onSave,
+  onSuccess,
+  onError
 }) {
   const [formData, setFormData] = useState({
     title: '',
@@ -300,11 +302,30 @@ function AddEditForm({
 
       console.log('Form submitting task data:', taskData);
       await onSave(taskData);
+      
+      // Call success callback
+      if (onSuccess) {
+        onSuccess({
+          type: 'success',
+          title: task ? 'Berhasil Mengubah Tugas' : 'Berhasil Menambahkan Tugas',
+          message: task ? 'Tugas berhasil diperbarui' : 'Tugas baru berhasil ditambahkan'
+        });
+      }
+      
       onClose();
     } catch (error) {
       console.error('Error saving task:', error);
       console.error('Error response:', error.response?.data);
-      console.error('Error response:', error.response?.data);
+      
+      // Call error callback
+      if (onError) {
+        onError({
+          type: 'error',
+          title: 'Gagal Menyimpan Tugas',
+          message: error.response?.data?.message || 'Terjadi kesalahan saat menyimpan tugas'
+        });
+      }
+      
       // Don't close the form if there's an error
     } finally {
       setIsSubmitting(false);
