@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './addeditform.module.css';
 import DatePickerPopup from '../../../core/widgets/datepicker/datepicker_popup.jsx';
+import TimePickerPopup from '../../../core/widgets/timepicker/timepicker_popup.jsx';
+import DurationPickerPopup from '../../../core/widgets/durationpicker/durationpicker_popup.jsx';
 
 // Import category icons
 import akademikIcon from '../../../assets/home/categories/akademik.svg';
@@ -13,6 +15,7 @@ import sosialIcon from '../../../assets/home/categories/sosial.svg';
 import spiritualIcon from '../../../assets/home/categories/spiritual.svg';
 import istirahatIcon from '../../../assets/home/categories/istirahat.svg';
 import jadwalIcon from '../../../assets/home/jadwal-black.svg';
+import clockIcon from '../../../assets/home/clock.svg';
 
 function AddEditForm({ 
   isOpen, 
@@ -33,7 +36,11 @@ function AddEditForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [showDurationPicker, setShowDurationPicker] = useState(false);
   const dateInputRef = useRef(null);
+  const timeInputRef = useRef(null);
+  const durationInputRef = useRef(null);
 
   // Categories for dropdown (sesuai dengan backend validation)
   const categories = [
@@ -56,6 +63,10 @@ function AddEditForm({
           setIsDropdownOpen(false);
         } else if (showDatePicker) {
           setShowDatePicker(false);
+        } else if (showTimePicker) {
+          setShowTimePicker(false);
+        } else if (showDurationPicker) {
+          setShowDurationPicker(false);
         } else {
           handleClose();
         }
@@ -78,7 +89,7 @@ function AddEditForm({
       document.removeEventListener('keydown', handleEscapeKey);
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, isSubmitting, isDropdownOpen, showDatePicker]);
+  }, [isOpen, isSubmitting, isDropdownOpen, showDatePicker, showTimePicker, showDurationPicker]);
 
   // Separate effect for body scroll management
   useEffect(() => {
@@ -116,7 +127,9 @@ function AddEditForm({
         description: task.task_description || task.description || '',
         deadline_date: deadlineDate,
         deadline_time: deadlineTime,
-        estimated_duration: task.estimated_task_duration || task.estimated_duration || '',
+        estimated_duration: task.estimated_task_duration ? 
+          task.estimated_task_duration : // Keep the H:i format as is (e.g., "5:30")
+          (task.estimated_duration || ''),
         category: task.task_category || task.categories?.[0] || ''
       });
     } else {
@@ -132,6 +145,14 @@ function AddEditForm({
     }
     setErrors({});
   }, [task, isOpen]);
+
+  // Convert time format from HH:MM to H:i format for backend
+  const convertToBackendTimeFormat = (timeString) => {
+    if (!timeString) return '';
+    // Convert "05:30" to "5:30" (remove leading zero from hour)
+    const [hours, minutes] = timeString.split(':');
+    return `${parseInt(hours, 10)}:${minutes}`;
+  };
 
   // Handle category selection
   const handleCategorySelect = (categoryValue) => {
@@ -246,6 +267,7 @@ function AddEditForm({
 
       // Only include estimated_task_duration if it's provided and valid
       if (formData.estimated_duration && formData.estimated_duration.trim()) {
+        // DurationPicker already returns H:i format (e.g., "5:30"), so use it directly
         taskData.estimated_task_duration = formData.estimated_duration;
       }
 
@@ -391,14 +413,50 @@ function AddEditForm({
                   />
                 )}
               </div>
-              <input
-                type="time"
-                name="deadline_time"
-                value={formData.deadline_time}
-                onChange={handleChange}
-                className={`${styles.input} ${styles.timeInput} ${errors.deadline_time ? styles.inputError : ''}`}
-                disabled={isSubmitting}
-              />
+              <div className={styles.timeInputContainer}>
+                <div className={styles.timeInputWrapper}>
+                  <img 
+                    src={clockIcon} 
+                    alt="Clock"
+                    className={styles.timeIcon}
+                  />
+                  <input
+                    ref={timeInputRef}
+                    type="text"
+                    name="deadline_time"
+                    value={formData.deadline_time ? (() => {
+                      // Format time for display (24-hour format)
+                      try {
+                        const [hours, minutes] = formData.deadline_time.split(':');
+                        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+                      } catch (e) {
+                        return formData.deadline_time;
+                      }
+                    })() : ''}
+                    readOnly
+                    placeholder="HH:MM"
+                    onFocus={() => setShowTimePicker(true)}
+                    onClick={() => setShowTimePicker(true)}
+                    className={`${styles.input} ${styles.timeInput} ${errors.deadline_time ? styles.inputError : ''}`}
+                    disabled={isSubmitting}
+                  />
+                </div>
+                {showTimePicker && (
+                  <TimePickerPopup
+                    value={formData.deadline_time}
+                    onChange={(time) => {
+                      setFormData(prev => ({ ...prev, deadline_time: time }));
+                      if (errors.deadline_time) {
+                        setErrors(prev => ({ ...prev, deadline_time: '' }));
+                      }
+                    }}
+                    onClose={() => setShowTimePicker(false)}
+                    targetElement={timeInputRef.current}
+                    disabled={isSubmitting}
+                    error={!!errors.deadline_time}
+                  />
+                )}
+              </div>
             </div>
             {(errors.deadline_date || errors.deadline_time) && (
               <div className={styles.errorText}>
@@ -410,15 +468,50 @@ function AddEditForm({
           {/* Estimasi Durasi */}
           <div className={styles.fieldGroup}>
             <label className={styles.label}>Estimasi Durasi</label>
-            <input
-              type="time"
-              name="estimated_duration"
-              value={formData.estimated_duration}
-              onChange={handleChange}
-              placeholder="HH:MM"
-              className={`${styles.input} ${errors.estimated_duration ? styles.inputError : ''}`}
-              disabled={isSubmitting}
-            />
+            <div className={styles.timeInputContainer}>
+              <div className={styles.timeInputWrapper}>
+                <img 
+                  src={clockIcon} 
+                  alt="Clock"
+                  className={styles.timeIcon}
+                />
+                <input
+                  ref={durationInputRef}
+                  type="text"
+                  name="estimated_duration"
+                  value={formData.estimated_duration ? (() => {
+                    // Format duration for display - show HH:MM but store H:i
+                    try {
+                      const [hours, minutes] = formData.estimated_duration.split(':');
+                      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+                    } catch (e) {
+                      return formData.estimated_duration;
+                    }
+                  })() : ''}
+                  readOnly
+                  placeholder="HH:MM"
+                  onFocus={() => setShowDurationPicker(true)}
+                  onClick={() => setShowDurationPicker(true)}
+                  className={`${styles.input} ${styles.timeInput} ${errors.estimated_duration ? styles.inputError : ''}`}
+                  disabled={isSubmitting}
+                />
+              </div>
+              {showDurationPicker && (
+                <DurationPickerPopup
+                  value={formData.estimated_duration}
+                  onChange={(duration) => {
+                    setFormData(prev => ({ ...prev, estimated_duration: duration }));
+                    if (errors.estimated_duration) {
+                      setErrors(prev => ({ ...prev, estimated_duration: '' }));
+                    }
+                  }}
+                  onClose={() => setShowDurationPicker(false)}
+                  targetElement={durationInputRef.current}
+                  disabled={isSubmitting}
+                  error={!!errors.estimated_duration}
+                />
+              )}
+            </div>
             <div className={styles.helpText}>
               Format: HH:MM (contoh: 02:30 untuk 2 jam 30 menit)
             </div>
