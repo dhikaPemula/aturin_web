@@ -128,7 +128,17 @@ function AddEditForm({
         deadline_date: deadlineDate,
         deadline_time: deadlineTime,
         estimated_duration: task.estimated_task_duration ? 
-          task.estimated_task_duration : // Keep the H:i format as is (e.g., "5:30")
+          (() => {
+            // Convert from "05:30:00" or "5:30:00" format to "H:i" format
+            const duration = task.estimated_task_duration;
+            if (duration.includes(':')) {
+              const parts = duration.split(':');
+              const hours = parseInt(parts[0], 10); // Remove leading zero
+              const minutes = parts[1];
+              return `${hours}:${minutes}`;
+            }
+            return duration;
+          })() : 
           (task.estimated_duration || ''),
         category: task.task_category || task.categories?.[0] || ''
       });
@@ -146,12 +156,22 @@ function AddEditForm({
     setErrors({});
   }, [task, isOpen]);
 
-  // Convert time format from HH:MM to H:i format for backend
+  // Convert time format to H:i format for backend
   const convertToBackendTimeFormat = (timeString) => {
     if (!timeString) return '';
-    // Convert "05:30" to "5:30" (remove leading zero from hour)
-    const [hours, minutes] = timeString.split(':');
-    return `${parseInt(hours, 10)}:${minutes}`;
+    
+    try {
+      const parts = timeString.split(':');
+      if (!parts[0] || !parts[1]) return timeString;
+      
+      // Convert "05:30:00" or "05:30" to "5:30" (remove leading zero from hour and seconds)
+      const hourNum = parseInt(parts[0], 10);
+      const minutes = parts[1];
+      return `${hourNum}:${minutes}`;
+    } catch (e) {
+      console.warn('Error converting time format:', e);
+      return timeString;
+    }
   };
 
   // Handle category selection
@@ -232,7 +252,8 @@ function AddEditForm({
 
     // Validate estimated_duration format if provided
     if (formData.estimated_duration && formData.estimated_duration.trim()) {
-      const timePattern = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+      // Accept both H:i and HH:MM formats (e.g., "5:30" or "05:30")
+      const timePattern = /^([0-9]|[01][0-9]|2[0-3]):[0-5][0-9]$/;
       if (!timePattern.test(formData.estimated_duration)) {
         newErrors.estimated_duration = 'Format durasi harus HH:MM (contoh: 02:30)';
       }
@@ -267,8 +288,10 @@ function AddEditForm({
 
       // Only include estimated_task_duration if it's provided and valid
       if (formData.estimated_duration && formData.estimated_duration.trim()) {
-        // DurationPicker already returns H:i format (e.g., "5:30"), so use it directly
-        taskData.estimated_task_duration = formData.estimated_duration;
+        // Convert to H:i format (remove leading zeros from hours and seconds) for backend
+        const convertedDuration = convertToBackendTimeFormat(formData.estimated_duration);
+        console.log('Duration conversion - Original:', formData.estimated_duration, 'Converted:', convertedDuration);
+        taskData.estimated_task_duration = convertedDuration;
       }
 
       if (task) {
