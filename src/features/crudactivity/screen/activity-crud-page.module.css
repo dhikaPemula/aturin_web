@@ -69,6 +69,13 @@
   font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Style untuk asterisk merah */
+.label::after {
+  content: " *";
+  color: #ef4444; /* red-500 */
+  font-weight: normal;
+}
+
 .input,
 .dateInput,
 .timeInput {

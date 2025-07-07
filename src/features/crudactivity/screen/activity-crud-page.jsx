@@ -244,7 +244,7 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
         <form onSubmit={handleSubmit} className={styles.form}>
           {/* Field Judul */}
           <div className={styles.field}>
-            <label className={styles.label}>Judul *</label>
+            <label className={styles.label}>Judul</label>
             <input
               type="text"
               value={formData.judul}
@@ -263,7 +263,7 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
 
           {/* Field Tanggal */}
           <div className={styles.field}>
-            <label className={styles.label}>Tanggal *</label>
+            <label className={styles.label}>Tanggal</label>
             <input
               type="date"
               value={formData.tanggal}
@@ -281,7 +281,7 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
           {/* Field Waktu - Sejajar di Mobile */}
           <div className={styles.timeFields}>
             <div className={styles.field}>
-              <label className={styles.label}>Waktu mulai *</label>
+              <label className={styles.label}>Waktu mulai</label>
               <input
                 type="time"
                 value={formData.waktuMulai}
@@ -297,7 +297,7 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
             </div>
 
             <div className={styles.field}>
-              <label className={styles.label}>Waktu selesai *</label>
+              <label className={styles.label}>Waktu selesai</label>
               <input
                 type="time"
                 value={formData.waktuSelesai}
@@ -321,7 +321,7 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
 
           {/* Field Kategori */}
           <div className={styles.field}>
-            <label className={styles.label}>Kategori *</label>
+            <label className={styles.label}>Kategori</label>
             <div className={styles.categoryWrapper}>
               <button
                 type="button"
