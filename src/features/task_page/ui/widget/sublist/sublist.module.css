@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 .subListContainer {
-  @apply mb-8 rounded-lg border-1 border-[#E2E8F0] overflow-hidden;
+  @apply rounded-lg border-1 border-[#E2E8F0] overflow-hidden;
   /* Responsive width for horizontal layout */
   @apply md:flex-1 md:mb-0 md:min-w-0 shadow-lg;
   transition: all 0.2s ease-in-out;

@@ -1,9 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './addeditform.module.css';
-import DatePickerPopup from '../../../core/widgets/datepicker/datepicker_popup.jsx';
-import TimePickerPopup from '../../../core/widgets/timepicker/timepicker_popup.jsx';
-import DurationPickerPopup from '../../../core/widgets/durationpicker/durationpicker_popup.jsx';
 import { useGlobalTaskRefresh } from '../../../core/hooks/useGlobalTaskRefresh';
 
 // Import category icons
@@ -15,8 +12,6 @@ import hiburanIcon from '../../../assets/home/categories/hiburan.svg';
 import sosialIcon from '../../../assets/home/categories/sosial.svg';
 import spiritualIcon from '../../../assets/home/categories/spiritual.svg';
 import istirahatIcon from '../../../assets/home/categories/istirahat.svg';
-import jadwalIcon from '../../../assets/home/jadwal-black.svg';
-import clockIcon from '../../../assets/home/clock.svg';
 
 // Utility functions for timezone handling
 const formatLocalDateTime = (date) => {
@@ -73,12 +68,6 @@ function AddEditForm({
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [showDurationPicker, setShowDurationPicker] = useState(false);
-  const dateInputRef = useRef(null);
-  const timeInputRef = useRef(null);
-  const durationInputRef = useRef(null);
 
   // Categories for dropdown (sesuai dengan backend validation)
   const categories = [
@@ -99,12 +88,6 @@ function AddEditForm({
       if (event.key === 'Escape' && isOpen && !isSubmitting) {
         if (isDropdownOpen) {
           setIsDropdownOpen(false);
-        } else if (showDatePicker) {
-          setShowDatePicker(false);
-        } else if (showTimePicker) {
-          setShowTimePicker(false);
-        } else if (showDurationPicker) {
-          setShowDurationPicker(false);
         } else {
           handleClose();
         }
@@ -115,7 +98,6 @@ function AddEditForm({
       if (isDropdownOpen && !event.target.closest(`.${styles.customSelectContainer}`)) {
         setIsDropdownOpen(false);
       }
-      // Remove dateInputContainer check since DatePickerPopup handles its own outside clicks
     };
 
     if (isOpen) {
@@ -127,7 +109,7 @@ function AddEditForm({
       document.removeEventListener('keydown', handleEscapeKey);
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, isSubmitting, isDropdownOpen, showDatePicker, showTimePicker, showDurationPicker]);
+  }, [isOpen, isSubmitting, isDropdownOpen]);
 
   // Separate effect for body scroll management
   useEffect(() => {
@@ -484,142 +466,86 @@ function AddEditForm({
             </label>
             <div className={styles.dateTimeGroup}>
               <div className={styles.dateInputContainer}>
-                <div className={styles.dateInputWrapper}>
-                  <img 
-                    src={jadwalIcon} 
-                    alt="Calendar"
-                    className={styles.dateIcon}
-                  />
-                  <input
-                    ref={dateInputRef}
-                    type="text"
-                    name="deadline_date"
-                    value={formData.deadline_date ? (() => {
-                      // Parse date safely without timezone issues
-                      const dateParts = formData.deadline_date.split('-');
-                      if (dateParts.length === 3) {
-                        const localDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-                        return localDate.toLocaleDateString('id-ID', { 
-                          day: '2-digit', 
-                          month: '2-digit', 
-                          year: 'numeric' 
+                <input
+                  type="date"
+                  name="deadline_date"
+                  value={formData.deadline_date}
+                  onChange={(e) => {
+                    const { value } = e.target;
+                    setFormData(prev => ({ ...prev, deadline_date: value }));
+                    
+                    // Clear error when user selects a date
+                    if (errors.deadline_date) {
+                      setErrors(prev => ({ ...prev, deadline_date: '' }));
+                    }
+                    
+                    // Real-time validation for datetime
+                    if (value && formData.deadline_time) {
+                      const deadlineDateTime = new Date(`${value}T${formData.deadline_time}`);
+                      const currentDateTime = new Date();
+                      const minimumDateTime = new Date(currentDateTime.getTime() + 60000); // Add 1 minute
+                      
+                      if (deadlineDateTime <= minimumDateTime) {
+                        setErrors(prev => ({ 
+                          ...prev, 
+                          deadline_date: 'Batas waktu harus minimal 1 menit dari waktu saat ini' 
+                        }));
+                      } else {
+                        // Clear error if datetime is valid
+                        setErrors(prev => {
+                          const newErrors = { ...prev };
+                          if (newErrors.deadline_date === 'Batas waktu harus minimal 1 menit dari waktu saat ini') {
+                            delete newErrors.deadline_date;
+                          }
+                          return newErrors;
                         });
                       }
-                      return '';
-                    })() : ''}
-                    readOnly
-                    placeholder="DD/MM/YYYY"
-                    onFocus={() => setShowDatePicker(true)}
-                    onClick={() => setShowDatePicker(true)}
-                    className={`${styles.input} ${styles.dateInput} ${errors.deadline_date ? styles.inputError : ''}`}
-                    disabled={isSubmitting}
-                  />
-                </div>
-                {showDatePicker && (
-                  <DatePickerPopup
-                    value={formData.deadline_date}
-                    onChange={(date) => {
-                      setFormData(prev => ({ ...prev, deadline_date: date }));
-                      if (errors.deadline_date) {
-                        setErrors(prev => ({ ...prev, deadline_date: '' }));
-                      }
-                      
-                      // Real-time validation for datetime
-                      if (date && formData.deadline_time) {
-                        const deadlineDateTime = new Date(`${date}T${formData.deadline_time}`);
-                        const currentDateTime = new Date();
-                        const minimumDateTime = new Date(currentDateTime.getTime() + 60000); // Add 1 minute
-                        
-                        if (deadlineDateTime <= minimumDateTime) {
-                          setErrors(prev => ({ 
-                            ...prev, 
-                            deadline_date: 'Batas waktu harus minimal 1 menit dari waktu saat ini' 
-                          }));
-                        } else {
-                          // Clear error if datetime is valid
-                          setErrors(prev => {
-                            const newErrors = { ...prev };
-                            if (newErrors.deadline_date === 'Batas waktu harus minimal 1 menit dari waktu saat ini') {
-                              delete newErrors.deadline_date;
-                            }
-                            return newErrors;
-                          });
-                        }
-                      }
-                    }}
-                    onClose={() => setShowDatePicker(false)}
-                    targetElement={dateInputRef.current}
-                    disabled={isSubmitting}
-                    error={!!errors.deadline_date}
-                  />
-                )}
+                    }
+                  }}
+                  className={`${styles.input} ${styles.dateInput} ${errors.deadline_date ? styles.inputError : ''}`}
+                  disabled={isSubmitting}
+                />
               </div>
               <div className={styles.timeInputContainer}>
-                <div className={styles.timeInputWrapper}>
-                  <img 
-                    src={clockIcon} 
-                    alt="Clock"
-                    className={styles.timeIcon}
-                  />
-                  <input
-                    ref={timeInputRef}
-                    type="text"
-                    name="deadline_time"
-                    value={formData.deadline_time ? (() => {
-                      // Format time for display (24-hour format)
-                      try {
-                        const [hours, minutes] = formData.deadline_time.split(':');
-                        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-                      } catch (e) {
-                        return formData.deadline_time;
-                      }
-                    })() : ''}
-                    readOnly
-                    placeholder="HH:MM"
-                    onFocus={() => setShowTimePicker(true)}
-                    onClick={() => setShowTimePicker(true)}
-                    className={`${styles.input} ${styles.timeInput} ${(errors.deadline_time || (errors.deadline_date === 'Batas waktu harus minimal 1 menit dari waktu saat ini')) ? styles.inputError : ''}`}
-                    disabled={isSubmitting}
-                  />
-                </div>
-                {showTimePicker && (
-                  <TimePickerPopup
-                    value={formData.deadline_time}
-                    onChange={(time) => {
-                      setFormData(prev => ({ ...prev, deadline_time: time }));
-                      if (errors.deadline_time) {
-                        setErrors(prev => ({ ...prev, deadline_time: '' }));
-                      }
+                <input
+                  type="time"
+                  name="deadline_time"
+                  value={formData.deadline_time}
+                  onChange={(e) => {
+                    const { value } = e.target;
+                    setFormData(prev => ({ ...prev, deadline_time: value }));
+                    
+                    // Clear error when user selects a time
+                    if (errors.deadline_time) {
+                      setErrors(prev => ({ ...prev, deadline_time: '' }));
+                    }
+                    
+                    // Real-time validation for datetime
+                    if (formData.deadline_date && value) {
+                      const deadlineDateTime = new Date(`${formData.deadline_date}T${value}`);
+                      const currentDateTime = new Date();
+                      const minimumDateTime = new Date(currentDateTime.getTime() + 60000); // Add 1 minute
                       
-                      // Real-time validation for datetime
-                      if (formData.deadline_date && time) {
-                        const deadlineDateTime = new Date(`${formData.deadline_date}T${time}`);
-                        const currentDateTime = new Date();
-                        const minimumDateTime = new Date(currentDateTime.getTime() + 60000); // Add 1 minute
-                        
-                        if (deadlineDateTime <= minimumDateTime) {
-                          setErrors(prev => ({ 
-                            ...prev, 
-                            deadline_date: 'Batas waktu harus minimal 1 menit dari waktu saat ini' 
-                          }));
-                        } else {
-                          // Clear error if datetime is valid
-                          setErrors(prev => {
-                            const newErrors = { ...prev };
-                            if (newErrors.deadline_date === 'Batas waktu harus minimal 1 menit dari waktu saat ini') {
-                              delete newErrors.deadline_date;
-                            }
-                            return newErrors;
-                          });
-                        }
+                      if (deadlineDateTime <= minimumDateTime) {
+                        setErrors(prev => ({ 
+                          ...prev, 
+                          deadline_date: 'Batas waktu harus minimal 1 menit dari waktu saat ini' 
+                        }));
+                      } else {
+                        // Clear error if datetime is valid
+                        setErrors(prev => {
+                          const newErrors = { ...prev };
+                          if (newErrors.deadline_date === 'Batas waktu harus minimal 1 menit dari waktu saat ini') {
+                            delete newErrors.deadline_date;
+                          }
+                          return newErrors;
+                        });
                       }
-                    }}
-                    onClose={() => setShowTimePicker(false)}
-                    targetElement={timeInputRef.current}
-                    disabled={isSubmitting}
-                    error={!!(errors.deadline_time || (errors.deadline_date === 'Batas waktu harus minimal 1 menit dari waktu saat ini'))}
-                  />
-                )}
+                    }
+                  }}
+                  className={`${styles.input} ${styles.timeInput} ${(errors.deadline_time || (errors.deadline_date === 'Batas waktu harus minimal 1 menit dari waktu saat ini')) ? styles.inputError : ''}`}
+                  disabled={isSubmitting}
+                />
               </div>
             </div>
             {(errors.deadline_date || errors.deadline_time) && (
@@ -635,48 +561,31 @@ function AddEditForm({
               Estimasi Durasi Pengerjaan<span className={styles.required}>*</span>
             </label>
             <div className={styles.timeInputContainer}>
-              <div className={styles.timeInputWrapper}>
-                <img 
-                  src={clockIcon} 
-                  alt="Clock"
-                  className={styles.timeIcon}
-                />
-                <input
-                  ref={durationInputRef}
-                  type="text"
-                  name="estimated_duration"
-                  value={formData.estimated_duration ? (() => {
-                    // Display as received from backend (no forced formatting)
-                    try {
-                      const [hours, minutes] = formData.estimated_duration.split(':');
-                      return `${hours}:${minutes}`;
-                    } catch (e) {
-                      return formData.estimated_duration;
-                    }
-                  })() : ''}
-                  readOnly
-                  placeholder="HH:MM"
-                  onFocus={() => setShowDurationPicker(true)}
-                  onClick={() => setShowDurationPicker(true)}
-                  className={`${styles.input} ${styles.timeInput} ${errors.estimated_duration ? styles.inputError : ''}`}
-                  disabled={isSubmitting}
-                />
-              </div>
-              {showDurationPicker && (
-                <DurationPickerPopup
-                  value={formData.estimated_duration}
-                  onChange={(duration) => {
-                    setFormData(prev => ({ ...prev, estimated_duration: duration }));
-                    if (errors.estimated_duration) {
-                      setErrors(prev => ({ ...prev, estimated_duration: '' }));
-                    }
-                  }}
-                  onClose={() => setShowDurationPicker(false)}
-                  targetElement={durationInputRef.current}
-                  disabled={isSubmitting}
-                  error={!!errors.estimated_duration}
-                />
-              )}
+              <input
+                type="time"
+                name="estimated_duration"
+                value={formData.estimated_duration ? (() => {
+                  // Display as received from backend (no forced formatting)
+                  try {
+                    const [hours, minutes] = formData.estimated_duration.split(':');
+                    return `${hours}:${minutes}`;
+                  } catch (e) {
+                    return formData.estimated_duration;
+                  }
+                })() : ''}
+                onChange={(e) => {
+                  const { value } = e.target;
+                  setFormData(prev => ({ ...prev, estimated_duration: value }));
+                  
+                  // Clear error when user selects a duration
+                  if (errors.estimated_duration) {
+                    setErrors(prev => ({ ...prev, estimated_duration: '' }));
+                  }
+                }}
+                placeholder="HH:MM"
+                className={`${styles.input} ${styles.timeInput} ${errors.estimated_duration ? styles.inputError : ''}`}
+                disabled={isSubmitting}
+              />
             </div>
             {errors.estimated_duration && <div className={styles.errorText}>{errors.estimated_duration}</div>}
           </div>

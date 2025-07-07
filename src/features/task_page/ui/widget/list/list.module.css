@@ -1,8 +1,7 @@
 @import "tailwindcss";
 
 .listContainer {
-  @apply space-y-8;
-  /* Horizontal layout for medium screens and up */
+  @apply space-y-4;
   @apply lg:flex lg:space-y-0 lg:space-x-6 lg:items-start lg:gap-4;
 }
 
