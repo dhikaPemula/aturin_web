@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './calendar.module.css';
+import { getAllTasks } from '../../../../../core/services/api/task_api_service';
+import { useTaskAutoRefresh } from '../../../../../core/hooks/useGlobalTaskRefresh';
 
 const daysShort = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
 
@@ -15,19 +17,57 @@ function getFirstDayOfWeek(year, month) {
 function Calendar({ today, currentDate, onDateChange }) {
   // today dan currentDate dikontrol dari parent
   const [date, setDate] = useState(currentDate || today || new Date());
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch tasks untuk menentukan hari mana yang ada tugas
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllTasks();
+      setTasks(data);
+      console.log('Calendar: Tasks loaded for date indicators');
+    } catch (error) {
+      console.error('Calendar: Error fetching tasks:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Auto-refresh menggunakan global trigger
+  useTaskAutoRefresh(fetchTasks);
 
   useEffect(() => {
     // Sinkronkan tampilan bulan jika currentDate berubah dari parent
     setDate(currentDate || today || new Date());
   }, [currentDate, today]);
 
+  // Initial fetch
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
   const year = date.getFullYear();
   const month = date.getMonth();
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = getFirstDayOfWeek(year, month);
 
-  // Dummy: tanggal 21 ada jadwal
-  const jadwalSet = new Set([21]);
+  // Buat set tanggal yang ada tugasnya di bulan/tahun yang sedang ditampilkan
+  const tasksInCurrentMonth = new Set();
+  
+  tasks.forEach(task => {
+    if (task.task_deadline) {
+      try {
+        const taskDate = new Date(task.task_deadline);
+        // Cek apakah task ada di bulan dan tahun yang sama dengan calendar
+        if (taskDate.getFullYear() === year && taskDate.getMonth() === month) {
+          tasksInCurrentMonth.add(taskDate.getDate());
+        }
+      } catch (error) {
+        console.warn('Calendar: Invalid task deadline format:', task.task_deadline);
+      }
+    }
+  });
 
   // Navigasi bulan
   const handlePrev = () => {
@@ -84,7 +124,9 @@ function Calendar({ today, currentDate, onDateChange }) {
   return (
     <div className={styles.calendarContainer}>
       <div className={styles.calendarHeader}>
-        <span className={styles.calendarTitle}>Kalender</span>
+        <span className={styles.calendarTitle}>
+          Kalender {loading && <span className={styles.loadingIndicator}>🔄</span>}
+        </span>
         <div className={styles.calendarNav}>
           <button onClick={handlePrev} className={styles.calendarNavBtn}>&lt;</button>
           <span className={styles.calendarMonth}>{monthNames[month]} {year}</span>
@@ -101,7 +143,7 @@ function Calendar({ today, currentDate, onDateChange }) {
           if (d === null) return <div key={i} className={styles.calendarEmpty}>&nbsp;</div>;
           const isToday = isTodayCell(d);
           const isCurrent = isCurrentDateCell(d);
-          const isJadwal = jadwalSet.has(d);
+          const hasTasks = tasksInCurrentMonth.has(d);
           return (
             <div
               key={i}
@@ -114,7 +156,7 @@ function Calendar({ today, currentDate, onDateChange }) {
               style={{ cursor: 'pointer' }}
             >
               {d}
-              {isJadwal && <span className={styles.jadwalDot} />}
+              {hasTasks && <span className={styles.jadwalDot} />}
             </div>
           );
         })}
