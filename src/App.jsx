@@ -36,13 +36,13 @@ function App() {
             padding: 0
           }}
         >
-          <div style={{ width: '33.333%' }}>
+          <div style={{ width: '33.333%', flexShrink: 0 }}>
             <HomePage />
           </div>
-          <div style={{ width: '33.333%' }}>
+          <div style={{ width: '33.333%', flexShrink: 0 }}>
             <TaskPage />
           </div>
-          <div style={{ width: '33.333%' }}>
+          <div style={{ width: '33.333%', flexShrink: 0 }}>
             <ActivityPage />
           </div>
         </div>

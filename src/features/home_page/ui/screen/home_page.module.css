@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
 .container {
-  @apply mx-4 md:mx-8;
+  @apply px-4 md:px-8;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .headerSection {
