@@ -21,7 +21,8 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  z-index: 9999;
+  z-index: 999999; /* Higher than drag overlay */
+  pointer-events: auto;
 }
 
 /* Alert Container */
@@ -32,9 +33,11 @@
   width: 100%;
   margin: 0 auto;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  z-index: 10000;
+  z-index: 1000000; /* Higher than backdrop */
   animation: slideIn 0.3s ease-out;
   overflow: hidden;
+  pointer-events: auto;
+  position: relative;
 }
 
 @keyframes slideIn {

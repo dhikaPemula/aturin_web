@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { DndContext, DragOverlay, closestCenter, pointerWithin } from '@dnd-kit/core';
+import { createPortal } from 'react-dom';
 import styles from "./task_page.module.css";
 import useTaskList from "../../../../core/hooks/useTaskList.js";
 import useProfile from "../../../../core/hooks/useProfile.js";
 import { useTaskAutoRefresh } from "../../../../core/hooks/useGlobalTaskRefresh";
-import { useDragDropTask } from "../../../../core/hooks/useDragDropTask.js";
+import { useDndKitTaskDrag } from "../../../../core/hooks/useDndKitTaskDrag.js";
 import Badge from "../../../../core/widgets/badge/buildbadge/badge.jsx";
 import StatusBadge from "../../../../core/widgets/status/statusbadge.jsx";
 import UpperSection from "../widget/uppersection/uppersection.jsx";
@@ -14,6 +16,7 @@ import CategoryFilter from "../widget/categoryfilter/categoryfilter.jsx";
 import List from "../widget/list/list.jsx";
 import AddEditForm from "../../../crudtask/screen/addeditform.jsx";
 import Toast from "../../../../core/widgets/toast/toast.jsx";
+import TaskCard from "../widget/taskcard/taskcard.jsx";
 // Import icons
 import clockIcon from "../../../../assets/home/clock.svg";
 import jadwalIcon from "../../../../assets/home/jadwal.svg";
@@ -32,6 +35,7 @@ function TaskPage() {
     title: '',
     message: ''
   });
+  const [activeTask, setActiveTask] = useState(null);
 
   // Get user profile data
   const { profile, loading: profileLoading, error: profileError } = useProfile();
@@ -57,8 +61,23 @@ function TaskPage() {
     setShowToastNotification(true);
   };
 
-  // Drag and drop handler
-  const { handleDropTask } = useDragDropTask(displayToast);
+  // DndKit drag handler
+  const { handleDragEnd } = useDndKitTaskDrag(displayToast);
+
+  // Handle drag start for overlay
+  const handleDragStart = (event) => {
+    const taskData = event.active.data.current?.task;
+    console.log('Drag start - taskData:', taskData);
+    console.log('Categories:', taskData?.categories);
+    console.log('Task category:', taskData?.task_category);
+    setActiveTask(taskData);
+  };
+
+  // Handle drag end and reset overlay
+  const handleDragEndWithOverlay = (event) => {
+    handleDragEnd(event);
+    setActiveTask(null);
+  };
 
   const handleToastSuccess = (config) => {
     displayToast(config);
@@ -176,83 +195,122 @@ function TaskPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <div>
-        <div className={styles.upperSection}>
-          <div className={styles.tugas}>
-            <UpperSection />
+    <DndContext 
+      collisionDetection={pointerWithin}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEndWithOverlay}
+    >
+      <div className={styles.container}>
+        <div>
+          <div className={styles.upperSection}>
+            <div className={styles.tugas}>
+              <UpperSection />
+            </div>
+            <div className={styles.addSection}>
+              <AddSection onAddTask={handleAddNewTask} />
+            </div>
           </div>
-          <div className={styles.addSection}>
-            <AddSection onAddTask={handleAddNewTask} />
+          <div className={styles.filteringSection}>
+            <div className={styles.searchSection}>
+              <Search
+                onSearchChange={handleSearchChange}
+                placeholder="Mencari Tugas..."
+              />
+            </div>
+            <div className={styles.filterSection}>
+              <StatusFilter
+                onStatusChange={handleStatusChange}
+                placeholder="Semua status"
+              />
+            </div>
+            <div className={styles.categorySection}>
+              <CategoryFilter
+                onCategoryChange={handleCategoryChange}
+                placeholder="Semua kategori"
+              />
+            </div>
           </div>
-        </div>
-        <div className={styles.filteringSection}>
-          <div className={styles.searchSection}>
-            <Search
-              onSearchChange={handleSearchChange}
-              placeholder="Mencari Tugas..."
+          <div className={styles.listSection}>
+            <List
+              tasks={tasks}
+              loading={loading}
+              error={error}
+              searchQuery={searchQuery}
+              currentStatus={statusFilter}
+              currentCategory={categoryFilter}
+              onEditTask={handleEditTask}
+              onDeleteTask={handleDeleteTask}
+              onDeleteSuccess={displayToast}
             />
           </div>
-          <div className={styles.filterSection}>
-            <StatusFilter
-              onStatusChange={handleStatusChange}
-              placeholder="Semua status"
-            />
-          </div>
-          <div className={styles.categorySection}>
-            <CategoryFilter
-              onCategoryChange={handleCategoryChange}
-              placeholder="Semua kategori"
-            />
-          </div>
         </div>
-        <div className={styles.listSection}>
-          <List
-            tasks={tasks}
-            loading={loading}
-            error={error}
-            searchQuery={searchQuery}
-            currentStatus={statusFilter}
-            currentCategory={categoryFilter}
-            onEditTask={handleEditTask}
-            onDeleteTask={handleDeleteTask}
-            onDeleteSuccess={displayToast}
-            onDropTask={handleDropTask}
-          />
-        </div>
+
+        {/* Drag Overlay using Portal */}
+        {createPortal(
+          <DragOverlay 
+            adjustScale={false}
+            dropAnimation={null}
+            style={{
+              transformOrigin: '0 0',
+            }}
+          >
+            {activeTask ? (
+              <div style={{
+                opacity: 1,
+                transform: 'rotate(0deg)', // Rotasi lebih kecil
+                transformOrigin: 'center center',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)',
+                background: 'white',
+                borderRadius: '8px',
+                border: '2px solid #e5e7eb',
+                width: 'auto',
+                height: 'auto',
+                pointerEvents: 'none',
+                cursor: 'grabbing',
+                zIndex: 99999,
+                position: 'relative',
+                willChange: 'transform',
+                margin: '0',
+                padding: '0',
+                // Offset yang disesuaikan untuk posisi yang lebih tepat
+                marginTop: '0px', // Sedikit ke bawah dari center
+                marginLeft: '0px', // Sedikit ke kanan dari center
+                overflow: 'hidden' // Mencegah content overflow
+              }}>
+                <TaskCard 
+                  task={activeTask}
+                  isDraggable={false}
+                  className="dragOverlay"
+                  onEditTask={handleEditTask}
+                  onDeleteTask={handleDeleteTask}
+                  onDeleteSuccess={displayToast}
+                />
+              </div>
+            ) : null}
+          </DragOverlay>,
+          document.body
+        )}
+
+        {/* Add/Edit Form Modal */}
+        <AddEditForm 
+          isOpen={isAddEditFormOpen}
+          onClose={handleCloseAddEditForm}
+          task={taskToEdit}
+          onSave={handleSaveTask}
+          onSuccess={handleToastSuccess}
+          onError={handleToastError}
+        />
+
+        {/* Toast Component */}
+        <Toast
+          isOpen={showToastNotification}
+          title={toastConfig.title}
+          message={toastConfig.message}
+          onClose={() => setShowToastNotification(false)}
+          duration={3000}
+        />
       </div>
-
-      {/* Toast Notification - Remove old toast */}
-      
-      {/* Add/Edit Form Modal */}
-      <AddEditForm 
-        isOpen={isAddEditFormOpen}
-        onClose={handleCloseAddEditForm}
-        task={taskToEdit}
-        onSave={handleSaveTask}
-        onSuccess={handleToastSuccess}
-        onError={handleToastError}
-      />
-
-      {/* Toast Component */}
-      <Toast
-        isOpen={showToastNotification}
-        title={toastConfig.title}
-        message={toastConfig.message}
-        onClose={() => setShowToastNotification(false)}
-        duration={3000}
-      />
-
-      {/* <p>
-        Query Search: <strong>"{searchQuery}"</strong>
-      </p>
-      <p>
-        Status Filter: <strong>"{statusFilter || "Semua status"}"</strong>
-      </p>
-      <p>
-        Category Filter: <strong>"{categoryFilter || "Semua kategori"}"</strong>
-      </p> */}
-    </div>
+    </DndContext>
   );
 }
 

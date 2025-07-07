@@ -37,3 +37,17 @@
 .noDataText {
   @apply text-gray-500 text-center text-base md:text-lg max-w-md;
 }
+
+/* DndKit droppable area styles */
+.droppableSection {
+  flex: 1;
+  min-height: 150px; /* Reduced min height */
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 16px; /* Add consistent spacing */
+}
+
+.droppableSection.isOver {
+  background-color: rgba(59, 130, 246, 0.05);
+  border: 2px dashed #3b82f6;
+}

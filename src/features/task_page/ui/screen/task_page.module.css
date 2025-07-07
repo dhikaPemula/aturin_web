@@ -4,6 +4,8 @@
   @apply px-4 md:px-8;
   max-width: 100%;
   box-sizing: border-box;
+  position: relative;
+  overflow: visible; /* Pastikan tidak ada clipping */
 }
 
 /* Search Section */
@@ -79,4 +81,52 @@
     transform: translateX(0);
     opacity: 1;
   }
+}
+
+/* DragOverlay Styles */
+.dragOverlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 99999 !important;
+  pointer-events: none !important;
+  will-change: transform;
+}
+
+.dragOverlayCard {
+  opacity: 1 !important;
+  transform: rotate(3deg) translate(-50%, -50%) !important;
+  transform-origin: center center !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+  pointer-events: none !important;
+  width: 280px !important;
+  height: auto !important;
+  cursor: grabbing !important;
+  z-index: 99999 !important;
+  position: relative !important;
+  will-change: transform;
+  background: white !important;
+  border-radius: 8px !important;
+}
+
+/* Global DragOverlay fix */
+body {
+  position: relative;
+}
+
+/* Ensure DragOverlay is always on top */
+[data-dnd-context] {
+  position: relative;
+  z-index: 1;
+}
+
+/* Force DragOverlay to be visible */
+div[role="presentation"] {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 99999 !important;
+  pointer-events: none !important;
+  width: 100vw !important;
+  height: 100vh !important;
 }

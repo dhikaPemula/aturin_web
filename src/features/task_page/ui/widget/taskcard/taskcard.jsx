@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useDraggable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 import styles from './taskcard.module.css';
 import Badge from '../../../../../core/widgets/badge/buildbadge/badge.jsx';
 import Alert from '../../../../../core/widgets/alert/alert.jsx';
@@ -14,10 +16,35 @@ function TaskCard({
   onEditTask, 
   onDeleteTask,
   onDeleteSuccess,
-  isDraggable = false
+  isDraggable = false,
+  className = ""
 }) {
   // State for delete confirmation alert
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+
+  // DndKit draggable setup
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    isDragging
+  } = useDraggable({
+    id: `task-${task?.id || task?.slug}`,
+    disabled: !isDraggable,
+    data: {
+      task: task
+    }
+  });
+
+  // Transform style for drag feedback
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.3 : 1, // Slightly more visible when dragging
+    cursor: isDraggable ? 'grab' : 'default',
+    zIndex: isDragging ? 1000 : 'auto',
+    transition: 'opacity 0.1s ease' // Quick transition for opacity
+  };
 
   // Cleanup effect when component unmounts
   useEffect(() => {
@@ -28,12 +55,28 @@ function TaskCard({
   }, []);
 
   // Handle delete button click
-  const handleDeleteClick = () => {
+  const handleDeleteClick = (e) => {
+    e.stopPropagation(); // Prevent drag event
+    e.preventDefault(); // Prevent default behavior
     setShowDeleteAlert(true);
   };
 
+  // Handle edit button click
+  const handleEditClick = (e) => {
+    e.stopPropagation(); // Prevent drag event
+    e.preventDefault(); // Prevent default behavior
+    if (onEditTask) {
+      onEditTask(task);
+    }
+  };
+
   // Handle delete confirmation
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = async (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    
     if (onDeleteTask) {
       try {
         await onDeleteTask(task);
@@ -64,55 +107,12 @@ function TaskCard({
   };
 
   // Handle delete cancellation
-  const handleDeleteCancel = () => {
+  const handleDeleteCancel = (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
     setShowDeleteAlert(false);
-  };
-
-  // Handle drag start
-  const handleDragStart = (e) => {
-    if (!isDraggable) return;
-    
-    // Set drag data
-    e.dataTransfer.setData('task', JSON.stringify(task));
-    e.dataTransfer.effectAllowed = 'move';
-    
-    // Create a custom drag image to prevent default transparency
-    const dragImage = e.target.cloneNode(true);
-    dragImage.style.opacity = '1';
-    dragImage.style.transform = 'rotate(2deg)';
-    dragImage.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)';
-    
-    // Create a temporary container
-    const container = document.createElement('div');
-    container.style.position = 'absolute';
-    container.style.top = '-1000px';
-    container.style.left = '-1000px';
-    container.style.width = e.target.offsetWidth + 'px';
-    container.style.height = e.target.offsetHeight + 'px';
-    container.appendChild(dragImage);
-    
-    document.body.appendChild(container);
-    
-    // Set cursor position to center of the card
-    const centerX = e.target.offsetWidth / 2;
-    const centerY = e.target.offsetHeight / 2;
-    
-    // Set the custom drag image with center positioning
-    e.dataTransfer.setDragImage(dragImage, centerX, centerY);
-    
-    // Clean up after a short delay
-    setTimeout(() => {
-      if (document.body.contains(container)) {
-        document.body.removeChild(container);
-      }
-    }, 0);
-  };
-
-  // Handle drag end
-  const handleDragEnd = (e) => {
-    if (!isDraggable) return;
-    
-    // No need to reset opacity since we don't change it
   };
   // Format deadline
   const formatDeadline = (deadlineStr) => {
@@ -166,25 +166,28 @@ function TaskCard({
   }
 
   return (
+    <>
     <div 
-      className={styles.taskCard}
-      draggable={isDraggable}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-      style={{ cursor: isDraggable ? 'move' : 'default' }}
+      ref={setNodeRef}
+      className={`${styles.taskCard} ${isDragging ? styles.dragging : ''} ${className ? styles[className] : ''}`}
+      style={style}
+      {...(isDraggable ? { ...listeners, ...attributes } : {})}
     >
       {/* Task Header with Category Badge */}
       <div className={styles.taskHeader}>
-        {task.categories && task.categories.length > 0 && (
+        {((task.categories && task.categories.length > 0) || task.task_category) && (
           <div className={styles.categoryBadges}>
-            {task.categories
+            {(task.categories && task.categories.length > 0 
+              ? task.categories 
+              : (task.task_category ? [task.task_category] : [])
+            )
               .filter(category => 
                 category.toLowerCase() !== 'tugas' && 
                 category.toLowerCase() !== 'task'
               )
               .map((category, index) => (
                 <Badge
-                  key={`category-${task.id}-${index}`}
+                  key={`category-${task.id || task.slug}-${index}`}
                   name={category.toLowerCase()}
                   size="small"
                 />
@@ -231,13 +234,20 @@ function TaskCard({
           </span>
           
           {/* Action Buttons - inline with deadline */}
-          <div className={styles.inlineActionButtons}>
+          <div 
+            className={styles.inlineActionButtons}
+            data-no-drag="true" // Attribute to identify non-draggable area
+          >
             {onEditTask && (
               <button 
-                onClick={() => onEditTask(task)}
+                onClick={handleEditClick}
+                onPointerDown={(e) => e.stopPropagation()} // Prevent drag on pointer down
+                onMouseDown={(e) => e.stopPropagation()} // Prevent drag on mouse down
+                onTouchStart={(e) => e.stopPropagation()} // Prevent drag on touch start
                 className={styles.editButton}
                 type="button"
                 title="Edit Tugas"
+                data-no-drag="true"
               >
                 <img src={editIcon} alt="Edit" className={styles.actionIcon} />
               </button>
@@ -245,9 +255,13 @@ function TaskCard({
             {onDeleteTask && (
               <button 
                 onClick={handleDeleteClick}
+                onPointerDown={(e) => e.stopPropagation()} // Prevent drag on pointer down
+                onMouseDown={(e) => e.stopPropagation()} // Prevent drag on mouse down
+                onTouchStart={(e) => e.stopPropagation()} // Prevent drag on touch start
                 className={styles.deleteButton}
                 type="button"
                 title="Hapus Tugas"
+                data-no-drag="true"
               >
                 <img src={deleteIcon} alt="Delete" className={styles.actionIcon} />
               </button>
@@ -255,20 +269,21 @@ function TaskCard({
           </div>
         </div>
       </div>
-
-      {/* Delete Confirmation Alert */}
-      {showDeleteAlert && (
-        <Alert
-          isOpen={showDeleteAlert}
-          title="Hapus Tugas"
-          message={`Apakah Anda yakin ingin menghapus tugas "${task?.title}"? Perubahan ini bersifat permanen.`}
-          cancelText="Batal"
-          submitLabel="Hapus"
-          onCancel={handleDeleteCancel}
-          onSubmit={handleDeleteConfirm}
-        />
-      )}
     </div>
+
+    {/* Delete Confirmation Alert - Outside draggable area */}
+    {showDeleteAlert && (
+      <Alert
+        isOpen={showDeleteAlert}
+        title="Hapus Tugas"
+        message={`Apakah Anda yakin ingin menghapus tugas "${task?.title}"? Perubahan ini bersifat permanen.`}
+        cancelText="Batal"
+        submitLabel="Hapus"
+        onCancel={handleDeleteCancel}
+        onSubmit={handleDeleteConfirm}
+      />
+    )}
+    </>
   );
 }
 

@@ -44,16 +44,28 @@ function Alert({
 
   // Handle backdrop click
   const handleBackdropClick = (e) => {
+    e.stopPropagation(); // Prevent event propagation
     if (e.target === e.currentTarget) {
       onCancel?.();
     }
+  };
+
+  // Handle alert container click to prevent propagation
+  const handleContainerClick = (e) => {
+    e.stopPropagation(); // Prevent event propagation
   };
 
   if (!isOpen) return null;
 
   return createPortal(
     <div className={styles.backdrop} onClick={handleBackdropClick}>
-      <div className={styles.alertContainer}>
+      <div 
+        className={styles.alertContainer}
+        onClick={handleContainerClick}
+        onPointerDown={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+      >
         {/* Red accent bar */}
         <div className={styles.redAccent}></div>
         

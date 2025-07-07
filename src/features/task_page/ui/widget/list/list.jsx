@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './list.module.css';
 import SubList from '../sublist/sublist.jsx';
+import DroppableArea from '../droppable_area/droppable_area.jsx';
 import noDataIcon from '../../../../../assets/home/nodata.svg';
 
 function List({ 
@@ -12,8 +13,7 @@ function List({
   currentCategory = "",
   onEditTask,
   onDeleteTask,
-  onDeleteSuccess,
-  onDropTask
+  onDeleteSuccess
 }) {
   const [filteredTasks, setFilteredTasks] = useState([]);
 
@@ -58,11 +58,11 @@ function List({
     setFilteredTasks(convertedTasks);
   }, [tasks, searchQuery, currentStatus, currentCategory]);
 
-  // Get unique statuses to display
+  // Get unique statuses to display - always show all statuses for drop areas
   const getStatusesToDisplay = () => {
     if (currentStatus && currentStatus !== '') {
-      // Show only the selected status
-      return [currentStatus];
+      // Even when filtering, show all statuses as drop areas
+      return ['terlambat', 'belum_selesai', 'selesai'];
     } else {
       // Show all statuses when "Semua status" is selected
       return ['terlambat', 'belum_selesai', 'selesai'];
@@ -119,16 +119,22 @@ function List({
         const tasksForStatus = getTasksForStatus(status);
         
         return (
-          <SubList
+          <DroppableArea 
             key={status}
-            task_status={status}
-            tasks={tasksForStatus}
-            currentCategory={currentCategory}
-            onEditTask={onEditTask}
-            onDeleteTask={onDeleteTask}
-            onDeleteSuccess={onDeleteSuccess}
-            onDropTask={onDropTask}
-          />
+            id={`droppable-${status}`}
+            status={status}
+            className={styles.droppableSection}
+          >
+            {/* Always show SubList - it has its own empty state handling */}
+            <SubList
+              task_status={status}
+              tasks={tasksForStatus}
+              currentCategory={currentCategory}
+              onEditTask={onEditTask}
+              onDeleteTask={onDeleteTask}
+              onDeleteSuccess={onDeleteSuccess}
+            />
+          </DroppableArea>
         );
       })}
     </div>
