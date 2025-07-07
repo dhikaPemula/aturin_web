@@ -1,12 +1,17 @@
 @import "tailwindcss";
 
 .taskCard {
-  @apply bg-white border border-gray-200 rounded-lg p-4 m-2 shadow-sm hover:shadow-md transition-all duration-200 mb-4 cursor-pointer;
+  @apply bg-white border border-gray-200 rounded-lg p-4 m-2 shadow-sm hover:shadow-md transition-all duration-200 mb-4 cursor-grab;
   transform: scale(1);
 }
 
 .taskCard:hover {
-  transform: scale(1.02);
+  transform: scale(1.01);
+}
+
+.taskCard:active {
+  @apply cursor-grabbing shadow-lg;
+  transform: scale(0.99);
 }
 
 .taskHeader {

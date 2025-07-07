@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+.quoteContainer {
+  @apply w-full min-h-[200px] rounded-xl overflow-hidden my-6 flex;
+  background-image: url('../../../../../assets/home/bg-quote.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.contentWrapper {
+  @apply flex-1 flex items-center justify-center p-8;
+}
+
+.quoteContent {
+  @apply text-center relative z-10 p-6;
+}
+
+.quoteText {
+  @apply text-3xl font-medium text-white mb-3 leading-relaxed italic;
+}
+
+.quoteAuthor {
+  @apply text-2xl text-white font-medium;
+}
+
+.panaIcon {
+  @apply w-86 h-86 -mt-14;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .quoteContainer {
+    @apply min-h-[150px] flex-col;
+  }
+  
+  .contentWrapper {
+    @apply p-4;
+  }
+  
+  .quoteContent {
+    @apply p-4 max-w-full;
+  }
+  
+  .quoteText {
+    @apply text-base mb-2;
+  }
+  
+  .quoteAuthor {
+    @apply text-xs;
+  }
+  
+  .panaIcon {
+    @apply w-32 h-32 mt-2;
+  }
+}
+
+@media (max-width: 480px) {
+  .quoteContainer {
+    @apply min-h-[120px] flex-col;
+  }
+  
+  .contentWrapper {
+    @apply p-2;
+  }
+  
+  .quoteContent {
+    @apply p-3 max-w-full;
+  }
+  
+  .quoteText {
+    @apply text-sm mb-1;
+  }
+  
+  .quoteAuthor {
+    @apply text-xs;
+  }
+  
+  .panaIcon {
+    @apply w-24 h-24 mt-1;
+  }
+}

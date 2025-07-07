@@ -1,35 +1,40 @@
 import styles from './taskcount.module.css';
 import { useState, useEffect, useMemo } from 'react';
 import { getAllTasks } from '../../../../../core/services/api/task_api_service';
+import { useTaskAutoRefresh } from '../../../../../core/hooks/useGlobalTaskRefresh';
 // Import SVG as image path
 import countIcon from '../../../../../assets/home/count.svg';
 import checkCircleIcon from '../../../../../assets/home/check-circle.svg';
 import clockIcon from '../../../../../assets/home/clock.svg';
 import warningCircleIcon from '../../../../../assets/home/warning-circle.svg';
 
-function TaskCount({ selectedDate }) {
+function TaskCount({ selectedDate, refreshTrigger }) {
 	const [allTasks, setAllTasks] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
-	// Fetch all tasks
-	useEffect(() => {
-		const fetchAllTasks = async () => {
-			try {
-				setLoading(true);
-				setError(null);
-				const tasks = await getAllTasks();
-				setAllTasks(tasks);
-			} catch (error) {
-				setError('Gagal mengambil data tugas');
-				console.error('Error fetching tasks for TaskCount:', error);
-			} finally {
-				setLoading(false);
-			}
-		};
+	// Function untuk fetch tasks
+	const fetchAllTasks = async () => {
+		try {
+			setLoading(true);
+			setError(null);
+			const tasks = await getAllTasks();
+			setAllTasks(tasks);
+		} catch (error) {
+			setError('Gagal mengambil data tugas');
+			console.error('Error fetching tasks for TaskCount:', error);
+		} finally {
+			setLoading(false);
+		}
+	};
 
+	// Auto-refresh menggunakan global trigger
+	useTaskAutoRefresh(fetchAllTasks);
+
+	// Fetch all tasks when component mounts or refreshTrigger changes (backward compatibility)
+	useEffect(() => {
 		fetchAllTasks();
-	}, []);
+	}, [refreshTrigger]); // Tambahkan refreshTrigger sebagai dependency
 
 	// Utility function to check if two dates are the same day
 	const isSameDate = (date1, date2) => {

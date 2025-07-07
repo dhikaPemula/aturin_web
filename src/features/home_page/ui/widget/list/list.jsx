@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import styles from "./list.module.css";
 import useTaskDashboard from "../../../../../core/hooks/useTaskDashboard";
 import { getAllTasks } from "../../../../../core/services/api/task_api_service";
+import { useTaskAutoRefresh } from "../../../../../core/hooks/useGlobalTaskRefresh";
 import TaskCard from "../taskcard/taskcard.jsx";
 import noDataIcon from "../../../../../assets/home/nodata.svg";
 import jadwalIcon from "../../../../../assets/home/list/jadwal.svg";
 import taskIcon from "../../../../../assets/home/list/task.svg";
 import activityIcon from "../../../../../assets/home/list/activity.svg";
 
-function List({ currentIndex, searchQuery = "", selectedDate }) {
+function List({ currentIndex, searchQuery = "", selectedDate, refreshTrigger }) {
   const {
     dashboardData,
     loading: dashboardLoading,
@@ -18,33 +19,37 @@ function List({ currentIndex, searchQuery = "", selectedDate }) {
   const [tasksLoading, setTasksLoading] = useState(false);
   const [tasksError, setTasksError] = useState(null);
 
-  // Fetch all tasks when component mounts
-  useEffect(() => {
-    const fetchAllTasks = async () => {
-      try {
-        setTasksLoading(true);
-        setTasksError(null);
-        const tasks = await getAllTasks();
-        console.log("Raw tasks from API:", tasks);
-        console.log(
-          "Sample task deadlines:",
-          tasks.slice(0, 5).map((task) => ({
-            title: task.task_title,
-            deadline: task.task_deadline,
-            type: typeof task.task_deadline,
-          }))
-        );
-        setAllTasks(tasks);
-      } catch (error) {
-        setTasksError("Gagal mengambil data tugas");
-        console.error("Error fetching all tasks:", error);
-      } finally {
-        setTasksLoading(false);
-      }
-    };
+  // Function untuk fetch tasks
+  const fetchAllTasks = async () => {
+    try {
+      setTasksLoading(true);
+      setTasksError(null);
+      const tasks = await getAllTasks();
+      console.log("Raw tasks from API:", tasks);
+      console.log(
+        "Sample task deadlines:",
+        tasks.slice(0, 5).map((task) => ({
+          title: task.task_title,
+          deadline: task.task_deadline,
+          type: typeof task.task_deadline,
+        }))
+      );
+      setAllTasks(tasks);
+    } catch (error) {
+      setTasksError("Gagal mengambil data tugas");
+      console.error("Error fetching tasks:", error);
+    } finally {
+      setTasksLoading(false);
+    }
+  };
 
+  // Auto-refresh menggunakan global trigger
+  useTaskAutoRefresh(fetchAllTasks);
+
+  // Fetch all tasks when component mounts or when refreshTrigger changes (backward compatibility)
+  useEffect(() => {
     fetchAllTasks();
-  }, []);
+  }, [refreshTrigger]); // Tambahkan refreshTrigger sebagai dependency
 
   // Fungsi untuk mengkonversi data API ke format yang diharapkan komponen
   const convertApiDataToListFormat = (apiData) => {

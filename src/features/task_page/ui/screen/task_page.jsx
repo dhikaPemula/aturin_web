@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./task_page.module.css";
 import useTaskList from "../../../../core/hooks/useTaskList.js";
 import useProfile from "../../../../core/hooks/useProfile.js";
+import { useTaskAutoRefresh } from "../../../../core/hooks/useGlobalTaskRefresh";
 import Badge from "../../../../core/widgets/badge/buildbadge/badge.jsx";
 import StatusBadge from "../../../../core/widgets/status/statusbadge.jsx";
 import UpperSection from "../widget/uppersection/uppersection.jsx";
@@ -42,8 +43,12 @@ function TaskPage() {
     createTask,
     updateTask,
     deleteTask,
-    clearError
+    clearError,
+    refreshTasks
   } = useTaskList();
+
+  // Auto-refresh tasks menggunakan global trigger
+  useTaskAutoRefresh(refreshTasks);
 
   // Toast notification functions
   const displayToast = (config) => {

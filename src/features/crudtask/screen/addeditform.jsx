@@ -4,6 +4,7 @@ import styles from './addeditform.module.css';
 import DatePickerPopup from '../../../core/widgets/datepicker/datepicker_popup.jsx';
 import TimePickerPopup from '../../../core/widgets/timepicker/timepicker_popup.jsx';
 import DurationPickerPopup from '../../../core/widgets/durationpicker/durationpicker_popup.jsx';
+import { useGlobalTaskRefresh } from '../../../core/hooks/useGlobalTaskRefresh';
 
 // Import category icons
 import akademikIcon from '../../../assets/home/categories/akademik.svg';
@@ -17,14 +18,49 @@ import istirahatIcon from '../../../assets/home/categories/istirahat.svg';
 import jadwalIcon from '../../../assets/home/jadwal-black.svg';
 import clockIcon from '../../../assets/home/clock.svg';
 
+// Utility functions for timezone handling
+const formatLocalDateTime = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
+const parseDeadlineString = (deadlineString) => {
+  if (!deadlineString) return null;
+  
+  // If it's already a date object
+  if (deadlineString instanceof Date) {
+    return deadlineString;
+  }
+  
+  // Parse string - handle different formats
+  if (deadlineString.includes('T')) {
+    // ISO format with T separator
+    return new Date(deadlineString);
+  } else if (deadlineString.includes(' ')) {
+    // Local format with space separator (YYYY-MM-DD HH:MM:SS)
+    return new Date(deadlineString.replace(' ', 'T'));
+  } else {
+    return new Date(deadlineString);
+  }
+};
+
 function AddEditForm({ 
   isOpen, 
   onClose, 
   task = null, 
   onSave,
   onSuccess,
-  onError
+  onError,
+  onDataChanged // Callback untuk refresh data real-time (deprecated - akan diganti dengan global refresh)
 }) {
+  // Global task refresh hook
+  const { triggerTaskRefresh } = useGlobalTaskRefresh();
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -115,13 +151,20 @@ function AddEditForm({
       let deadlineTime = '';
       
       if (task.task_deadline || task.deadline) {
-        const deadline = new Date(task.task_deadline || task.deadline);
-        // Use local date methods to avoid timezone issues
-        const year = deadline.getFullYear();
-        const month = String(deadline.getMonth() + 1).padStart(2, '0');
-        const day = String(deadline.getDate()).padStart(2, '0');
-        deadlineDate = `${year}-${month}-${day}`;
-        deadlineTime = deadline.toTimeString().slice(0, 5); // HH:MM
+        // Parse deadline string using utility function
+        const deadline = parseDeadlineString(task.task_deadline || task.deadline);
+        
+        if (deadline && !isNaN(deadline.getTime())) {
+          // Extract date and time components in local timezone
+          const year = deadline.getFullYear();
+          const month = String(deadline.getMonth() + 1).padStart(2, '0');
+          const day = String(deadline.getDate()).padStart(2, '0');
+          const hours = String(deadline.getHours()).padStart(2, '0');
+          const minutes = String(deadline.getMinutes()).padStart(2, '0');
+          
+          deadlineDate = `${year}-${month}-${day}`;
+          deadlineTime = `${hours}:${minutes}`;
+        }
       }
 
       setFormData({
@@ -236,29 +279,48 @@ function AddEditForm({
       newErrors.title = 'Judul tugas maksimal 20 karakter';
     }
     
-    if (formData.description && formData.description.length > 50) {
+    if (!formData.description.trim()) {
+      newErrors.description = 'Deskripsi wajib diisi';
+    } else if (formData.description.length > 50) {
       newErrors.description = 'Deskripsi maksimal 50 karakter';
     }
     
     if (!formData.deadline_date) {
-      newErrors.deadline_date = 'Tanggal deadline wajib diisi';
+      newErrors.deadline_date = 'Tanggal batas wajib diisi';
     }
     
     if (!formData.deadline_time) {
-      newErrors.deadline_time = 'Waktu deadline wajib diisi';
+      newErrors.deadline_time = 'Waktu batas wajib diisi';
     }
 
-    if (!formData.category) {
-      newErrors.category = 'Kategori wajib dipilih';
+    // Validate deadline is not in the past
+    if (formData.deadline_date && formData.deadline_time) {
+      // Create deadline datetime in local timezone
+      const deadlineDateTime = new Date(`${formData.deadline_date}T${formData.deadline_time}`);
+      const currentDateTime = new Date();
+      
+      // Add a small buffer (1 minute) to account for processing time
+      const minimumDateTime = new Date(currentDateTime.getTime() + 60000); // Add 1 minute
+      
+      if (deadlineDateTime <= minimumDateTime) {
+        newErrors.deadline_date = 'Batas waktu harus minimal 1 menit dari waktu saat ini';
+      }
     }
 
-    // Validate estimated_duration format if provided
-    if (formData.estimated_duration && formData.estimated_duration.trim()) {
+    // Make estimated_duration required
+    if (!formData.estimated_duration || !formData.estimated_duration.trim()) {
+      newErrors.estimated_duration = 'Estimasi durasi wajib diisi';
+    } else {
+      // Validate estimated_duration format if provided
       // Accept both H:i and HH:MM formats (e.g., "5:30" or "05:30")
       const timePattern = /^([0-9]|[01][0-9]|2[0-3]):[0-5][0-9]$/;
       if (!timePattern.test(formData.estimated_duration)) {
         newErrors.estimated_duration = 'Format durasi harus HH:MM (contoh: 02:30)';
       }
+    }
+
+    if (!formData.category) {
+      newErrors.category = 'Kategori wajib dipilih';
     }
 
     setErrors(newErrors);
@@ -276,9 +338,19 @@ function AddEditForm({
     setIsSubmitting(true);
     
     try {
-      // Combine date and time for deadline - use ISO format
-      const deadlineDate = new Date(`${formData.deadline_date}T${formData.deadline_time}`);
-      const deadline = deadlineDate.toISOString().slice(0, 19); // Remove milliseconds and Z
+      // Combine date and time for deadline - keep in local timezone
+      const deadlineDateTime = new Date(`${formData.deadline_date}T${formData.deadline_time}`);
+      
+      // Format deadline for backend using utility function
+      const deadline = formatLocalDateTime(deadlineDateTime);
+      
+      console.log('Deadline processing:', {
+        original_date: formData.deadline_date,
+        original_time: formData.deadline_time,
+        combined_datetime: deadlineDateTime.toString(),
+        formatted_for_backend: deadline,
+        timezone_offset: deadlineDateTime.getTimezoneOffset()
+      });
       
       const taskData = {
         task_title: formData.title,
@@ -288,13 +360,10 @@ function AddEditForm({
         task_status: task ? task.task_status : 'belum_selesai'
       };
 
-      // Only include estimated_task_duration if it's provided and valid
-      if (formData.estimated_duration && formData.estimated_duration.trim()) {
-        // Keep original format (no conversion needed)
-        const convertedDuration = convertToBackendTimeFormat(formData.estimated_duration);
-        console.log('Duration - Original:', formData.estimated_duration, 'Sent to backend:', convertedDuration);
-        taskData.estimated_task_duration = convertedDuration;
-      }
+      // Include estimated_task_duration since it's now required
+      const convertedDuration = convertToBackendTimeFormat(formData.estimated_duration);
+      console.log('Duration - Original:', formData.estimated_duration, 'Sent to backend:', convertedDuration);
+      taskData.estimated_task_duration = convertedDuration;
 
       if (task) {
         taskData.id = task.id;
@@ -302,6 +371,14 @@ function AddEditForm({
 
       console.log('Form submitting task data:', taskData);
       await onSave(taskData);
+      
+      // Trigger global task refresh untuk real-time update di semua halaman
+      triggerTaskRefresh();
+      
+      // Call deprecated data changed callback untuk backward compatibility
+      if (onDataChanged) {
+        onDataChanged();
+      }
       
       // Call success callback
       if (onSuccess) {
@@ -360,7 +437,9 @@ function AddEditForm({
         <form onSubmit={handleSubmit} className={styles.form}>
           {/* Judul */}
           <div className={styles.fieldGroup}>
-            <label className={styles.label}>Judul</label>
+            <label className={styles.label}>
+              Judul <span className={styles.required}>*</span>
+            </label>
             <input
               type="text"
               name="title"
@@ -379,7 +458,9 @@ function AddEditForm({
 
           {/* Deskripsi */}
           <div className={styles.fieldGroup}>
-            <label className={styles.label}>Deskripsi</label>
+            <label className={styles.label}>
+              Deskripsi <span className={styles.required}>*</span>
+            </label>
             <textarea
               name="description"
               value={formData.description}
@@ -398,7 +479,9 @@ function AddEditForm({
 
           {/* Batas waktu */}
           <div className={styles.fieldGroup}>
-            <label className={styles.label}>Batas waktu</label>
+            <label className={styles.label}>
+              Batas waktu <span className={styles.required}>*</span>
+            </label>
             <div className={styles.dateTimeGroup}>
               <div className={styles.dateInputContainer}>
                 <div className={styles.dateInputWrapper}>
@@ -440,6 +523,29 @@ function AddEditForm({
                       if (errors.deadline_date) {
                         setErrors(prev => ({ ...prev, deadline_date: '' }));
                       }
+                      
+                      // Real-time validation for datetime
+                      if (date && formData.deadline_time) {
+                        const deadlineDateTime = new Date(`${date}T${formData.deadline_time}`);
+                        const currentDateTime = new Date();
+                        const minimumDateTime = new Date(currentDateTime.getTime() + 60000); // Add 1 minute
+                        
+                        if (deadlineDateTime <= minimumDateTime) {
+                          setErrors(prev => ({ 
+                            ...prev, 
+                            deadline_date: 'Batas waktu harus minimal 1 menit dari waktu saat ini' 
+                          }));
+                        } else {
+                          // Clear error if datetime is valid
+                          setErrors(prev => {
+                            const newErrors = { ...prev };
+                            if (newErrors.deadline_date === 'Batas waktu harus minimal 1 menit dari waktu saat ini') {
+                              delete newErrors.deadline_date;
+                            }
+                            return newErrors;
+                          });
+                        }
+                      }
                     }}
                     onClose={() => setShowDatePicker(false)}
                     targetElement={dateInputRef.current}
@@ -472,7 +578,7 @@ function AddEditForm({
                     placeholder="HH:MM"
                     onFocus={() => setShowTimePicker(true)}
                     onClick={() => setShowTimePicker(true)}
-                    className={`${styles.input} ${styles.timeInput} ${errors.deadline_time ? styles.inputError : ''}`}
+                    className={`${styles.input} ${styles.timeInput} ${(errors.deadline_time || (errors.deadline_date === 'Batas waktu harus minimal 1 menit dari waktu saat ini')) ? styles.inputError : ''}`}
                     disabled={isSubmitting}
                   />
                 </div>
@@ -484,11 +590,34 @@ function AddEditForm({
                       if (errors.deadline_time) {
                         setErrors(prev => ({ ...prev, deadline_time: '' }));
                       }
+                      
+                      // Real-time validation for datetime
+                      if (formData.deadline_date && time) {
+                        const deadlineDateTime = new Date(`${formData.deadline_date}T${time}`);
+                        const currentDateTime = new Date();
+                        const minimumDateTime = new Date(currentDateTime.getTime() + 60000); // Add 1 minute
+                        
+                        if (deadlineDateTime <= minimumDateTime) {
+                          setErrors(prev => ({ 
+                            ...prev, 
+                            deadline_date: 'Batas waktu harus minimal 1 menit dari waktu saat ini' 
+                          }));
+                        } else {
+                          // Clear error if datetime is valid
+                          setErrors(prev => {
+                            const newErrors = { ...prev };
+                            if (newErrors.deadline_date === 'Batas waktu harus minimal 1 menit dari waktu saat ini') {
+                              delete newErrors.deadline_date;
+                            }
+                            return newErrors;
+                          });
+                        }
+                      }
                     }}
                     onClose={() => setShowTimePicker(false)}
                     targetElement={timeInputRef.current}
                     disabled={isSubmitting}
-                    error={!!errors.deadline_time}
+                    error={!!(errors.deadline_time || (errors.deadline_date === 'Batas waktu harus minimal 1 menit dari waktu saat ini'))}
                   />
                 )}
               </div>
@@ -502,7 +631,9 @@ function AddEditForm({
 
           {/* Estimasi Durasi */}
           <div className={styles.fieldGroup}>
-            <label className={styles.label}>Estimasi Durasi</label>
+            <label className={styles.label}>
+              Estimasi Durasi Pengerjaan<span className={styles.required}>*</span>
+            </label>
             <div className={styles.timeInputContainer}>
               <div className={styles.timeInputWrapper}>
                 <img 
@@ -552,7 +683,9 @@ function AddEditForm({
 
           {/* Kategori */}
           <div className={styles.fieldGroup}>
-            <label className={styles.label}>Kategori</label>
+            <label className={styles.label}>
+              Kategori <span className={styles.required}>*</span>
+            </label>
             <div className={styles.customSelectContainer}>
               <button
                 type="button"

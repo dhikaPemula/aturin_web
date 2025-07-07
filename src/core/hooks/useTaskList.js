@@ -117,6 +117,7 @@ export default function useTaskList() {
     // Actions
     clearError,
     fetchTasks,
+    refreshTasks: fetchTasks, // Alias untuk global refresh
     createTask: handleCreateTask,
     updateTask: handleUpdateTask,
     deleteTask: handleDeleteTask,

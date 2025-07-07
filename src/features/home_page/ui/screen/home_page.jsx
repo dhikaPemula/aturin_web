@@ -6,6 +6,7 @@ import Filter from "../widget/filter/filter.jsx";
 import Calendar from "../widget/calendar/calendar.jsx";
 import TaskCount from "../widget/taskcount/taskcount.jsx";
 import List from "../widget/list/list.jsx";
+import Quote from "../widget/quote/quote.jsx";
 import React from "react";
 
 function HomePage() {
@@ -13,6 +14,7 @@ function HomePage() {
   const [calendarDate, setCalendarDate] = React.useState(new Date());
   const [searchQuery, setSearchQuery] = React.useState('');
   const [currentTime, setCurrentTime] = React.useState(new Date());
+  const [refreshTrigger, setRefreshTrigger] = React.useState(0); // Trigger untuk refresh data
   const today = React.useMemo(() => new Date(), []);
 
   // Update waktu setiap detik
@@ -35,6 +37,12 @@ function HomePage() {
     console.log('Search query changed:', query);
   };
 
+  // Handler untuk refresh data real-time
+  const handleDataRefresh = () => {
+    setRefreshTrigger(prev => prev + 1);
+    console.log('Data refresh triggered');
+  };
+
   return (
     <>
       <div className={styles.container}>
@@ -43,7 +51,7 @@ function HomePage() {
             <Greeting />
           </div>
           <div className={styles.addSection}>
-            <AddSection />
+            <AddSection onTaskAdded={handleDataRefresh} />
           </div>
         </div>
         <Search 
@@ -52,7 +60,7 @@ function HomePage() {
           placeholder="Cari tugas, jadwal, atau aktivitas..."
         />
         <Filter currentIndex={filterIndex} setCurrentIndex={setFilterIndex} />
-        {(filterIndex === 0 || filterIndex === 1) && <div className={styles.taskCountContainer}><TaskCount selectedDate={calendarDate} /></div>}
+        {(filterIndex === 0 || filterIndex === 1) && <div className={styles.taskCountContainer}><TaskCount selectedDate={calendarDate} refreshTrigger={refreshTrigger} /></div>}
         <div className={styles.calendarMobile}>
           <Calendar
             today={today}
@@ -65,6 +73,7 @@ function HomePage() {
               currentIndex={filterIndex} 
               selectedDate={calendarDate}
               searchQuery={searchQuery}
+              refreshTrigger={refreshTrigger}
             />
             <div className={styles.calendarDesktop}>
               <Calendar
@@ -74,6 +83,7 @@ function HomePage() {
               />
             </div>
         </div>
+        <Quote />
         {/* <p>Token: {localStorage.getItem('token')}</p>
         <p>Tanggal kalender: {calendarDate.toLocaleDateString('id-ID')}</p>
         <p>Filter index: {filterIndex}</p>
