@@ -1,13 +1,15 @@
 @import "tailwindcss";
 
 .button {
-  @apply min-w-[200px] h-14 px-6 py-3 bg-[#5263F3] rounded-xl 
+  @apply min-w-[200px] h-14 px-6 py-2.5 bg-[#5263F3] rounded-xl 
     inline-flex justify-center items-center gap-2
-    text-white text-base font-medium
+    text-white text-xl font-medium leading-loose
     transition-all duration-200 ease-in-out
     shadow-[4px_4px_0px_#3537CD] hover:shadow-none hover:translate-x-1 hover:translate-y-1
     whitespace-nowrap;
   font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  border: 1.5px solid #3537CD;
+  cursor: pointer;
 }
 
 .disabled {
@@ -15,7 +17,7 @@
 }
 
 .icon {
-  @apply w-5 h-5 flex-shrink-0;
+  @apply w-6 h-6 flex-shrink-0;
 }
 
 .text {

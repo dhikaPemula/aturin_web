@@ -16,54 +16,47 @@ const LabelKategori = ({ kategori }) => {
   const categoryConfig = {
     akademik: {
       icon: akademikIcon,
-      textColor: "#3B82F6", // blue-500
+      textColor: "#3498DB", 
       displayName: "Akademik",
     },
     hiburan: {
       icon: hiburanIcon,
-      textColor: "#A855F7", // purple-500
+      textColor: "#9B59B6", 
       displayName: "Hiburan",
     },
     pekerjaan: {
       icon: pekerjaanIcon,
-      textColor: "#F59E0B", // amber-500
+      textColor: "#F59E0B", 
       displayName: "Pekerjaan",
     },
     olahraga: {
       icon: olahragaIcon,
-      textColor: "#EF4444", // red-500
+      textColor: "#E74C3C", 
       displayName: "Olahraga",
     },
     sosial: {
       icon: sosialIcon,
-      textColor: "#F97316", // orange-500
+      textColor: "#E67E22", 
       displayName: "Sosial",
     },
     spiritual: {
       icon: spiritualIcon,
-      textColor: "#10B981", // emerald-500
+      textColor: "#27AE60", 
       displayName: "Spiritual",
     },
     pribadi: {
       icon: pribadiIcon,
-      textColor: "#EAB308", // yellow-500
+      textColor: "#F1C40F", 
       displayName: "Pribadi",
     },
     istirahat: {
       icon: istirahatIcon,
-      textColor: "#6366F1", // indigo-500
+      textColor: "#283593", 
       displayName: "Istirahat",
     },
   }
 
   const config = categoryConfig[normalizedKategori] || categoryConfig.pribadi
-
-  console.log("🏷️ Label Kategori Debug:", {
-    originalKategori: kategori,
-    normalizedKategori,
-    config: config.displayName,
-    textColor: config.textColor,
-  })
 
   return (
     <div className={styles.labelContainer} data-category={normalizedKategori}>

@@ -6,8 +6,7 @@
   gap: 6px;
   padding: 4px 8px;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  background-color: #f9fafb;
+  background-color: transparent;
   font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -30,43 +29,35 @@
   white-space: nowrap;
 }
 
-/* Specific category styles */
+/* Background colors untuk setiap kategori tanpa border */
 .labelContainer[data-category="akademik"] {
-  background-color: #dbeafe;
-  border-color: #3b82f6;
+  background-color: #ccebff;
 }
 
 .labelContainer[data-category="hiburan"] {
-  background-color: #f3e8ff;
-  border-color: #a855f7;
+  background-color: #f0dbff;
 }
 
 .labelContainer[data-category="pekerjaan"] {
-  background-color: #fef3c7;
-  border-color: #f59e0b;
+  background-color: #ffe2d3;
 }
 
 .labelContainer[data-category="olahraga"] {
-  background-color: #fee2e2;
-  border-color: #ef4444;
+  background-color: #ffd8d8;
 }
 
 .labelContainer[data-category="sosial"] {
-  background-color: #ffedd5;
-  border-color: #f97316;
+  background-color: #ffe3ca;
 }
 
 .labelContainer[data-category="spiritual"] {
-  background-color: #d1fae5;
-  border-color: #10b981;
+  background-color: #d3ffe5;
 }
 
 .labelContainer[data-category="pribadi"] {
-  background-color: #fef3c7;
-  border-color: #eab308;
+  background-color: #fff3c2;
 }
 
 .labelContainer[data-category="istirahat"] {
-  background-color: #e0e7ff;
-  border-color: #6366f1;
+  background-color: #d2d8ff;
 }

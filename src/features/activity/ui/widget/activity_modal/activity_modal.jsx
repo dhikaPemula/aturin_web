@@ -14,7 +14,30 @@ import spiritualIcon from "../../../../../assets/icons/spiritual.svg"
 import pribadiIcon from "../../../../../assets/icons/pribadi.svg"
 import istirahatIcon from "../../../../../assets/icons/istirahat.svg"
 
+// Helper functions untuk validasi tanggal dan waktu
+const getTodayDate = () => {
+  return new Date().toISOString().split("T")[0]
+}
+
+const getCurrentTime = () => {
+  const now = new Date()
+  const hours = String(now.getHours()).padStart(2, "0")
+  const minutes = String(now.getMinutes()).padStart(2, "0")
+  return `${hours}:${minutes}`
+}
+
+const isToday = (dateString) => {
+  return dateString === getTodayDate()
+}
+
+const isPastTime = (timeString) => {
+  if (!timeString) return false
+  const currentTime = getCurrentTime()
+  return timeString < currentTime
+}
+
 const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
+  // State untuk form data
   const [formData, setFormData] = useState({
     judul: "",
     tanggal: defaultDate || new Date().toISOString().split("T")[0],
@@ -22,12 +45,19 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
     waktuSelesai: "",
     kategori: "",
   })
+
+  // State untuk dropdown kategori
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
+
+  // State untuk error validation
   const [errors, setErrors] = useState({})
+
+  // State untuk field yang sedang fokus
   const [focusedField, setFocusedField] = useState("")
 
+  // Daftar kategori dengan ikon dan warna
   const categories = [
-    { name: "Akademik", icon: akademikIcon, color: "text-blue-500" },
+    { name: "Akademik", icon: akademikIcon, color: "text-white" },
     { name: "Hiburan", icon: hiburanIcon, color: "text-fuchsia-700" },
     { name: "Pekerjaan", icon: pekerjaanIcon, color: "text-stone-500" },
     { name: "Olahraga", icon: olahragaIcon, color: "text-red-500" },
@@ -37,94 +67,57 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
     { name: "Istirahat", icon: istirahatIcon, color: "text-blue-900" },
   ]
 
-  // 🔧 PERBAIKAN: Fungsi normalisasi tanggal yang konsisten dengan parent
+  // Fungsi untuk normalisasi tanggal
   const normalizeDate = (dateString) => {
     if (!dateString) return defaultDate || new Date().toISOString().split("T")[0]
 
-    console.log("🔍 Modal normalizing date:", dateString)
-
-    // Jika sudah format YYYY-MM-DD, gunakan langsung
+    // format YYYY-MM-DD
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-      console.log("✅ Modal: Already in YYYY-MM-DD format:", dateString)
       return dateString
     }
 
-    // 🔧 PERBAIKAN: Handle ISO timestamp dengan timezone yang sama seperti parent
+    // Handle ISO timestamp
     if (dateString.includes("T")) {
       try {
-        // Parse sebagai Date object untuk menangani timezone dengan benar
         const date = new Date(dateString)
-
-        // 🔧 PENTING: Gunakan local date, bukan UTC (sama seperti parent)
         const year = date.getFullYear()
         const month = String(date.getMonth() + 1).padStart(2, "0")
         const day = String(date.getDate()).padStart(2, "0")
-
-        const localDate = `${year}-${month}-${day}`
-        console.log("✅ Modal: Extracted local date from ISO:", localDate)
-        return localDate
+        return `${year}-${month}-${day}`
       } catch (error) {
-        console.error("❌ Modal: Error parsing ISO timestamp:", error)
-        // Fallback ke split T
-        const extracted = dateString.split("T")[0]
-        console.log("⚠️ Modal: Fallback extracted:", extracted)
-        return extracted
+        return dateString.split("T")[0]
       }
     }
 
-    // Jika ada spasi (format datetime)
+    // Handle datetime format
     if (dateString.includes(" ")) {
-      const extracted = dateString.split(" ")[0]
-      console.log("✅ Modal: Extracted from datetime:", extracted)
-      return extracted
+      return dateString.split(" ")[0]
     }
 
-    // Coba parse sebagai Date object
-    try {
-      const date = new Date(dateString)
-      if (!isNaN(date.getTime())) {
-        // 🔧 PERBAIKAN: Gunakan local date
-        const year = date.getFullYear()
-        const month = String(date.getMonth() + 1).padStart(2, "0")
-        const day = String(date.getDate()).padStart(2, "0")
-
-        const localDate = `${year}-${month}-${day}`
-        console.log("✅ Modal: Parsed as local Date object:", localDate)
-        return localDate
-      }
-    } catch (error) {
-      console.error("❌ Modal: Error parsing as Date:", error)
-    }
-
-    console.log("⚠️ Modal: Could not normalize date, using default:", defaultDate)
     return defaultDate || new Date().toISOString().split("T")[0]
   }
 
+  // Fungsi untuk normalisasi kategori
   const normalizeCategory = (category) => {
     if (!category) return ""
-
     const normalized = category.toLowerCase()
     return normalized.charAt(0).toUpperCase() + normalized.slice(1)
   }
 
+  // Setup form data saat modal dibuka
   useEffect(() => {
     if (activity && isOpen) {
-      console.log("🔍 Modal: Setting up edit mode with activity:", activity)
-
+      // Mode edit - isi form dengan data aktivitas
       const normalizedData = {
         judul: activity.judul || "",
-        tanggal: normalizeDate(activity.tanggal), // 🔧 Menggunakan fungsi yang sudah diperbaiki
+        tanggal: normalizeDate(activity.tanggal),
         waktuMulai: activity.waktuMulai || "",
         waktuSelesai: activity.waktuSelesai || "",
         kategori: normalizeCategory(activity.kategori),
       }
-
-      console.log("🔍 Modal: Normalized data for edit:", normalizedData)
       setFormData(normalizedData)
     } else if (isOpen) {
-      // 🔧 PERBAIKAN: Gunakan defaultDate untuk aktivitas baru
-      console.log("🔍 Modal: Setting up create mode with defaultDate:", defaultDate)
-
+      // Mode tambah - reset form
       setFormData({
         judul: "",
         tanggal: defaultDate || new Date().toISOString().split("T")[0],
@@ -134,37 +127,35 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
       })
     }
 
+    // Reset state lainnya
     setErrors({})
     setFocusedField("")
     setShowCategoryDropdown(false)
   }, [activity, isOpen, defaultDate])
 
+  // Validasi form
   const validateForm = () => {
     const newErrors = {}
 
-    // Validasi judul
     if (!formData.judul.trim()) {
       newErrors.judul = "Judul aktivitas harus diisi"
     } else if (formData.judul.length > 20) {
       newErrors.judul = "Judul tidak boleh lebih dari 20 karakter"
     }
 
-    // Validasi tanggal
     if (!formData.tanggal) {
       newErrors.tanggal = "Tanggal aktivitas harus diisi"
     }
 
-    // Validasi waktu mulai
     if (!formData.waktuMulai) {
       newErrors.waktuMulai = "Waktu mulai harus diisi"
     }
 
-    // Validasi waktu selesai
     if (!formData.waktuSelesai) {
       newErrors.waktuSelesai = "Waktu selesai harus diisi"
     }
 
-    // Validasi waktu - hanya cek waktu selesai > waktu mulai
+    // Validasi waktu selesai > waktu mulai
     if (formData.waktuMulai && formData.waktuSelesai) {
       const startTime = new Date(`2000-01-01 ${formData.waktuMulai}`)
       const endTime = new Date(`2000-01-01 ${formData.waktuSelesai}`)
@@ -174,7 +165,24 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
       }
     }
 
-    // Validasi kategori
+    // Validasi tidak boleh membuat aktivitas di masa lampau (hanya untuk mode tambah)
+    if (!activity) {
+      // Hanya validasi untuk aktivitas baru, bukan edit
+      const today = getTodayDate()
+      const currentTime = getCurrentTime()
+
+      if (formData.tanggal < today) {
+        newErrors.tanggal = "Tidak dapat membuat aktivitas di masa lampau"
+      } else if (formData.tanggal === today) {
+        if (formData.waktuMulai && formData.waktuMulai < currentTime) {
+          newErrors.waktuMulai = "Tidak dapat membuat aktivitas di waktu yang sudah lewat"
+        }
+        if (formData.waktuSelesai && formData.waktuSelesai < currentTime) {
+          newErrors.waktuSelesai = "Tidak dapat membuat aktivitas di waktu yang sudah lewat"
+        }
+      }
+    }
+
     if (!formData.kategori) {
       newErrors.kategori = "Kategori aktivitas harus dipilih"
     }
@@ -183,48 +191,41 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
     return Object.keys(newErrors).length === 0
   }
 
+  // Handle perubahan input
   const handleInputChange = (field, value) => {
-    console.log(`🔍 Modal: Input changed - ${field}:`, value)
     setFormData((prev) => ({ ...prev, [field]: value }))
 
+    // Clear error saat user mulai mengetik
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }))
     }
   }
 
+  // Handle submit form
   const handleSubmit = (e) => {
     e.preventDefault()
-
-    console.log("🔍 Modal: Submitting form data:", formData)
 
     if (validateForm()) {
       const dataForBackend = {
         ...formData,
         kategori: formData.kategori.toLowerCase(),
       }
-      console.log("🔍 Modal: Data for backend:", dataForBackend)
       onSave(dataForBackend)
     }
   }
 
-  const handleFocus = (field) => {
-    setFocusedField(field)
-  }
+  const handleFocus = (field) => setFocusedField(field)
+  const handleBlur = () => setFocusedField("")
 
-  const handleBlur = () => {
-    setFocusedField("")
-  }
-
+  // Cari kategori yang dipilih
   const selectedCategory = categories.find((cat) => cat.name === formData.kategori)
 
-  if (!isOpen) {
-    return null
-  }
+  if (!isOpen) return null
 
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        {/* Header */}
+        {/* Header Modal */}
         <div className={styles.header}>
           <h2 className={styles.title}>{activity ? "Ubah Aktivitas" : "Tambah Aktivitas"}</h2>
           <button type="button" onClick={onClose} className={styles.closeButton}>
@@ -234,7 +235,7 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className={styles.form}>
-          {/* Judul */}
+          {/* Field Judul */}
           <div className={styles.field}>
             <label className={styles.label}>Judul</label>
             <input
@@ -245,61 +246,73 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
               onBlur={handleBlur}
               placeholder="Masukkan judul aktivitas"
               maxLength={20}
-              className={`${styles.input} ${focusedField === "judul" ? styles.inputFocused : ""} ${errors.judul ? styles.inputError : ""}`}
+              className={`${styles.input} ${
+                focusedField === "judul" ? styles.inputFocused : ""
+              } ${errors.judul ? styles.inputError : ""}`}
             />
             <div className={styles.characterCount}>{formData.judul.length}/20 karakter</div>
             {errors.judul && <span className={styles.errorText}>{errors.judul}</span>}
           </div>
 
-          {/* Tanggal */}
+          {/* Field Tanggal */}
           <div className={styles.field}>
             <label className={styles.label}>Tanggal</label>
-            <div className={styles.dateInputWrapper}>
-              <input
-                type="date"
-                value={formData.tanggal}
-                onChange={(e) => handleInputChange("tanggal", e.target.value)}
-                onFocus={() => handleFocus("tanggal")}
-                onBlur={handleBlur}
-                className={`${styles.dateInput} ${focusedField === "tanggal" ? styles.inputFocused : ""} ${errors.tanggal ? styles.inputError : ""}`}
-              />
-            </div>
+            <input
+              type="date"
+              value={formData.tanggal}
+              onChange={(e) => handleInputChange("tanggal", e.target.value)}
+              onFocus={() => handleFocus("tanggal")}
+              onBlur={handleBlur}
+              min={getTodayDate()} // Disable tanggal masa lampau
+              className={`${styles.dateInput} ${
+                focusedField === "tanggal" ? styles.inputFocused : ""
+              } ${errors.tanggal ? styles.inputError : ""}`}
+            />
             {errors.tanggal && <span className={styles.errorText}>{errors.tanggal}</span>}
           </div>
 
-          {/* Waktu */}
+          {/* Field Waktu - Sejajar di Mobile */}
           <div className={styles.timeFields}>
             <div className={styles.field}>
               <label className={styles.label}>Waktu mulai</label>
-              <div className={styles.timeInputWrapper}>
-                <input
-                  type="time"
-                  value={formData.waktuMulai}
-                  onChange={(e) => handleInputChange("waktuMulai", e.target.value)}
-                  onFocus={() => handleFocus("waktuMulai")}
-                  onBlur={handleBlur}
-                  className={`${styles.timeInput} ${focusedField === "waktuMulai" ? styles.inputFocused : ""} ${errors.waktuMulai ? styles.inputError : ""}`}
-                />
-              </div>
+              <input
+                type="time"
+                value={formData.waktuMulai}
+                onChange={(e) => handleInputChange("waktuMulai", e.target.value)}
+                onFocus={() => handleFocus("waktuMulai")}
+                onBlur={handleBlur}
+                min={isToday(formData.tanggal) ? getCurrentTime() : undefined} // Disable waktu masa lampau jika hari ini
+                className={`${styles.timeInput} ${
+                  focusedField === "waktuMulai" ? styles.inputFocused : ""
+                } ${errors.waktuMulai ? styles.inputError : ""}`}
+              />
               {errors.waktuMulai && <span className={styles.errorText}>{errors.waktuMulai}</span>}
             </div>
+
             <div className={styles.field}>
               <label className={styles.label}>Waktu selesai</label>
-              <div className={styles.timeInputWrapper}>
-                <input
-                  type="time"
-                  value={formData.waktuSelesai}
-                  onChange={(e) => handleInputChange("waktuSelesai", e.target.value)}
-                  onFocus={() => handleFocus("waktuSelesai")}
-                  onBlur={handleBlur}
-                  className={`${styles.timeInput} ${focusedField === "waktuSelesai" ? styles.inputFocused : ""} ${errors.waktuSelesai ? styles.inputError : ""}`}
-                />
-              </div>
+              <input
+                type="time"
+                value={formData.waktuSelesai}
+                onChange={(e) => handleInputChange("waktuSelesai", e.target.value)}
+                onFocus={() => handleFocus("waktuSelesai")}
+                onBlur={handleBlur}
+                min={
+                  isToday(formData.tanggal)
+                    ? formData.waktuMulai && formData.waktuMulai >= getCurrentTime()
+                      ? formData.waktuMulai
+                      : getCurrentTime()
+                    : formData.waktuMulai || undefined
+                } // Disable waktu selesai yang tidak valid
+                className={`${styles.timeInput} ${
+                  focusedField === "waktuSelesai" ? styles.inputFocused : ""
+                } ${errors.waktuSelesai ? styles.inputError : ""}`}
+              />
               {errors.waktuSelesai && <span className={styles.errorText}>{errors.waktuSelesai}</span>}
             </div>
           </div>
 
-          {/* Kategori */}
+          {/* Field Kategori */}
           <div className={styles.field}>
             <label className={styles.label}>Kategori</label>
             <div className={styles.categoryWrapper}>
@@ -308,7 +321,9 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
                 onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
                 onFocus={() => handleFocus("kategori")}
                 onBlur={handleBlur}
-                className={`${styles.categoryButton} ${focusedField === "kategori" ? styles.inputFocused : ""} ${errors.kategori ? styles.inputError : ""}`}
+                className={`${styles.categoryButton} ${
+                  focusedField === "kategori" ? styles.inputFocused : ""
+                } ${errors.kategori ? styles.inputError : ""}`}
               >
                 {selectedCategory ? (
                   <div className={styles.categoryButtonContent}>
@@ -328,8 +343,10 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
                   className={`${styles.categoryChevron} ${showCategoryDropdown ? styles.categoryChevronRotated : ""}`}
                 />
               </button>
+
               {errors.kategori && <span className={styles.errorText}>{errors.kategori}</span>}
 
+              {/* Dropdown Kategori */}
               {showCategoryDropdown && (
                 <div className={styles.categoryDropdown}>
                   {categories.map((category) => (
@@ -360,7 +377,7 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
             </div>
           </div>
 
-          {/* Buttons */}
+          {/* Tombol Aksi */}
           <div className={styles.buttons}>
             <button type="button" onClick={onClose} className={styles.cancelButton}>
               Batal
@@ -372,7 +389,7 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
         </form>
       </div>
 
-      {/* Backdrop for category dropdown */}
+      {/* Backdrop untuk menutup dropdown */}
       {showCategoryDropdown && <div className={styles.backdrop} onClick={() => setShowCategoryDropdown(false)} />}
     </div>
   )

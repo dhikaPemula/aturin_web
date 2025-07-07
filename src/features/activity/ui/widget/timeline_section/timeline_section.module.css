@@ -26,17 +26,18 @@
 }
 
 .container {
-  @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+  /* 🔧 PERBAIKAN: Padding disesuaikan dengan margin yang benar */
+  @apply bg-white rounded-xl shadow-sm border border-gray-200;
+  padding: 24px;
 }
 
 .timeline {
   @apply relative;
 }
 
-/* Timeline line yang lebih presisi */
 .timelineLine {
   position: absolute;
-  left: 28px; /* Tepat di tengah icon (56px / 2 = 28px) */
+  left: 28px;
   top: 0;
   bottom: 0;
   width: 2px;
@@ -75,22 +76,20 @@
 }
 
 .activitiesContainer {
-  margin-left: 56px; /* Sejajar dengan kanan icon (14 * 4px = 56px) */
+  margin-left: 56px;
   @apply relative;
-  /* 🔧 PERBAIKAN: Spacing antar card = 12px */
   display: flex;
   flex-direction: column;
-  gap: 12px; /* 12px spacing between cards */
+  gap: 12px;
 }
 
 .activityWrapper {
   @apply relative;
 }
 
-/* Dot yang perfectly centered */
 .activityDot {
   position: absolute;
-  left: -28px; /* Tepat di tengah timeline line */
+  left: -28px;
   top: 50%;
   transform: translateY(-50%);
   width: 12px;
@@ -102,7 +101,6 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Card dengan hover effect */
 .activityCard {
   @apply bg-white rounded-lg shadow-sm border border-gray-200 transition-all duration-200 relative;
 }
@@ -120,7 +118,6 @@
 }
 
 .activityTitle {
-  /* 🔧 UPDATED: Font size to 16px */
   font-size: 16px;
   @apply font-semibold text-gray-900 mb-4;
   font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
@@ -139,13 +136,11 @@
 }
 
 .activityTimeText {
-  /* 🔧 UPDATED: Font size to 16px */
   font-size: 16px;
   @apply font-normal text-gray-600;
   font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Hover effect untuk action buttons */
 .activityCardActions {
   @apply flex gap-2 opacity-0 transition-opacity duration-200;
 }
@@ -171,15 +166,141 @@
   @apply w-4 h-4;
 }
 
-/* Garis horizontal yang lebih presisi */
 .activityWrapper::before {
   content: "";
   position: absolute;
-  left: -28px; /* Mulai dari tengah timeline line */
+  left: -28px;
   top: 50%;
   transform: translateY(-50%);
   width: 28px;
   height: 2px;
   background-color: #5263f3;
   z-index: 10;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .container {
+    padding: 16px;
+  }
+
+  .timelineLine {
+    left: 20px;
+  }
+
+  .timeSlotIcon {
+    @apply w-10 h-10;
+  }
+
+  .timeSlotIconImg {
+    @apply w-5 h-5;
+  }
+
+  .timeSlotInfo {
+    @apply ml-3;
+  }
+
+  .timeSlotLabel {
+    @apply text-base;
+  }
+
+  .timeSlotRange {
+    @apply text-xs;
+  }
+
+  .activitiesContainer {
+    margin-left: 40px;
+    gap: 10px;
+  }
+
+  .activityDot {
+    left: -20px;
+    width: 10px;
+    height: 10px;
+  }
+
+  .activityWrapper::before {
+    left: -20px;
+    width: 20px;
+  }
+
+  .activityCardContent {
+    @apply p-3;
+  }
+
+  .activityTitle {
+    font-size: 14px;
+    @apply mb-3;
+  }
+
+  .activityTimeText {
+    font-size: 14px;
+  }
+
+  .clockIcon {
+    @apply w-3 h-3;
+  }
+
+  .actionIcon {
+    @apply w-3 h-3;
+  }
+
+  .editButton,
+  .deleteButton {
+    @apply p-1;
+  }
+
+  .activityCardActions {
+    @apply opacity-100;
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    padding: 20px;
+  }
+
+  .timelineLine {
+    left: 24px;
+  }
+
+  .timeSlotIcon {
+    @apply w-12 h-12;
+  }
+
+  .timeSlotIconImg {
+    @apply w-5 h-5;
+  }
+
+  .activitiesContainer {
+    margin-left: 48px;
+    gap: 11px;
+  }
+
+  .activityDot {
+    left: -24px;
+    width: 11px;
+    height: 11px;
+  }
+
+  .activityWrapper::before {
+    left: -24px;
+    width: 24px;
+  }
+
+  .activityTitle {
+    font-size: 15px;
+  }
+
+  .activityTimeText {
+    font-size: 15px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .container {
+    padding: 24px;
+  }
 }

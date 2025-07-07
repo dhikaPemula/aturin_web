@@ -7,7 +7,6 @@ import FilterWidget from "../widget/filter_widget/filter_widget"
 import PrimaryButton from "../widget/primary_button/primary_button"
 import TimelineSection from "../widget/timeline_section/timeline_section"
 import ActivityModal from "../widget/activity_modal/activity_modal"
-// Remove DeleteConfirmationModal import
 import plusIcon from "../../../../assets/icons/plus.svg"
 import infoIcon from "../../../../assets/icons/info.svg"
 import calendarIcon from "../../../../assets/icons/calendar.svg"
@@ -29,7 +28,6 @@ const ActivityPage = () => {
   const [selectedDate, setSelectedDate] = useState(today)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingActivity, setEditingActivity] = useState(null)
-  // Remove deleteModal state
 
   const loadActivities = async () => {
     try {
@@ -54,12 +52,10 @@ const ActivityPage = () => {
   const extractDateFromTimestamp = (dateString) => {
     if (!dateString) return ""
 
-    // Jika sudah format YYYY-MM-DD
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
       return dateString
     }
 
-    // 🔧 PERBAIKAN: Handle ISO timestamp dengan timezone
     if (dateString.includes("T")) {
       try {
         const date = new Date(dateString)
@@ -77,7 +73,7 @@ const ActivityPage = () => {
       return dateString.split(" ")[0]
     }
 
-    // Coba parse sebagai Date object
+    // parse sebagai Date object
     try {
       const date = new Date(dateString)
       if (!isNaN(date.getTime())) {
@@ -113,7 +109,7 @@ const ActivityPage = () => {
       })
     }
 
-    // Filter by date - 🔧 SELALU AKTIF karena default ke hari ini
+    // Filter by date SELALU AKTIF karena default ke hari ini
     if (selectedDate) {
       filtered = filtered.filter((activity) => {
         const activityDate = extractDateFromTimestamp(activity.tanggal)
@@ -134,7 +130,6 @@ const ActivityPage = () => {
     setIsModalOpen(true)
   }
 
-  // 🔧 UPDATED: Direct delete without confirmation modal
   const handleDeleteActivity = async (activity) => {
     try {
       setLoading(true)
@@ -196,7 +191,7 @@ const ActivityPage = () => {
               <h1 className={styles.title}>Aktivitas</h1>
               <p className={styles.subtitle}>
                 <img src={infoIcon || "/placeholder.svg"} alt="Info" className={styles.infoIcon} />
-                Kelola aktivitas harian Anda dengan mudah
+                Tekan tanggal pada kalender untuk melihat jadwal selengkapnya.
               </p>
             </div>
             <PrimaryButton onClick={handleAddActivity} icon={plusIcon} disabled={loading}>
@@ -253,7 +248,6 @@ const ActivityPage = () => {
         defaultDate={selectedDate}
       />
 
-      {/* Remove DeleteConfirmationModal completely */}
     </div>
   )
 }

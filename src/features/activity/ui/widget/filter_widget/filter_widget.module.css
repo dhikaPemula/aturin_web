@@ -21,7 +21,6 @@
   font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Keep existing dateInput for backward compatibility */
 .dateInput {
   @apply w-full px-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#5263F3] focus:border-transparent;
   font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;

@@ -17,7 +17,6 @@ const TimelineSection = ({ activities, loading, onEdit, onDelete }) => {
     onDeleteExists: !!onDelete,
   })
 
-  // 🔧 PERBAIKAN: Simplified event handlers
   const handleEdit = (activity) => {
     console.log("🔥 Edit clicked for:", activity.judul, "ID:", activity.id)
     if (onEdit && typeof onEdit === "function") {

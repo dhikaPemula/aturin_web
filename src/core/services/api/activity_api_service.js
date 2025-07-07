@@ -29,7 +29,7 @@ export async function getActivities() {
       const activities = response.data.data.map((item) => {
         const activity = {
           id: item.id,
-          slug: item.slug, // 🔧 TAMBAH: Simpan slug untuk update/delete
+          slug: item.slug, 
           judul: item.activity_title,
           tanggal: item.activity_date,
           waktuMulai: item.activity_start_time,
@@ -89,7 +89,6 @@ export async function createActivity(data) {
   }
 }
 
-// 🔧 PERBAIKAN: Update menggunakan SLUG bukan ID
 export async function updateActivity(slug, data) {
   try {
     console.log("🔄 Updating activity with slug:", slug, "data:", data)
@@ -110,7 +109,6 @@ export async function updateActivity(slug, data) {
 
     console.log("✅ PATCH response:", response.data)
 
-    // 🔧 PERBAIKAN: Handle nested response structure seperti Flutter
     if (response.data && (response.data.status === "success" || response.data.status === "Berhasil")) {
       const activityData = response.data.data?.data || response.data.data
       return { ...response.data, data: activityData }
@@ -145,7 +143,6 @@ export async function updateActivity(slug, data) {
   }
 }
 
-// 🔧 PERBAIKAN: Delete menggunakan SLUG bukan ID
 export async function deleteActivity(slug) {
   try {
     console.log("🔄 Deleting activity with slug:", slug)
@@ -156,7 +153,6 @@ export async function deleteActivity(slug) {
 
     console.log("✅ DELETE response:", response.data)
 
-    // 🔧 PERBAIKAN: Handle multiple success status codes seperti Flutter
     if (response.status === 200 || response.status === 204 || response.status === 404) {
       return { success: true, message: "Activity deleted successfully" }
     }
@@ -166,7 +162,6 @@ export async function deleteActivity(slug) {
     console.error("❌ Error deleting activity:", error)
     console.error("❌ Error response:", error.response?.data)
 
-    // 🔧 PERBAIKAN: Handle 404 as success (activity already deleted)
     if (error.response?.status === 404) {
       return { success: true, message: "Activity deleted (not found)" }
     }
