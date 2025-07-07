@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './sublist.module.css';
 import TaskCard from '../taskcard/taskcard.jsx';
 import { getStatusByName } from './status.jsx';
@@ -13,8 +13,10 @@ function SubList({
   currentCategory = "",
   onEditTask, 
   onDeleteTask,
-  onDeleteSuccess
+  onDeleteSuccess,
+  onDropTask
 }) {
+  const [isDragOver, setIsDragOver] = useState(false);
   // Filter tasks by status and category
   let filteredTasks = tasks.filter(task => task.task_status === task_status);
   
@@ -37,8 +39,40 @@ function SubList({
   };
   const displayTitle = title || currentStatus.label;
 
+  // Handle drag and drop events
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    try {
+      const draggedTaskData = JSON.parse(e.dataTransfer.getData('task'));
+      
+      // Only handle drop if it's a different status
+      if (draggedTaskData.task_status !== task_status && onDropTask) {
+        onDropTask(draggedTaskData, task_status);
+      }
+    } catch (error) {
+      console.error('Error handling drop:', error);
+    }
+  };
+
   return (
-    <div className={styles.subListContainer}>
+    <div 
+      className={`${styles.subListContainer} ${isDragOver ? styles.dragOver : ''}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       {/* Header with status badge */}
       <div 
         className={styles.headerSection}
@@ -77,6 +111,7 @@ function SubList({
               onEditTask={onEditTask}
               onDeleteTask={onDeleteTask}
               onDeleteSuccess={onDeleteSuccess}
+              isDraggable={true}
             />
           ))
         )}

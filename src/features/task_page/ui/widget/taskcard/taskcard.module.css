@@ -14,6 +14,31 @@
   transform: scale(0.99);
 }
 
+/* Drag states */
+.taskCard[draggable="true"]:hover {
+  @apply shadow-lg border-blue-300;
+}
+
+.taskCard[draggable="true"]:active {
+  @apply cursor-grabbing;
+}
+
+/* Prevent drag ghost from being transparent */
+.taskCard[draggable="true"] {
+  -webkit-user-drag: element;
+}
+
+.taskCard::-webkit-drag-image {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Additional styling for better drag visibility */
+.taskCard[draggable="true"]:active {
+  transform: scale(1.05);
+  @apply shadow-2xl border-blue-400;
+}
+
 .taskHeader {
   @apply mb-3;
 }

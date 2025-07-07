@@ -4,6 +4,13 @@
   @apply mb-8 rounded-lg border-1 border-[#E2E8F0] overflow-hidden;
   /* Responsive width for horizontal layout */
   @apply md:flex-1 md:mb-0 md:min-w-0 shadow-lg;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Drag over state */
+.subListContainer.dragOver {
+  @apply border-2 border-blue-400 bg-blue-50;
+  transform: scale(1.02);
 }
 
 .headerSection {

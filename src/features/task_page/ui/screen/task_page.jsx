@@ -3,6 +3,7 @@ import styles from "./task_page.module.css";
 import useTaskList from "../../../../core/hooks/useTaskList.js";
 import useProfile from "../../../../core/hooks/useProfile.js";
 import { useTaskAutoRefresh } from "../../../../core/hooks/useGlobalTaskRefresh";
+import { useDragDropTask } from "../../../../core/hooks/useDragDropTask.js";
 import Badge from "../../../../core/widgets/badge/buildbadge/badge.jsx";
 import StatusBadge from "../../../../core/widgets/status/statusbadge.jsx";
 import UpperSection from "../widget/uppersection/uppersection.jsx";
@@ -55,6 +56,9 @@ function TaskPage() {
     setToastConfig(config);
     setShowToastNotification(true);
   };
+
+  // Drag and drop handler
+  const { handleDropTask } = useDragDropTask(displayToast);
 
   const handleToastSuccess = (config) => {
     displayToast(config);
@@ -213,6 +217,7 @@ function TaskPage() {
             onEditTask={handleEditTask}
             onDeleteTask={handleDeleteTask}
             onDeleteSuccess={displayToast}
+            onDropTask={handleDropTask}
           />
         </div>
       </div>

@@ -13,7 +13,8 @@ function TaskCard({
   task,
   onEditTask, 
   onDeleteTask,
-  onDeleteSuccess
+  onDeleteSuccess,
+  isDraggable = false
 }) {
   // State for delete confirmation alert
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -65,6 +66,53 @@ function TaskCard({
   // Handle delete cancellation
   const handleDeleteCancel = () => {
     setShowDeleteAlert(false);
+  };
+
+  // Handle drag start
+  const handleDragStart = (e) => {
+    if (!isDraggable) return;
+    
+    // Set drag data
+    e.dataTransfer.setData('task', JSON.stringify(task));
+    e.dataTransfer.effectAllowed = 'move';
+    
+    // Create a custom drag image to prevent default transparency
+    const dragImage = e.target.cloneNode(true);
+    dragImage.style.opacity = '1';
+    dragImage.style.transform = 'rotate(2deg)';
+    dragImage.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)';
+    
+    // Create a temporary container
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.top = '-1000px';
+    container.style.left = '-1000px';
+    container.style.width = e.target.offsetWidth + 'px';
+    container.style.height = e.target.offsetHeight + 'px';
+    container.appendChild(dragImage);
+    
+    document.body.appendChild(container);
+    
+    // Set cursor position to center of the card
+    const centerX = e.target.offsetWidth / 2;
+    const centerY = e.target.offsetHeight / 2;
+    
+    // Set the custom drag image with center positioning
+    e.dataTransfer.setDragImage(dragImage, centerX, centerY);
+    
+    // Clean up after a short delay
+    setTimeout(() => {
+      if (document.body.contains(container)) {
+        document.body.removeChild(container);
+      }
+    }, 0);
+  };
+
+  // Handle drag end
+  const handleDragEnd = (e) => {
+    if (!isDraggable) return;
+    
+    // No need to reset opacity since we don't change it
   };
   // Format deadline
   const formatDeadline = (deadlineStr) => {
@@ -118,7 +166,13 @@ function TaskCard({
   }
 
   return (
-    <div className={styles.taskCard}>
+    <div 
+      className={styles.taskCard}
+      draggable={isDraggable}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      style={{ cursor: isDraggable ? 'move' : 'default' }}
+    >
       {/* Task Header with Category Badge */}
       <div className={styles.taskHeader}>
         {task.categories && task.categories.length > 0 && (

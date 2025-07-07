@@ -1,8 +1,7 @@
 @import "tailwindcss";
 
 .badge {
-  @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-full font-medium cursor-pointer transition-all duration-200;
-  @apply hover:scale-105 hover:shadow-md;
+  @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-full font-medium transition-all duration-200;
 }
 
 .badge:active {
