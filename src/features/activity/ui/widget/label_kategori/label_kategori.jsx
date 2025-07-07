@@ -1,12 +1,12 @@
 // Import ikon kategori
-import akademikIcon from "../../../../../assets/icons/akademik.svg"
-import hiburanIcon from "../../../../../assets/icons/hiburan.svg"
-import pekerjaanIcon from "../../../../../assets/icons/pekerjaan.svg"
-import olahragaIcon from "../../../../../assets/icons/olahraga.svg"
-import sosialIcon from "../../../../../assets/icons/sosial.svg"
-import spiritualIcon from "../../../../../assets/icons/spiritual.svg"
-import pribadiIcon from "../../../../../assets/icons/pribadi.svg"
-import istirahatIcon from "../../../../../assets/icons/istirahat.svg"
+import akademikIcon from "../../../../../assets/activity/categories/akademik.svg"
+import hiburanIcon from "../../../../../assets/activity/categories/hiburan.svg"
+import pekerjaanIcon from "../../../../../assets/activity/categories/pekerjaan.svg"
+import olahragaIcon from "../../../../../assets/activity/categories/olahraga.svg"
+import sosialIcon from "../../../../../assets/activity/categories/sosial.svg"
+import spiritualIcon from "../../../../../assets/activity/categories/spiritual.svg"
+import pribadiIcon from "../../../../../assets/activity/categories/pribadi.svg"
+import istirahatIcon from "../../../../../assets/activity/categories/istirahat.svg"
 import styles from "./label_kategori.module.css"
 
 const LabelKategori = ({ kategori }) => {

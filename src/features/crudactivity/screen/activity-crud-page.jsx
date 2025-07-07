@@ -1,18 +1,19 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import styles from "./activity_modal.module.css"
-import chevronDownIcon from "../../../../../assets/icons/chevron-down.svg"
-import checkIcon from "../../../../../assets/icons/check.svg"
+import styles from "./activity-crud-page.module.css"
+import chevronDownIcon from "../../../assets/activity/icons/chevron-down.svg"
+import checkIcon from "../../../assets/activity/icons/check.svg"
+
 // Import ikon kategori
-import akademikIcon from "../../../../../assets/icons/akademik.svg"
-import hiburanIcon from "../../../../../assets/icons/hiburan.svg"
-import pekerjaanIcon from "../../../../../assets/icons/pekerjaan.svg"
-import olahragaIcon from "../../../../../assets/icons/olahraga.svg"
-import sosialIcon from "../../../../../assets/icons/sosial.svg"
-import spiritualIcon from "../../../../../assets/icons/spiritual.svg"
-import pribadiIcon from "../../../../../assets/icons/pribadi.svg"
-import istirahatIcon from "../../../../../assets/icons/istirahat.svg"
+import akademikIcon from "../../../assets/activity/categories/akademik.svg"
+import hiburanIcon from "../../../assets/activity/categories/hiburan.svg"
+import pekerjaanIcon from "../../../assets/activity/categories/pekerjaan.svg"
+import olahragaIcon from "../../../assets/activity/categories/olahraga.svg"
+import sosialIcon from "../../../assets/activity/categories/sosial.svg"
+import spiritualIcon from "../../../assets/activity/categories/spiritual.svg"
+import pribadiIcon from "../../../assets/activity/categories/pribadi.svg"
+import istirahatIcon from "../../../assets/activity/categories/istirahat.svg"
 
 // Helper functions untuk validasi tanggal dan waktu
 const getTodayDate = () => {
@@ -36,7 +37,7 @@ const isPastTime = (timeString) => {
   return timeString < currentTime
 }
 
-const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
+const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
   // State untuk form data
   const [formData, setFormData] = useState({
     judul: "",
@@ -70,12 +71,10 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
   // Fungsi untuk normalisasi tanggal
   const normalizeDate = (dateString) => {
     if (!dateString) return defaultDate || new Date().toISOString().split("T")[0]
-
     // format YYYY-MM-DD
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
       return dateString
     }
-
     // Handle ISO timestamp
     if (dateString.includes("T")) {
       try {
@@ -88,12 +87,10 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
         return dateString.split("T")[0]
       }
     }
-
     // Handle datetime format
     if (dateString.includes(" ")) {
       return dateString.split(" ")[0]
     }
-
     return defaultDate || new Date().toISOString().split("T")[0]
   }
 
@@ -126,7 +123,6 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
         kategori: "",
       })
     }
-
     // Reset state lainnya
     setErrors({})
     setFocusedField("")
@@ -136,7 +132,6 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
   // Validasi form
   const validateForm = () => {
     const newErrors = {}
-
     if (!formData.judul.trim()) {
       newErrors.judul = "Judul aktivitas harus diisi"
     } else if (formData.judul.length > 20) {
@@ -159,18 +154,17 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
     if (formData.waktuMulai && formData.waktuSelesai) {
       const startTime = new Date(`2000-01-01 ${formData.waktuMulai}`)
       const endTime = new Date(`2000-01-01 ${formData.waktuSelesai}`)
-
       if (startTime >= endTime) {
         newErrors.waktuSelesai = "Waktu selesai harus lebih besar dari waktu mulai"
       }
     }
 
-    // Validasi tidak boleh membuat aktivitas di masa lampau (hanya untuk mode tambah)
-    if (!activity) {
-      // Hanya validasi untuk aktivitas baru, bukan edit
-      const today = getTodayDate()
-      const currentTime = getCurrentTime()
+    // Validasi tanggal dan waktu berdasarkan mode (tambah/edit)
+    const today = getTodayDate()
+    const currentTime = getCurrentTime()
 
+    if (!activity) {
+      // Mode TAMBAH: tidak boleh tanggal/waktu lampau
       if (formData.tanggal < today) {
         newErrors.tanggal = "Tidak dapat membuat aktivitas di masa lampau"
       } else if (formData.tanggal === today) {
@@ -179,6 +173,21 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
         }
         if (formData.waktuSelesai && formData.waktuSelesai < currentTime) {
           newErrors.waktuSelesai = "Tidak dapat membuat aktivitas di waktu yang sudah lewat"
+        }
+      }
+    } else {
+      // Mode EDIT: bisa edit dari tanggal aktivitas ke depan, tidak bisa ke belakang
+      const originalDate = normalizeDate(activity.tanggal)
+      if (formData.tanggal < originalDate) {
+        newErrors.tanggal = "Tidak dapat mengubah tanggal ke masa lampau dari tanggal aktivitas asli"
+      }
+      // Jika tanggal sama dengan hari ini dan waktu sudah lewat
+      if (formData.tanggal === today) {
+        if (formData.waktuMulai && formData.waktuMulai < currentTime) {
+          newErrors.waktuMulai = "Tidak dapat mengubah waktu ke waktu yang sudah lewat"
+        }
+        if (formData.waktuSelesai && formData.waktuSelesai < currentTime) {
+          newErrors.waktuSelesai = "Tidak dapat mengubah waktu ke waktu yang sudah lewat"
         }
       }
     }
@@ -194,7 +203,6 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
   // Handle perubahan input
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
-
     // Clear error saat user mulai mengetik
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }))
@@ -204,7 +212,6 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
   // Handle submit form
   const handleSubmit = (e) => {
     e.preventDefault()
-
     if (validateForm()) {
       const dataForBackend = {
         ...formData,
@@ -237,7 +244,7 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
         <form onSubmit={handleSubmit} className={styles.form}>
           {/* Field Judul */}
           <div className={styles.field}>
-            <label className={styles.label}>Judul</label>
+            <label className={styles.label}>Judul *</label>
             <input
               type="text"
               value={formData.judul}
@@ -256,14 +263,14 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
 
           {/* Field Tanggal */}
           <div className={styles.field}>
-            <label className={styles.label}>Tanggal</label>
+            <label className={styles.label}>Tanggal *</label>
             <input
               type="date"
               value={formData.tanggal}
               onChange={(e) => handleInputChange("tanggal", e.target.value)}
               onFocus={() => handleFocus("tanggal")}
               onBlur={handleBlur}
-              min={getTodayDate()} // Disable tanggal masa lampau
+              min={activity ? normalizeDate(activity.tanggal) : getTodayDate()} // Edit: dari tanggal asli, Tambah: dari hari ini
               className={`${styles.dateInput} ${
                 focusedField === "tanggal" ? styles.inputFocused : ""
               } ${errors.tanggal ? styles.inputError : ""}`}
@@ -274,7 +281,7 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
           {/* Field Waktu - Sejajar di Mobile */}
           <div className={styles.timeFields}>
             <div className={styles.field}>
-              <label className={styles.label}>Waktu mulai</label>
+              <label className={styles.label}>Waktu mulai *</label>
               <input
                 type="time"
                 value={formData.waktuMulai}
@@ -290,7 +297,7 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
             </div>
 
             <div className={styles.field}>
-              <label className={styles.label}>Waktu selesai</label>
+              <label className={styles.label}>Waktu selesai *</label>
               <input
                 type="time"
                 value={formData.waktuSelesai}
@@ -314,7 +321,7 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
 
           {/* Field Kategori */}
           <div className={styles.field}>
-            <label className={styles.label}>Kategori</label>
+            <label className={styles.label}>Kategori *</label>
             <div className={styles.categoryWrapper}>
               <button
                 type="button"
@@ -343,7 +350,6 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
                   className={`${styles.categoryChevron} ${showCategoryDropdown ? styles.categoryChevronRotated : ""}`}
                 />
               </button>
-
               {errors.kategori && <span className={styles.errorText}>{errors.kategori}</span>}
 
               {/* Dropdown Kategori */}
@@ -395,4 +401,4 @@ const ActivityModal = ({ isOpen, onClose, onSave, activity, defaultDate }) => {
   )
 }
 
-export default ActivityModal
+export default ActivityCrudPage

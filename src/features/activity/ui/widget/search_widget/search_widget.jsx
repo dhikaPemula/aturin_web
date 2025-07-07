@@ -1,6 +1,6 @@
 "use client"
 import styles from "./search_widget.module.css"
-import searchIcon from "../../../../../assets/icons/search.svg"
+import searchIcon from "../../../../../assets/activity/icons/search.svg"
 
 const SearchWidget = ({ value, onChange, placeholder = "Mencari..." }) => {
   return (

@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+/* CSS Custom Properties */
+:root {
+  --alert-red-color: #ef4444;
+  --alert-red-hover: #dc2626;
+}
+
+/* Backdrop */
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 9999;
+}
+
+/* Alert Container */
+.alertContainer {
+  background-color: white;
+  border-radius: 1rem;
+  max-width: 28rem;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  z-index: 10000;
+  animation: slideIn 0.3s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Red accent bar */
+.redAccent {
+  height: 8px;
+  background-color: var(--alert-red-color);
+  width: 100%;
+  border-radius: 1rem 1rem 0 0;
+}
+
+/* Header */
+.header {
+  padding: 1.5rem;
+  text-align: center;
+  background-color: white;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+/* Content */
+.content {
+  padding: 0 1.5rem 1.5rem;
+  text-align: center;
+}
+
+.message {
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Buttons */
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+  padding: 0 1.5rem 1.5rem;
+}
+
+.cancelButton {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: white;
+  border: 2px solid #d1d5db;
+  color: #374151;
+  /* 3D effect */
+  box-shadow: 0 4px 0 #9ca3af, 0 6px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(0);
+}
+
+.cancelButton:hover {
+  background-color: #f9fafb;
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #9ca3af, 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.cancelButton:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #9ca3af, 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.submitButton {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+  border: none;
+  background-color: var(--alert-red-color);
+  /* 3D effect */
+  box-shadow: 0 4px 0 var(--alert-red-hover), 0 6px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(0);
+}
+
+.submitButton:hover {
+  background-color: var(--alert-red-hover);
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--alert-red-hover), 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.submitButton:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--alert-red-hover), 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .alertContainer {
+    margin: 0 1rem;
+  }
+  
+  .header {
+    padding: 1rem;
+  }
+  
+  .content {
+    padding: 0 1rem 1rem;
+  }
+  
+  .title {
+    font-size: 1.125rem;
+  }
+  
+  .message {
+    font-size: 14px;
+  }
+}

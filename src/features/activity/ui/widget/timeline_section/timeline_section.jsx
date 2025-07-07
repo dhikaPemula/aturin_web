@@ -1,14 +1,14 @@
 "use client"
 import LabelKategori from "../label_kategori/label_kategori"
 import styles from "./timeline_section.module.css"
-import sunIcon from "../../../../../assets/icons/sun.svg"
-import sunriseIcon from "../../../../../assets/icons/sunrise.svg"
-import sunsetIcon from "../../../../../assets/icons/sunset.svg"
-import moonIcon from "../../../../../assets/icons/moon.svg"
-import editIcon from "../../../../../assets/icons/edit.svg"
-import trashIcon from "../../../../../assets/icons/trash.svg"
-import nodataIcon from "../../../../../assets/icons/nodata.svg"
-import clockIcon from "../../../../../assets/icons/clock.svg"
+import sunIcon from "../../../../../assets/activity/icons/sun.svg"
+import sunriseIcon from "../../../../../assets/activity/icons/sunrise.svg"
+import sunsetIcon from "../../../../../assets/activity/icons/sunset.svg"
+import moonIcon from "../../../../../assets/activity/icons/moon.svg"
+import editIcon from "../../../../../assets/activity/icons/edit.svg"
+import trashIcon from "../../../../../assets/activity/icons/trash.svg"
+import nodataIcon from "../../../../../assets/activity/icons/nodata.svg"
+import clockIcon from "../../../../../assets/activity/icons/clock.svg"
 
 const TimelineSection = ({ activities, loading, onEdit, onDelete }) => {
   console.log("🎯 TimelineSection received:", {

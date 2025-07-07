@@ -6,10 +6,12 @@ import SearchWidget from "../widget/search_widget/search_widget"
 import FilterWidget from "../widget/filter_widget/filter_widget"
 import PrimaryButton from "../widget/primary_button/primary_button"
 import TimelineSection from "../widget/timeline_section/timeline_section"
-import ActivityModal from "../widget/activity_modal/activity_modal"
-import plusIcon from "../../../../assets/icons/plus.svg"
-import infoIcon from "../../../../assets/icons/info.svg"
-import calendarIcon from "../../../../assets/icons/calendar.svg"
+import ActivityCrudPage from "../../../crudactivity/screen/activity-crud-page"
+import Alert from "../../../../core/widgets/alert/alert"
+import Toast from "../../../../core/widgets/toast/toast"
+import plusIcon from "../../../../assets/activity/icons/plus.svg"
+import infoIcon from "../../../../assets/activity/icons/info.svg"
+import calendarIcon from "../../../../assets/activity/icons/calendar.svg"
 import {
   getActivities,
   createActivity,
@@ -29,6 +31,23 @@ const ActivityPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingActivity, setEditingActivity] = useState(null)
 
+  // Alert state
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    onConfirm: null,
+    activityToDelete: null,
+  })
+
+  // Toast state
+  const [toastConfig, setToastConfig] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    duration: 3000,
+  })
+
   const loadActivities = async () => {
     try {
       setLoading(true)
@@ -36,6 +55,7 @@ const ActivityPage = () => {
       setActivities(fetchedActivities)
     } catch (error) {
       console.error("Error loading activities:", error)
+      showToast("Error", "Gagal memuat aktivitas", "error")
     } finally {
       setLoading(false)
     }
@@ -120,6 +140,62 @@ const ActivityPage = () => {
     setFilteredActivities(filtered)
   }
 
+  // Toast functions
+  const showToast = (title, message, type = "success", duration = 3000) => {
+    setToastConfig({
+      isOpen: true,
+      title,
+      message,
+      type,
+      duration,
+    })
+  }
+
+  const hideToast = () => {
+    setToastConfig((prev) => ({
+      ...prev,
+      isOpen: false,
+    }))
+  }
+
+  // Alert functions
+  const showDeleteAlert = (activity) => {
+    setAlertConfig({
+      isOpen: true,
+      title: "Hapus Aktivitas",
+      message: `Apakah Anda yakin ingin menghapus aktivitas "${activity.judul}"? Tindakan ini tidak dapat dibatalkan.`,
+      activityToDelete: activity,
+      onConfirm: () => confirmDeleteActivity(activity),
+    })
+  }
+
+  const hideAlert = () => {
+    setAlertConfig({
+      isOpen: false,
+      title: "",
+      message: "",
+      onConfirm: null,
+      activityToDelete: null,
+    })
+  }
+
+  const confirmDeleteActivity = async (activity) => {
+    try {
+      setLoading(true)
+      const slug = activity.slug || activity.id
+      await deleteActivity(slug)
+      await loadActivities()
+      hideAlert()
+      showToast("Berhasil", "Aktivitas berhasil dihapus")
+    } catch (error) {
+      console.error("Error deleting activity:", error)
+      hideAlert()
+      showToast("Error", "Gagal menghapus aktivitas", "error")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleAddActivity = () => {
     setEditingActivity(null)
     setIsModalOpen(true)
@@ -130,17 +206,8 @@ const ActivityPage = () => {
     setIsModalOpen(true)
   }
 
-  const handleDeleteActivity = async (activity) => {
-    try {
-      setLoading(true)
-      const slug = activity.slug || activity.id
-      await deleteActivity(slug)
-      await loadActivities() // Reload activities after delete
-    } catch (error) {
-      console.error("Error deleting activity:", error)
-    } finally {
-      setLoading(false)
-    }
+  const handleDeleteActivity = (activity) => {
+    showDeleteAlert(activity)
   }
 
   const handleSaveActivity = async (activityData) => {
@@ -150,15 +217,19 @@ const ActivityPage = () => {
       if (editingActivity) {
         const slug = editingActivity.slug || editingActivity.id
         await updateActivity(slug, activityData)
+        showToast("Berhasil", "Aktivitas berhasil diperbarui")
       } else {
         await createActivity(activityData)
+        showToast("Berhasil", "Aktivitas berhasil ditambahkan")
       }
 
       setIsModalOpen(false)
       setEditingActivity(null)
-      await loadActivities() // Direct reload without delay
+      await loadActivities()
     } catch (error) {
       console.error("Error saving activity:", error)
+      const action = editingActivity ? "memperbarui" : "menambahkan"
+      showToast("Error", `Gagal ${action} aktivitas`, "error")
     } finally {
       setLoading(false)
     }
@@ -236,8 +307,8 @@ const ActivityPage = () => {
         />
       </div>
 
-      {/* Add/Edit Modal */}
-      <ActivityModal
+      {/* Add/Edit Popup */}
+      <ActivityCrudPage
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false)
@@ -248,6 +319,25 @@ const ActivityPage = () => {
         defaultDate={selectedDate}
       />
 
+      {/* Delete Confirmation Alert */}
+      <Alert
+        isOpen={alertConfig.isOpen}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        cancelText="Batal"
+        submitLabel="Hapus"
+        onCancel={hideAlert}
+        onSubmit={alertConfig.onConfirm}
+      />
+
+      {/* Success/Error Toast */}
+      <Toast
+        isOpen={toastConfig.isOpen}
+        title={toastConfig.title}
+        message={toastConfig.message}
+        duration={toastConfig.duration}
+        onClose={hideToast}
+      />
     </div>
   )
 }
