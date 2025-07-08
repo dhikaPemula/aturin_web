@@ -50,12 +50,34 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
 
   // State untuk dropdown kategori
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
-
-  // State untuk error validation
   const [errors, setErrors] = useState({})
-
-  // State untuk field yang sedang fokus
   const [focusedField, setFocusedField] = useState("")
+
+  // ESC key & backdrop click handler
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        if (showCategoryDropdown) {
+          setShowCategoryDropdown(false);
+        } else {
+          onClose();
+        }
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, showCategoryDropdown, onClose]);
+
+  // Body scroll lock (store original)
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
 
   // Daftar kategori dengan ikon dan warna
   const categories = [
@@ -228,182 +250,191 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
   // Cari kategori yang dipilih
   const selectedCategory = categories.find((cat) => cat.name === formData.kategori)
 
-  if (!isOpen) return null
+  // Backdrop click handler
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      if (showCategoryDropdown) {
+        setShowCategoryDropdown(false);
+      } else {
+        onClose();
+      }
+    }
+  };
 
-  // Modal content
+  if (!isOpen) return null;
+
+  // Modal content (scrollable form)
   const modalContent = (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
-        {/* Header Modal */}
-        <div className={styles.header}>
-          <h2 className={styles.title}>{activity ? "Ubah Aktivitas" : "Tambah Aktivitas"}</h2>
-          <button type="button" onClick={onClose} className={styles.closeButton}>
-            ×
-          </button>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className={styles.form}>
-          {/* Field Judul */}
-          <div className={styles.field}>
-            <label className={styles.label}>Judul</label>
-            <input
-              type="text"
-              value={formData.judul}
-              onChange={(e) => handleInputChange("judul", e.target.value)}
-              onFocus={() => handleFocus("judul")}
-              onBlur={handleBlur}
-              placeholder="Masukkan judul aktivitas"
-              maxLength={20}
-              className={`${styles.input} ${
-                focusedField === "judul" ? styles.inputFocused : ""
-              } ${errors.judul ? styles.inputError : ""}`}
-            />
-            <div className={styles.characterCount}>{formData.judul.length}/20 karakter</div>
-            {errors.judul && <span className={styles.errorText}>{errors.judul}</span>}
+    <div className={styles.backdrop}>
+      <div className={styles.overlay} onClick={handleBackdropClick}>
+        <div className={styles.modal} onClick={e => e.stopPropagation()}>
+          {/* Header Modal */}
+          <div className={styles.header}>
+            <h2 className={styles.title}>{activity ? "Ubah Aktivitas" : "Tambah Aktivitas"}</h2>
           </div>
 
-          {/* Field Tanggal */}
-          <div className={styles.field}>
-            <label className={styles.label}>Tanggal</label>
-            <input
-              type="date"
-              value={formData.tanggal}
-              onChange={(e) => handleInputChange("tanggal", e.target.value)}
-              onFocus={() => handleFocus("tanggal")}
-              onBlur={handleBlur}
-              min={activity ? normalizeDate(activity.tanggal) : getTodayDate()} // Edit: dari tanggal asli, Tambah: dari hari ini
-              className={`${styles.dateInput} ${
-                focusedField === "tanggal" ? styles.inputFocused : ""
-              } ${errors.tanggal ? styles.inputError : ""}`}
-            />
-            {errors.tanggal && <span className={styles.errorText}>{errors.tanggal}</span>}
-          </div>
-
-          {/* Field Waktu - Sejajar di Mobile */}
-          <div className={styles.timeFields}>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className={styles.form}>
+            {/* Field Judul */}
             <div className={styles.field}>
-              <label className={styles.label}>Waktu mulai</label>
+              <label className={styles.label}>Judul</label>
               <input
-                type="time"
-                value={formData.waktuMulai}
-                onChange={(e) => handleInputChange("waktuMulai", e.target.value)}
-                onFocus={() => handleFocus("waktuMulai")}
+                type="text"
+                value={formData.judul}
+                onChange={(e) => handleInputChange("judul", e.target.value)}
+                onFocus={() => handleFocus("judul")}
                 onBlur={handleBlur}
-                min={isToday(formData.tanggal) ? getCurrentTime() : undefined} // Disable waktu masa lampau jika hari ini
-                className={`${styles.timeInput} ${
-                  focusedField === "waktuMulai" ? styles.inputFocused : ""
-                } ${errors.waktuMulai ? styles.inputError : ""}`}
+                placeholder="Masukkan judul aktivitas"
+                maxLength={20}
+                className={`${styles.input} ${
+                  focusedField === "judul" ? styles.inputFocused : ""
+                } ${errors.judul ? styles.inputError : ""}`}
               />
-              {errors.waktuMulai && <span className={styles.errorText}>{errors.waktuMulai}</span>}
+              <div className={styles.characterCount}>{formData.judul.length}/20 karakter</div>
+              {errors.judul && <span className={styles.errorText}>{errors.judul}</span>}
             </div>
 
+            {/* Field Tanggal */}
             <div className={styles.field}>
-              <label className={styles.label}>Waktu selesai</label>
+              <label className={styles.label}>Tanggal</label>
               <input
-                type="time"
-                value={formData.waktuSelesai}
-                onChange={(e) => handleInputChange("waktuSelesai", e.target.value)}
-                onFocus={() => handleFocus("waktuSelesai")}
+                type="date"
+                value={formData.tanggal}
+                onChange={(e) => handleInputChange("tanggal", e.target.value)}
+                onFocus={() => handleFocus("tanggal")}
                 onBlur={handleBlur}
-                min={
-                  isToday(formData.tanggal)
-                    ? formData.waktuMulai && formData.waktuMulai >= getCurrentTime()
-                      ? formData.waktuMulai
-                      : getCurrentTime()
-                    : formData.waktuMulai || undefined
-                } // Disable waktu selesai yang tidak valid
-                className={`${styles.timeInput} ${
-                  focusedField === "waktuSelesai" ? styles.inputFocused : ""
-                } ${errors.waktuSelesai ? styles.inputError : ""}`}
+                min={activity ? normalizeDate(activity.tanggal) : getTodayDate()} // Edit: dari tanggal asli, Tambah: dari hari ini
+                className={`${styles.dateInput} ${
+                  focusedField === "tanggal" ? styles.inputFocused : ""
+                } ${errors.tanggal ? styles.inputError : ""}`}
               />
-              {errors.waktuSelesai && <span className={styles.errorText}>{errors.waktuSelesai}</span>}
+              {errors.tanggal && <span className={styles.errorText}>{errors.tanggal}</span>}
             </div>
-          </div>
 
-          {/* Field Kategori */}
-          <div className={styles.field}>
-            <label className={styles.label}>Kategori</label>
-            <div className={styles.categoryWrapper}>
-              <button
-                type="button"
-                onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-                onFocus={() => handleFocus("kategori")}
-                onBlur={handleBlur}
-                className={`${styles.categoryButton} ${
-                  focusedField === "kategori" ? styles.inputFocused : ""
-                } ${errors.kategori ? styles.inputError : ""}`}
-              >
-                {selectedCategory ? (
-                  <div className={styles.categoryButtonContent}>
-                    <img
-                      src={selectedCategory.icon || "/placeholder.svg"}
-                      alt={selectedCategory.name}
-                      className={styles.categoryIconImg}
-                    />
-                    <span className={styles.categoryButtonText}>{selectedCategory.name}</span>
-                  </div>
-                ) : (
-                  <span className={styles.categoryButtonPlaceholder}>Pilih kategori</span>
-                )}
-                <img
-                  src={chevronDownIcon || "/placeholder.svg"}
-                  alt="Chevron"
-                  className={`${styles.categoryChevron} ${showCategoryDropdown ? styles.categoryChevronRotated : ""}`}
+            {/* Field Waktu - Sejajar di Mobile */}
+            <div className={styles.timeFields}>
+              <div className={styles.field}>
+                <label className={styles.label}>Waktu mulai</label>
+                <input
+                  type="time"
+                  value={formData.waktuMulai}
+                  onChange={(e) => handleInputChange("waktuMulai", e.target.value)}
+                  onFocus={() => handleFocus("waktuMulai")}
+                  onBlur={handleBlur}
+                  min={isToday(formData.tanggal) ? getCurrentTime() : undefined} // Disable waktu masa lampau jika hari ini
+                  className={`${styles.timeInput} ${
+                    focusedField === "waktuMulai" ? styles.inputFocused : ""
+                  } ${errors.waktuMulai ? styles.inputError : ""}`}
                 />
-              </button>
-              {errors.kategori && <span className={styles.errorText}>{errors.kategori}</span>}
+                {errors.waktuMulai && <span className={styles.errorText}>{errors.waktuMulai}</span>}
+              </div>
 
-              {/* Dropdown Kategori */}
-              {showCategoryDropdown && (
-                <div className={styles.categoryDropdown}>
-                  {categories.map((category) => (
-                    <button
-                      key={category.name}
-                      type="button"
-                      onClick={() => {
-                        handleInputChange("kategori", category.name)
-                        setShowCategoryDropdown(false)
-                      }}
-                      className={styles.categoryDropdownItem}
-                    >
-                      <div className={styles.categoryDropdownItemContent}>
-                        <img
-                          src={category.icon || "/placeholder.svg"}
-                          alt={category.name}
-                          className={styles.categoryIconImg}
-                        />
-                        <span className={styles.categoryDropdownItemText}>{category.name}</span>
-                      </div>
-                      {formData.kategori === category.name && (
-                        <img src={checkIcon || "/placeholder.svg"} alt="Check" className={styles.categoryCheck} />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
+              <div className={styles.field}>
+                <label className={styles.label}>Waktu selesai</label>
+                <input
+                  type="time"
+                  value={formData.waktuSelesai}
+                  onChange={(e) => handleInputChange("waktuSelesai", e.target.value)}
+                  onFocus={() => handleFocus("waktuSelesai")}
+                  onBlur={handleBlur}
+                  min={
+                    isToday(formData.tanggal)
+                      ? formData.waktuMulai && formData.waktuMulai >= getCurrentTime()
+                        ? formData.waktuMulai
+                        : getCurrentTime()
+                      : formData.waktuMulai || undefined
+                  } // Disable waktu selesai yang tidak valid
+                  className={`${styles.timeInput} ${
+                    focusedField === "waktuSelesai" ? styles.inputFocused : ""
+                  } ${errors.waktuSelesai ? styles.inputError : ""}`}
+                />
+                {errors.waktuSelesai && <span className={styles.errorText}>{errors.waktuSelesai}</span>}
+              </div>
             </div>
-          </div>
 
-          {/* Tombol Aksi */}
-          <div className={styles.buttons}>
-            <button type="button" onClick={onClose} className={styles.cancelButton}>
-              Batal
-            </button>
-            <button type="submit" className={styles.submitButton}>
-              {activity ? "Simpan" : "Tambah"}
-            </button>
-          </div>
-        </form>
+            {/* Field Kategori */}
+            <div className={styles.field}>
+              <label className={styles.label}>Kategori</label>
+              <div className={styles.categoryWrapper}>
+                <button
+                  type="button"
+                  onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+                  onFocus={() => handleFocus("kategori")}
+                  onBlur={handleBlur}
+                  className={`${styles.categoryButton} ${
+                    focusedField === "kategori" ? styles.inputFocused : ""
+                  } ${errors.kategori ? styles.inputError : ""}`}
+                >
+                  {selectedCategory ? (
+                    <div className={styles.categoryButtonContent}>
+                      <img
+                        src={selectedCategory.icon || "/placeholder.svg"}
+                        alt={selectedCategory.name}
+                        className={styles.categoryIconImg}
+                      />
+                      <span className={styles.categoryButtonText}>{selectedCategory.name}</span>
+                    </div>
+                  ) : (
+                    <span className={styles.categoryButtonPlaceholder}>Pilih kategori</span>
+                  )}
+                  <img
+                    src={chevronDownIcon || "/placeholder.svg"}
+                    alt="Chevron"
+                    className={`${styles.categoryChevron} ${showCategoryDropdown ? styles.categoryChevronRotated : ""}`}
+                  />
+                </button>
+                {errors.kategori && <span className={styles.errorText}>{errors.kategori}</span>}
+
+                {/* Dropdown Kategori */}
+                {showCategoryDropdown && (
+                  <div className={styles.categoryDropdown}>
+                    {categories.map((category) => (
+                      <button
+                        key={category.name}
+                        type="button"
+                        onClick={() => {
+                          handleInputChange("kategori", category.name)
+                          setShowCategoryDropdown(false)
+                        }}
+                        className={styles.categoryDropdownItem}
+                      >
+                        <div className={styles.categoryDropdownItemContent}>
+                          <img
+                            src={category.icon || "/placeholder.svg"}
+                            alt={category.name}
+                            className={styles.categoryIconImg}
+                          />
+                          <span className={styles.categoryDropdownItemText}>{category.name}</span>
+                        </div>
+                        {formData.kategori === category.name && (
+                          <img src={checkIcon || "/placeholder.svg"} alt="Check" className={styles.categoryCheck} />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Tombol Aksi */}
+            <div className={styles.buttons}>
+              <button type="button" onClick={onClose} className={styles.cancelButton}>
+                Batal
+              </button>
+              <button type="submit" className={styles.submitButton}>
+                {activity ? "Simpan" : "Tambah"}
+              </button>
+            </div>
+          </form>
+        </div>
+        {/* Backdrop untuk menutup dropdown */}
+        {showCategoryDropdown && <div className={styles.backdrop} onClick={() => setShowCategoryDropdown(false)} />}
       </div>
-
-      {/* Backdrop untuk menutup dropdown */}
-      {showCategoryDropdown && <div className={styles.backdrop} onClick={() => setShowCategoryDropdown(false)} />}
     </div>
-  )
+  );
 
-  // Gunakan portal agar modal selalu muncul di tengah viewport, bukan terbatasi parent
-  return createPortal(modalContent, document.body)
+  // Portal membungkus backdrop+modal
+  return createPortal(modalContent, document.body);
 }
 
 export default ActivityCrudPage

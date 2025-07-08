@@ -4,12 +4,15 @@ import Aktivitas from '../../../../../assets/home/addactivity.svg';
 import AddEditForm from '../../../../crudtask/screen/addeditform.jsx';
 import Toast from '../../../../../core/widgets/toast/toast.jsx';
 import { createTask } from '../../../../../core/services/api/task_api_service.js';
+import { createActivity } from '../../../../../core/services/api/activity_api_service.js';
 import React from 'react';
+import ActivityCrudPage from '../../../../crudactivity/screen/activity-crud-page.jsx';
 
 function AddSection({ onTaskAdded }) {
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [showToast, setShowToast] = React.useState(false);
   const [toastConfig, setToastConfig] = React.useState({ title: '', message: '' });
+  const [isActivityModalOpen, setIsActivityModalOpen] = React.useState(false);
 
   // Debug log untuk track state changes
   React.useEffect(() => {
@@ -84,6 +87,25 @@ function AddSection({ onTaskAdded }) {
     setShowToast(false);
   }, []);
 
+  // Handle add activity button click
+  const handleAddActivity = () => {
+    setIsActivityModalOpen(true);
+  };
+
+  // Simpan aktivitas ke backend dan tampilkan toast
+  const handleActivitySave = async (activityData) => {
+    try {
+      await createActivity(activityData);
+      setIsActivityModalOpen(false);
+      setToastConfig({ title: 'Berhasil', message: 'Aktivitas berhasil ditambahkan' });
+      setShowToast(true);
+      if (onTaskAdded) onTaskAdded();
+    } catch (error) {
+      setToastConfig({ title: 'Gagal', message: error.message || 'Gagal menambahkan aktivitas' });
+      setShowToast(true);
+    }
+  };
+
   return (
     <>
       <div className={styles.addSection}>
@@ -94,12 +116,21 @@ function AddSection({ onTaskAdded }) {
           <img src={Tugas} alt="Tugas" className={styles.whiteIcon} />
           {'Tambah Tugas'}
         </button>
-        <button className={styles.addActivity + ' ' + styles.purpleButton}>
+        <button 
+          className={styles.addActivity + ' ' + styles.purpleButton}
+          onClick={handleAddActivity}
+        >
           <img src={Aktivitas} alt="Aktivitas" className={styles.whiteIcon} />
           {'Tambah Aktivitas'}
         </button>
       </div>
-
+      {/* Modal Tambah Aktivitas */}
+      <ActivityCrudPage
+        isOpen={isActivityModalOpen}
+        onClose={() => setIsActivityModalOpen(false)}
+        onSave={handleActivitySave}
+        activity={null}
+      />
       {/* Add/Edit Form Popup */}
       <AddEditForm
         isOpen={isFormOpen}
