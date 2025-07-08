@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1024" fill="none" viewBox="0 0 1440 1024">
+  <path fill="#fff" d="M0 0h1440v1024H0z"/>
+  <g clip-path="url(#a)">
+    <path fill="url(#b)" d="M0 0h1440v1024H0z"/>
+    <g clip-path="url(#c)">
+      <g filter="url(#d)" opacity=".2" style="mix-blend-mode:multiply">
+        <rect width="288" height="288" x="80" y="80" fill="#EEF3FF" rx="144"/>
+      </g>
+      <g filter="url(#e)" opacity=".2" style="mix-blend-mode:multiply">
+        <rect width="288" height="288" x="1112" y="160" fill="#DFEAFF" rx="144"/>
+      </g>
+      <g filter="url(#f)" opacity=".2" style="mix-blend-mode:multiply">
+        <rect width="288" height="288" x="160" y="768" fill="#C6D6FF" rx="144"/>
+      </g>
+    </g>
+  </g>
+  <defs>
+    <filter id="d" width="336" height="336" x="56" y="56" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur result="effect1_foregroundBlur_3962_21099" stdDeviation="12"/>
+    </filter>
+    <filter id="e" width="336" height="336" x="1088" y="136" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur result="effect1_foregroundBlur_3962_21099" stdDeviation="12"/>
+    </filter>
+    <filter id="f" width="336" height="336" x="136" y="744" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur result="effect1_foregroundBlur_3962_21099" stdDeviation="12"/>
+    </filter>
+    <clipPath id="a">
+      <path fill="#fff" d="M0 0h1440v1024H0z"/>
+    </clipPath>
+    <clipPath id="c">
+      <path fill="#fff" d="M0 0h1440v1024H0z"/>
+    </clipPath>
+    <linearGradient id="b" x1="315.506" x2="1282.75" y1="-224.36" y2="1135.82" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff"/>
+      <stop offset=".5" stop-color="#EEF3FF"/>
+      <stop offset="1" stop-color="#DFEAFF"/>
+    </linearGradient>
+  </defs>
+</svg>
