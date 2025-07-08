@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+.activityCard {
+  @apply bg-white rounded-2xl shadow-sm border border-gray-200 p-4 transition-all cursor-pointer duration-200;
+}
+
+.activityCard:hover {
+  @apply shadow-md scale-102;
+}
+
+.activityHeader {
+  @apply mb-3;
+}
+
+.badges {
+  @apply flex flex-wrap gap-2;
+}
+
+.activityContent {
+  @apply -mr-12;
+}
+
+.activityTitle {
+  @apply text-base font-semibold text-gray-900 mb-3 leading-tight;
+}
+
+.activityContainer {
+  @apply flex flex-row items-center justify-between gap-4;
+}
+
+.activityFooter {
+  @apply flex items-center justify-between;
+}
+
+.timeRange {
+  @apply flex items-center gap-1.5 text-sm;
+}
+
+.timeIcon {
+  @apply w-4 h-4 flex-shrink-0;
+  filter: brightness(0);
+}
+
+.timeText {
+  @apply font-medium;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .activityCard {
+    @apply p-3;
+  }
+  .activityTitle {
+    @apply text-sm mb-2;
+  }
+  .activityFooter {
+    @apply flex-col items-start gap-2;
+  }
+  .timeRange {
+    @apply text-xs;
+  }
+}

@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import styles from "./list.module.css";
 import useTaskDashboard from "../../../../../core/hooks/useTaskDashboard";
 import { getAllTasks } from "../../../../../core/services/api/task_api_service";
+import { getActivities } from "../../../../../core/services/api/activity_api_service";
 import { useTaskAutoRefresh } from "../../../../../core/hooks/useGlobalTaskRefresh";
 import TaskCard from "../taskcard/taskcard.jsx";
+import ActivityCard from "../activitycard/activitycard.jsx";
 import noDataIcon from "../../../../../assets/home/nodata.svg";
 import jadwalIcon from "../../../../../assets/home/list/jadwal.svg";
 import taskIcon from "../../../../../assets/home/list/task.svg";
 import activityIcon from "../../../../../assets/home/list/activity.svg";
+import Activity from "../../../../../core/models/activity";
 
 function List({ currentIndex, searchQuery = "", selectedDate, refreshTrigger }) {
   const {
@@ -18,6 +21,9 @@ function List({ currentIndex, searchQuery = "", selectedDate, refreshTrigger }) 
   const [allTasks, setAllTasks] = useState([]);
   const [tasksLoading, setTasksLoading] = useState(false);
   const [tasksError, setTasksError] = useState(null);
+  const [allActivities, setAllActivities] = useState([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(false);
+  const [activitiesError, setActivitiesError] = useState(null);
 
   // Function untuk fetch tasks
   const fetchAllTasks = async () => {
@@ -43,6 +49,21 @@ function List({ currentIndex, searchQuery = "", selectedDate, refreshTrigger }) 
     }
   };
 
+  // Function untuk fetch activities
+  const fetchAllActivities = async () => {
+    try {
+      setActivitiesLoading(true);
+      setActivitiesError(null);
+      const activities = await getActivities();
+      setAllActivities(activities);
+    } catch (error) {
+      setActivitiesError(error.message || "Gagal mengambil data aktivitas");
+      console.error("Error fetching activities:", error);
+    } finally {
+      setActivitiesLoading(false);
+    }
+  };
+
   // Auto-refresh menggunakan global trigger
   useTaskAutoRefresh(fetchAllTasks);
 
@@ -50,6 +71,13 @@ function List({ currentIndex, searchQuery = "", selectedDate, refreshTrigger }) 
   useEffect(() => {
     fetchAllTasks();
   }, [refreshTrigger]); // Tambahkan refreshTrigger sebagai dependency
+
+  // Auto-refresh activities jika currentIndex 2
+  useEffect(() => {
+    if (currentIndex === 2) {
+      fetchAllActivities();
+    }
+  }, [currentIndex, refreshTrigger]);
 
   // Fungsi untuk mengkonversi data API ke format yang diharapkan komponen
   const convertApiDataToListFormat = (apiData) => {
@@ -214,65 +242,98 @@ function List({ currentIndex, searchQuery = "", selectedDate, refreshTrigger }) 
   };
 
   // Tentukan data yang akan ditampilkan berdasarkan currentIndex
-  const loading = dashboardLoading || tasksLoading;
-  const error = dashboardError || tasksError;
-
   let items = [];
-  if (loading) {
-    items = [];
-  } else if (error) {
-    items = [];
-  } else {
-    switch (currentIndex) {
-      case 0: // Semua (jadwal + tugas untuk tanggal yang dipilih)
-        // Gunakan semua task yang tersedia
-        items = convertApiDataToListFormat(allTasks);
-        break;
-      case 1: // Tugas untuk tanggal yang dipilih
-        // Gunakan semua task yang tersedia
-        items = convertApiDataToListFormat(allTasks);
-        break;
-      case 2: // Aktivitas untuk tanggal yang dipilih (belum ada API)
-        items = [];
-        break;
-      default:
-        items = [];
-    }
-
-    // Filter berdasarkan tanggal yang dipilih
+  let loading = dashboardLoading || tasksLoading;
+  let error = dashboardError || tasksError;
+  if (currentIndex === 2) {
+    loading = activitiesLoading;
+    error = activitiesError;
+    let activities = allActivities.map((act) => {
+      const activityObj = Activity.fromApiResponse(act);
+      const display = activityObj.toDisplayFormat();
+      // activityObj.tanggal bisa ISO string (misal 2025-06-22T17:00:00.000000Z)
+      return {
+        slug: act.slug,
+        title: display.judul,
+        kategori: [display.kategori],
+        startTime: display.waktuMulai,
+        endTime: display.waktuSelesai,
+        description: display.deskripsi,
+        tanggal: display.tanggal,
+        status: display.status,
+        durasi: display.durasi,
+        timeSlot: display.timeSlot,
+        rawDate: act.activity_date || act.tanggal, // gunakan activity_date asli dari API
+      };
+    });
+    // Filter berdasarkan selectedDate
     if (selectedDate) {
-      const beforeFilter = items.length;
-      console.log(
-        "All tasks before date filter:",
-        items.map((item) => ({
-          title: item.title,
-          deadline: item.deadline,
-          type: typeof item.deadline,
-        }))
-      );
-
-      items = filterItemsByDate(items, selectedDate);
-      console.log(
-        `Date filter: ${beforeFilter} -> ${
-          items.length
-        } items for date ${selectedDate.toLocaleDateString("id-ID")}`
-      );
-      console.log(
-        "Tasks after date filter:",
-        items.map((item) => ({
-          title: item.title,
-          deadline: item.deadline,
-        }))
-      );
+      activities = activities.filter((item) => {
+        // item.rawDate bisa ISO string (2025-06-22T17:00:00.000000Z)
+        if (!item.rawDate) return false;
+        // Ambil tanggal lokal dari ISO string
+        const itemDate = new Date(item.rawDate);
+        return isSameDate(itemDate, selectedDate);
+      });
     }
+    items = activities;
+  } else {
+    if (loading) {
+      items = [];
+    } else if (error) {
+      items = [];
+    } else {
+      switch (currentIndex) {
+        case 0: // Semua (jadwal + tugas untuk tanggal yang dipilih)
+          // Gunakan semua task yang tersedia
+          items = convertApiDataToListFormat(allTasks);
+          break;
+        case 1: // Tugas untuk tanggal yang dipilih
+          // Gunakan semua task yang tersedia
+          items = convertApiDataToListFormat(allTasks);
+          break;
+        case 2: // Aktivitas untuk tanggal yang dipilih (belum ada API)
+          items = [];
+          break;
+        default:
+          items = [];
+      }
 
-    // Filter berdasarkan search query
-    if (searchQuery && searchQuery.trim() !== "") {
-      const beforeFilter = items.length;
-      items = filterItemsBySearch(items, searchQuery);
-      console.log(
-        `Search filter: ${beforeFilter} -> ${items.length} items for query "${searchQuery}"`
-      );
+      // Filter berdasarkan tanggal yang dipilih
+      if (selectedDate) {
+        const beforeFilter = items.length;
+        console.log(
+          "All tasks before date filter:",
+          items.map((item) => ({
+            title: item.title,
+            deadline: item.deadline,
+            type: typeof item.deadline,
+          }))
+        );
+
+        items = filterItemsByDate(items, selectedDate);
+        console.log(
+          `Date filter: ${beforeFilter} -> ${
+            items.length
+          } items for date ${selectedDate.toLocaleDateString("id-ID")}`
+        );
+        console.log(
+          "Tasks after date filter:",
+          items.map((item) => ({
+            title: item.title,
+            deadline: item.deadline,
+          }))
+        );
+      }
+
+      // Filter berdasarkan search query
+      if (searchQuery && searchQuery.trim() !== "") {
+        const beforeFilter = items.length;
+        items = filterItemsBySearch(items, searchQuery);
+        console.log(
+          `Search filter: ${beforeFilter} -> ${items.length} items for query "${searchQuery}"`
+        );
+      }
     }
   }
 
@@ -406,18 +467,30 @@ function List({ currentIndex, searchQuery = "", selectedDate, refreshTrigger }) 
           </div>
         ) : (
           items.map((item, idx) => (
-            <TaskCard
-              key={item.slug || idx}
-              title={item.title}
-              categories={item.kategori}
-              deadline={item.deadline || item.time}
-              status={
-                item.status || (item.done ? "selesai" : "belum_dikerjakan")
-              }
-              alarm_id={item.alarm_id}
-              onClick={() => handleTaskClick(item)}
-              onToggleStatus={() => handleToggleStatus(item)}
-            />
+            currentIndex === 2 ? (
+              <ActivityCard
+                key={item.slug || idx}
+                title={item.title}
+                category={item.kategori?.[0] || "Aktivitas"}
+                startTime={item.startTime || item.start_time || item.start || item.deadline}
+                endTime={item.endTime || item.end_time || item.end || item.deadline}
+                description={item.description || item.deskripsi || ""}
+                onClick={() => handleTaskClick(item)}
+              />
+            ) : (
+              <TaskCard
+                key={item.slug || idx}
+                title={item.title}
+                categories={item.kategori}
+                deadline={item.deadline || item.time}
+                status={
+                  item.status || (item.done ? "selesai" : "belum_dikerjakan")
+                }
+                alarm_id={item.alarm_id}
+                onClick={() => handleTaskClick(item)}
+                onToggleStatus={() => handleToggleStatus(item)}
+              />
+            )
           ))
         )}
       </div>
