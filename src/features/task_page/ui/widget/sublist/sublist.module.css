@@ -30,7 +30,7 @@
 }
 
 .taskCount {
-  @apply bg-yellow-200 text-yellow-800 font-bold rounded-full px-3 py-0.5 text-sm md:text-base;
+  @apply bg-[#FFC550] text-[#0F172A] font-bold rounded-full px-3 py-0.5 text-sm md:text-base;
 }
 
 .taskList {

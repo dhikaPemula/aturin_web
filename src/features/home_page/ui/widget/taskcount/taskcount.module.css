@@ -5,7 +5,7 @@
 }
 
 .card {
-  @apply relative flex flex-col rounded-xl shadow-sm px-4 pt-5 pb-4 min-w-0 transition hover:scale-[1.03] hover:shadow-lg;
+  @apply relative flex flex-col rounded-xl shadow-sm px-4 pt-5 pb-4 min-w-0 transition hover:shadow-lg;
 }
 
 .iconWrapper {

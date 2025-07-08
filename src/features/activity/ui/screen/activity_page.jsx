@@ -21,7 +21,15 @@ import {
 } from "../../../../core/services/api/activity_api_service"
 
 const ActivityPage = () => {
-  const today = new Date().toISOString().split("T")[0]
+  // Ambil tanggal hari ini dengan timezone lokal (misal Asia/Jakarta)
+  const today = (() => {
+    const now = new Date();
+    // Offset dalam menit
+    const tzOffset = now.getTimezoneOffset() * 60000;
+    // Waktu lokal
+    const localISO = new Date(now.getTime() - tzOffset).toISOString().split("T")[0];
+    return localISO;
+  })();
 
   const [activities, setActivities] = useState([])
   const [filteredActivities, setFilteredActivities] = useState([])

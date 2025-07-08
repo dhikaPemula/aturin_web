@@ -5,7 +5,7 @@
 }
 
 .activityCard:hover {
-  @apply shadow-md scale-102;
+  @apply shadow-md;
 }
 
 .activityHeader {

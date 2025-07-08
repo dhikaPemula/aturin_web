@@ -248,35 +248,100 @@ function List({ currentIndex, searchQuery = "", selectedDate, refreshTrigger }) 
   if (currentIndex === 2) {
     loading = activitiesLoading;
     error = activitiesError;
-    let activities = allActivities.map((act) => {
-      const activityObj = Activity.fromApiResponse(act);
-      const display = activityObj.toDisplayFormat();
-      // activityObj.tanggal bisa ISO string (misal 2025-06-22T17:00:00.000000Z)
-      return {
-        slug: act.slug,
-        title: display.judul,
-        kategori: [display.kategori],
-        startTime: display.waktuMulai,
-        endTime: display.waktuSelesai,
-        description: display.deskripsi,
-        tanggal: display.tanggal,
-        status: display.status,
-        durasi: display.durasi,
-        timeSlot: display.timeSlot,
-        rawDate: act.activity_date || act.tanggal, // gunakan activity_date asli dari API
-      };
-    });
+    // Ambil data aktivitas dengan format yang sama seperti index 1 (tugas)
+    let activities = allActivities.map((act) => ({
+      type: "aktivitas",
+      kategori: [act.category || act.kategori || "Aktivitas"],
+      title: act.title || act.judul || act.activity_title || "Aktivitas Tanpa Judul",
+      deadline: act.activity_date || act.tanggal || act.date || "",
+      status: act.status || act.activity_status || "",
+      done: act.status === "selesai" || act.activity_status === "selesai",
+      slug: act.slug,
+      alarm_id: act.alarm_id,
+      // Tambahan untuk ActivityCard
+      startTime: act.startTime || act.start_time || act.waktuMulai || act.waktu_mulai || act.activity_start_time || act.start || act.deadline || "",
+      endTime: act.endTime || act.end_time || act.waktuSelesai || act.waktu_selesai || act.activity_end_time || act.end || act.deadline || "",
+      description: act.description || act.deskripsi || "",
+      tanggal: act.activity_date || act.tanggal || act.date || "",
+      durasi: act.durasi || act.duration || "",
+      timeSlot: act.timeSlot || act.time_slot || "",
+      rawDate: act.activity_date || act.tanggal || act.date || "",
+    }));
     // Filter berdasarkan selectedDate
     if (selectedDate) {
       activities = activities.filter((item) => {
-        // item.rawDate bisa ISO string (2025-06-22T17:00:00.000000Z)
-        if (!item.rawDate) return false;
-        // Ambil tanggal lokal dari ISO string
-        const itemDate = new Date(item.rawDate);
+        const itemDate = parseDeadlineDate(item.deadline);
+        if (!itemDate) return false;
         return isSameDate(itemDate, selectedDate);
       });
     }
+    // Filter berdasarkan search query
+    if (searchQuery && searchQuery.trim() !== "") {
+      const lowerQuery = searchQuery.toLowerCase().trim();
+      activities = activities.filter(
+        (item) =>
+          item.title.toLowerCase().includes(lowerQuery) ||
+          (item.kategori && item.kategori.some((cat) => cat.toLowerCase().includes(lowerQuery)))
+      );
+    }
     items = activities;
+  } else if (currentIndex === 0) {
+    // Gabungkan tugas dan aktivitas untuk tanggal yang dipilih
+    let tasks = convertApiDataToListFormat(allTasks);
+    let activities = allActivities.map((act) => {
+      const rawDate = act.activity_date || act.tanggal || act.date || null;
+      let parsedDate = null;
+      if (rawDate) {
+        parsedDate = new Date(rawDate);
+        if (isNaN(parsedDate.getTime())) {
+          const parts = rawDate.split("/");
+          if (parts.length === 3) {
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10) - 1;
+            const year = parseInt(parts[2], 10);
+            parsedDate = new Date(year, month, day);
+          } else {
+            parsedDate = null;
+          }
+        }
+      }
+      return {
+        type: "aktivitas",
+        slug: act.slug,
+        title: act.title || act.judul || act.activity_title || "Aktivitas Tanpa Judul",
+        kategori: [act.category || act.kategori || "Aktivitas"],
+        startTime: act.startTime || act.start_time || act.waktuMulai || act.waktu_mulai || act.activity_start_time || act.start || act.deadline || "",
+        endTime: act.endTime || act.end_time || act.waktuSelesai || act.waktu_selesai || act.activity_end_time || act.end || act.deadline || "",
+        description: act.description || act.deskripsi || "",
+        tanggal: parsedDate,
+        status: act.status || act.activity_status || "",
+        durasi: act.durasi || act.duration || "",
+        timeSlot: act.timeSlot || act.time_slot || "",
+        rawDate: rawDate,
+      };
+    });
+    // Gabungkan dan filter berdasarkan tanggal
+    let combined = [...tasks, ...activities];
+    if (selectedDate) {
+      combined = combined.filter((item) => {
+        const dateVal = item.type === "tugas" ? item.deadline : item.tanggal;
+        let parsed = item.type === "tugas" ? parseDeadlineDate(dateVal) : dateVal;
+        if (!parsed || isNaN(new Date(parsed).getTime())) return false;
+        return isSameDate(parsed, selectedDate);
+      });
+    }
+    // Filter search query
+    if (searchQuery && searchQuery.trim() !== "") {
+      const lowerQuery = searchQuery.toLowerCase().trim();
+      combined = combined.filter(
+        (item) =>
+          item.title.toLowerCase().includes(lowerQuery) ||
+          (item.kategori && item.kategori.some((cat) => cat.toLowerCase().includes(lowerQuery)))
+      );
+    }
+    items = combined;
+    loading = dashboardLoading || tasksLoading || activitiesLoading;
+    error = dashboardError || tasksError || activitiesError;
   } else {
     if (loading) {
       items = [];
@@ -467,14 +532,14 @@ function List({ currentIndex, searchQuery = "", selectedDate, refreshTrigger }) 
           </div>
         ) : (
           items.map((item, idx) => (
-            currentIndex === 2 ? (
+            item.type === "aktivitas" ? (
               <ActivityCard
                 key={item.slug || idx}
                 title={item.title}
                 category={item.kategori?.[0] || "Aktivitas"}
-                startTime={item.startTime || item.start_time || item.start || item.deadline}
-                endTime={item.endTime || item.end_time || item.end || item.deadline}
-                description={item.description || item.deskripsi || ""}
+                startTime={item.startTime}
+                endTime={item.endTime}
+                description={item.description || ""}
                 onClick={() => handleTaskClick(item)}
               />
             ) : (
