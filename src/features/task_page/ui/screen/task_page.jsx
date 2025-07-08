@@ -214,7 +214,7 @@ function TaskPage() {
             <div className={styles.searchSection}>
               <Search
                 onSearchChange={handleSearchChange}
-                placeholder="Mencari Tugas..."
+                placeholder="Cari tugas..."
               />
             </div>
             <div className={styles.filterSection}>

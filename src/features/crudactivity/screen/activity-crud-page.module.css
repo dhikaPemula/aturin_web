@@ -1,0 +1,286 @@
+@import "tailwindcss";
+
+.overlay {
+  @apply fixed inset-0 w-screen h-screen bg-black/50 backdrop-blur-sm flex items-center justify-center p-4;
+  z-index: 9999;
+}
+
+.modal {
+  @apply bg-white rounded-2xl w-full max-w-md max-h-screen overflow-hidden;
+  z-index: 10000;
+}
+
+@media (min-width: 1024px) {
+  .modal {
+    @apply max-w-xl;
+  }
+}
+
+.header {
+  @apply flex items-start justify-between mb-4;
+  height: 36px;
+}
+
+.closeButton {
+  @apply w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors cursor-pointer bg-transparent border-none text-2xl font-light;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  @apply bg-gray-100;
+}
+
+.title {
+  @apply text-2xl font-semibold text-black leading-9;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.form {
+  @apply flex flex-col gap-6;
+  height: auto;
+  min-height: 550px;
+  padding-bottom: 60px;
+}
+
+.field {
+  @apply flex flex-col gap-2;
+  min-height: 100px;
+  padding-top: 8px;
+}
+
+.field:nth-child(1) {
+  min-height: 120px;
+  padding-top: 8px;
+}
+
+.field:nth-child(2) {
+  min-height: 110px;
+  padding-top: 8px;
+}
+
+.field:nth-child(4) {
+  min-height: 110px;
+  padding-top: 8px;
+}
+
+.label {
+  @apply text-xl font-medium text-black leading-loose;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Style untuk asterisk merah */
+.label::after {
+  content: " *";
+  color: #ef4444; /* red-500 */
+  font-weight: normal;
+}
+
+.input,
+.dateInput,
+.timeInput {
+  @apply w-full h-12 px-4 py-3 bg-white rounded-xl text-black placeholder-zinc-500 text-lg font-normal leading-relaxed;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  outline: 1.30px solid #e4e4e7;
+  outline-offset: -1.30px;
+}
+
+.inputFocused {
+  @apply ring-2 ring-[#5263F3] border-[#5263F3] bg-white;
+  outline-color: #5263f3;
+}
+
+.inputError {
+  @apply border-red-500 ring-2 ring-red-500/20;
+}
+
+.characterCount {
+  @apply text-sm text-gray-500 mt-1;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.errorText {
+  @apply text-sm text-red-500 mt-1;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.4;
+}
+
+.dateInputWrapper,
+.timeInputWrapper {
+  @apply relative;
+}
+
+.timeFields {
+  @apply flex justify-center items-start gap-5;
+  min-height: 120px;
+}
+
+.timeFields .field {
+  width: 240px;
+  min-height: 110px;
+  padding-top: 8px;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .modal {
+    padding: 24px;
+  }
+
+  .title {
+    @apply text-xl;
+  }
+
+  .label {
+    @apply text-lg;
+  }
+
+  .input,
+  .dateInput,
+  .timeInput {
+    @apply text-base h-11;
+  }
+
+  .timeFields {
+    @apply flex flex-row justify-between items-start gap-4;
+    min-height: 100px;
+  }
+
+  .timeFields .field {
+    width: calc(50% - 8px);
+    min-height: 90px;
+    padding-top: 4px;
+  }
+
+  .buttons {
+    @apply flex flex-row justify-between gap-4;
+  }
+
+  .cancelButton,
+  .submitButton {
+    width: calc(50% - 8px);
+    height: 56px;
+    @apply text-xl;
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .modal {
+    padding: 28px;
+  }
+
+  .title {
+    @apply text-2xl;
+  }
+
+  .timeFields .field {
+    width: 200px;
+  }
+
+  .buttons {
+    @apply gap-6;
+  }
+
+  .cancelButton,
+  .submitButton {
+    width: 200px;
+  }
+}
+
+.categoryWrapper {
+  @apply relative;
+}
+
+.categoryButton {
+  @apply w-full h-12 px-4 py-3 bg-white rounded-xl text-left flex justify-between items-center;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  outline: 1.30px solid #e4e4e7;
+  outline-offset: -1.30px;
+}
+
+.categoryButtonContent {
+  @apply flex items-center gap-2;
+}
+
+.categoryIconImg {
+  @apply w-4 h-4;
+}
+
+.categoryButtonText {
+  @apply text-lg font-normal text-black leading-relaxed;
+}
+
+.categoryButtonPlaceholder {
+  @apply text-lg font-normal text-black leading-relaxed;
+}
+
+.categoryChevron {
+  @apply w-5 h-5 transition-transform opacity-50;
+}
+
+.categoryChevronRotated {
+  @apply rotate-180;
+}
+
+.categoryDropdown {
+  @apply absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto;
+  z-index: 1010;
+}
+
+.categoryDropdownItem {
+  @apply w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center justify-between;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.categoryDropdownItemContent {
+  @apply flex items-center gap-2;
+}
+
+.categoryDropdownItemText {
+  @apply text-gray-900;
+}
+
+.categoryCheck {
+  @apply w-4 h-4;
+}
+
+.buttons {
+  @apply flex justify-start items-start gap-8 mt-4;
+}
+
+.cancelButton {
+  width: 224px;
+  height: 56px;
+  @apply px-6 py-2.5 bg-white rounded-xl text-xl font-medium leading-loose text-black;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  box-shadow: 4px 4px 0px #a3a3a3;
+  border: 1.5px solid #a3a3a3;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.cancelButton:hover {
+  box-shadow: none;
+  transform: translate(4px, 4px);
+}
+
+.submitButton {
+  width: 224px;
+  height: 56px;
+  @apply px-6 py-2.5 bg-indigo-500 rounded-xl text-xl font-medium leading-loose text-white;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  box-shadow: 4px 4px 0px #3730a3;
+  border: 1.5px solid #3730a3;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  box-shadow: none;
+  transform: translate(4px, 4px);
+}
+
+.backdrop {
+  @apply fixed inset-0;
+  z-index: 1005;
+}

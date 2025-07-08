@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+.container {
+  @apply px-4 md:px-8;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.wrapper {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.header {
+  @apply mb-6 md:mb-7 lg:mb-8;
+}
+
+.headerContent {
+  @apply flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4;
+}
+
+.headerText {
+  @apply flex flex-col gap-2;
+}
+
+.title {
+  @apply text-2xl md:text-3xl font-semibold text-black;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.2;
+}
+
+.subtitle {
+  @apply text-[#5263f3] text-sm flex items-center gap-2;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.infoIcon {
+  @apply w-4 h-4;
+}
+
+.filterSection {
+  @apply w-full mb-6 md:mb-7 lg:mb-8;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+/* Desktop and tablet: 3 columns */
+@media (min-width: 768px) {
+  .filterSection {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 18px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .filterSection {
+    gap: 20px;
+  }
+}
+
+.filterGrid {
+  display: contents;
+}
+
+.selectedDate {
+  @apply w-full mb-6 md:mb-7 lg:mb-8;
+}
+
+.dateActivityCard {
+  @apply w-full bg-[#5263F3] text-white px-4 py-4 md:px-6 md:py-5 rounded-2xl flex items-center justify-between;
+  box-shadow: 0 4px 12px rgba(82, 99, 243, 0.15);
+}
+
+.dateSection {
+  @apply flex items-center gap-4;
+}
+
+.calendarIconWrapper {
+  @apply w-10 h-10 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center;
+}
+
+.calendarIcon {
+  @apply w-6 h-6 md:w-7 md:h-7;
+  filter: brightness(0) invert(1);
+}
+
+.dateInfo {
+  @apply flex flex-col gap-1;
+}
+
+.dateText {
+  @apply font-medium text-white text-base md:text-lg;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.todayBadge {
+  @apply bg-[#FFC550] text-black px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+.activityCountBadge {
+  background-color: #ffc550;
+  @apply text-black px-2 py-1 md:px-3 md:py-2 rounded-full font-bold min-w-[32px] md:min-w-[40px] text-center text-xs md:text-sm;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.timelineSection {
+  width: 100%;
+}

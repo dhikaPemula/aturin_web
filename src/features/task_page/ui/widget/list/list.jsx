@@ -58,11 +58,11 @@ function List({
     setFilteredTasks(convertedTasks);
   }, [tasks, searchQuery, currentStatus, currentCategory]);
 
-  // Get unique statuses to display - always show all statuses for drop areas
+  // Get unique statuses to display - show only filtered status if selected
   const getStatusesToDisplay = () => {
     if (currentStatus && currentStatus !== '') {
-      // Even when filtering, show all statuses as drop areas
-      return ['terlambat', 'belum_selesai', 'selesai'];
+      // Only show the selected status
+      return [currentStatus];
     } else {
       // Show all statuses when "Semua status" is selected
       return ['terlambat', 'belum_selesai', 'selesai'];

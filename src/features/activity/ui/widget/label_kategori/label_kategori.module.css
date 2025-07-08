@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+.labelContainer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background-color: transparent;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.labelContent {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.labelIcon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.labelText {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Background colors untuk setiap kategori tanpa border */
+.labelContainer[data-category="akademik"] {
+  background-color: #ccebff;
+}
+
+.labelContainer[data-category="hiburan"] {
+  background-color: #f0dbff;
+}
+
+.labelContainer[data-category="pekerjaan"] {
+  background-color: #ffe2d3;
+}
+
+.labelContainer[data-category="olahraga"] {
+  background-color: #ffd8d8;
+}
+
+.labelContainer[data-category="sosial"] {
+  background-color: #ffe3ca;
+}
+
+.labelContainer[data-category="spiritual"] {
+  background-color: #d3ffe5;
+}
+
+.labelContainer[data-category="pribadi"] {
+  background-color: #fff3c2;
+}
+
+.labelContainer[data-category="istirahat"] {
+  background-color: #d2d8ff;
+}

@@ -5,7 +5,7 @@ import App from './App'
 import './index.css'
 import { DataRefreshProvider } from './core/context/DataRefreshContext'
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <DataRefreshProvider>

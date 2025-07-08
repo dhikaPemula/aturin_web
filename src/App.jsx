@@ -1,7 +1,7 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import HomePage from './features/home_page/ui/screen/home_page.jsx';
 import TaskPage from './features/task_page/ui/screen/task_page.jsx';
-import ActivityPage from './features/activity/ui/activity_page.jsx';
+import ActivityPage from './features/activity/ui/screen/activity_page.jsx';
 import Header from './core/widgets/header/header.jsx';
 import React, { useState, useEffect } from 'react';
 
