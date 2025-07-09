@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+.filterContainer {
+  @apply relative;
+}
+
+.filterWrapper {
+  @apply relative;
+}
+
+.filterButton {
+  @apply w-full flex items-center justify-between bg-white border border-gray-300 rounded-lg px-4 py-3 shadow-sm hover:shadow-md transition-shadow duration-200 text-left;
+}
+
+.filterButton:focus {
+  @apply border-2 border-[#5263F3];
+}
+
+.filterText {
+  @apply flex-1 text-gray-500 text-base md:text-lg;
+}
+
+.filterContent {
+  @apply flex items-center flex-1;
+}
+
+.categoryIcon {
+  @apply w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3 flex-shrink-0;
+}
+
+.dropdownIcon {
+  @apply w-6 h-6 text-gray-400 ml-2 transition-transform duration-200 flex-shrink-0;
+}
+
+.dropdownIconOpen {
+  @apply transform rotate-180;
+}
+
+.dropdownMenu {
+  @apply absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg z-10 py-1 max-h-60 overflow-y-auto;
+}
+
+.dropdownItem {
+  @apply w-full px-4 py-3 md:px-6 md:py-4 text-left text-gray-700 text-base md:text-lg hover:bg-gray-50 transition-colors duration-150;
+}
+
+.dropdownItem:first-child {
+  @apply rounded-t-lg;
+}
+
+.dropdownItem:last-child {
+  @apply rounded-b-lg;
+}
+
+.dropdownItemActive {
+  @apply bg-purple-50 text-purple-700;
+  background-color: #f3f4f6;
+  color: #5263F3;
+}
+
+.dropdownItemActive:hover {
+  @apply bg-purple-100;
+}
+
+.dropdownItemContent {
+  @apply flex items-center;
+}

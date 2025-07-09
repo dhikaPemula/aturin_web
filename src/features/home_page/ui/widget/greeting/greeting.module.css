@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+.greetingcontainer {
+  @apply flex flex-col items-start -mr-12 gap-1;
+}
+
+.greeting {
+  @apply flex flex-row items-center gap-1;
+}
+
+.today {
+  @apply flex flex-row items-center gap-1;
+}
+
+.todayItem {
+  @apply flex flex-row items-center gap-2;
+}
+
+.greetingTitle {
+  @apply font-normal sm:text-xl max-sm:text-base;
+  color: #5263F3;
+}
+
+.greetingName {
+  @apply font-normal sm:text-xl max-sm:text-base;
+}
+
+.todayo {
+  @apply font-medium sm:text-xl max-sm:text-base;
+}
+
+.todayDate {
+  @apply font-medium sm:text-xl max-sm:text-base;
+  color: #B74206;
+}

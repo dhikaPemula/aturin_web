@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+.headerContainer {
+  @apply mt-4 mx-auto py-4 border-[2.5px] border-[#5263F3] rounded-[64px] bg-white shadow flex items-center justify-between;
+  width: 100%;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.leftSection {
+  @apply flex items-center gap-3;
+}
+
+.logoAturin {
+  @apply h-16;
+}
+
+.aturinText {
+  @apply font-semibold text-[32px] text-[#5263F3];
+}
+
+.menuNav {
+  @apply flex items-center mt-2 mx-auto relative;
+}
+
+.menuList {
+  @apply flex items-center gap-12 list-none m-0 p-0;
+}
+
+.menuItem {
+  @apply relative flex items-center gap-6 text-[20px] font-medium pb-4 text-[#222] transition-colors duration-300 cursor-pointer;
+}
+
+.menuItemActive {
+  @apply text-[#5263F3] font-medium;
+}
+
+/* Garis animasi yang bergeser */
+.menuNav::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  height: 4px;
+  border-radius: 2px;
+  background: #5263F3;
+  transition: all 0.3s ease-in-out;
+  width: var(--underline-width, 0px);
+  left: var(--underline-left, 0px);
+}
+
+.iconActive {
+  filter: brightness(0) saturate(100%) invert(36%) sepia(92%) saturate(749%) hue-rotate(210deg) brightness(97%) contrast(101%);
+}
+
+.iconNav {
+  @apply h-8 w-8;
+}
+
+.rightSection {
+  @apply flex items-center gap-4;
+}
+
+.bellWrapper {
+  @apply relative flex items-center;
+}
+
+.bellIcon {
+  @apply h-8 w-8 cursor-pointer;
+}
+
+.name {
+  @apply ml-2 text-[20px] font-normal text-[#222];
+}
+
+.arrowIcon {
+  @apply h-8 w-8 ml-2 cursor-pointer;
+}
+
+.avatar {
+  @apply h-12 w-12 rounded-full cursor-pointer;
+}
+@media (max-width: 768px) {
+  .headerContainer {
+    @apply mt-2 mx-2 px-2 py-2 rounded-2xl;
+  }
+  .menuNav {
+    @apply flex-col w-full;
+  }
+  .menuList {
+    @apply flex-col gap-2 w-full;
+  }
+  .menuItem {
+    @apply text-base pb-2 gap-2;
+  }
+  .logoAturin {
+    @apply h-10;
+  }
+  .aturinText {
+    @apply text-lg;
+  }
+  .avatar {
+    @apply h-12 w-12 ml-2;
+  }
+  .name {
+    @apply text-base ml-1;
+  }
+}
+
+/* Mobile navigation styles */
+.mobileNavPanel {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  background: #fff;
+  border: 2.5px solid #5263F3;
+  border-radius: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 16px 0;
+  z-index: 1000;
+}
+
+.mobileNavContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.mobileNavButton {
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #222;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mobileNavButtonActive {
+  color: #5263F3;
+}
+
+.mobileNavIcon {
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+}
+
+.mobileNavIconActive {
+  filter: invert(32%) sepia(92%) saturate(749%) hue-rotate(210deg) brightness(97%) contrast(101%);
+}
+
+.mobileLogoutButton {
+  background: #ffffff;
+  color: #dc2626;
+  border: 2px solid #dc2626;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 12px 16px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  /* 3D effect */
+  box-shadow: 0 4px 0 #b91c1c, 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(0);
+}
+
+.mobileLogoutButton:hover {
+  /* Pressed effect - move down and reduce shadow */
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #b91c1c, 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.mobileLogoutButton:active {
+  /* Full pressed effect */
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #b91c1c, 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mobileLogoutButton img {
+  /* Keep icon red to match text color */
+  filter: invert(20%) sepia(94%) saturate(1845%) hue-rotate(345deg) brightness(88%) contrast(93%);
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.cursorPointer {
+  cursor: pointer;
+}

@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+.container {
+  @apply px-4 md:px-8;
+  max-width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  overflow: visible; /* Pastikan tidak ada clipping */
+}
+
+/* Search Section */
+.searchSection {
+  @apply my-6 md:my-0;
+}
+
+/* Filter Section */
+.filterSection {
+  @apply my-6 md:my-0;
+}
+
+/* Category Section */
+.categorySection {
+  @apply my-6 md:my-0;
+}
+
+.tugas{
+  @apply mb-2;
+}
+
+.filteringSection {
+  @apply my-6 md:grid md:grid-cols-3 md:gap-4;
+}
+
+.upperSection {
+  @apply md:flex md:justify-between md:items-center;
+}
+
+/* List Section */
+.listSection {
+  @apply my-8;
+}
+
+/* Toast Notification */
+.toast {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 50;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateX(0);
+  transition: all 0.3s ease;
+  animation: slideIn 0.3s ease-out;
+}
+
+.toast.success {
+  background-color: #10b981;
+}
+
+.toast.error {
+  background-color: #ef4444;
+}
+
+.toast.warning {
+  background-color: #f59e0b;
+}
+
+.toast.info {
+  background-color: #3b82f6;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* DragOverlay Styles */
+.dragOverlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 99999 !important;
+  pointer-events: none !important;
+  will-change: transform;
+}
+
+.dragOverlayCard {
+  opacity: 1 !important;
+  transform: rotate(3deg) translate(-50%, -50%) !important;
+  transform-origin: center center !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+  pointer-events: none !important;
+  width: 280px !important;
+  height: auto !important;
+  cursor: grabbing !important;
+  z-index: 99999 !important;
+  position: relative !important;
+  will-change: transform;
+  background: white !important;
+  border-radius: 8px !important;
+}
+
+/* Global DragOverlay fix */
+body {
+  position: relative;
+}
+
+/* Ensure DragOverlay is always on top */
+[data-dnd-context] {
+  position: relative;
+  z-index: 1;
+}
+
+/* Force DragOverlay to be visible */
+div[role="presentation"] {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 99999 !important;
+  pointer-events: none !important;
+  width: 100vw !important;
+  height: 100vh !important;
+}

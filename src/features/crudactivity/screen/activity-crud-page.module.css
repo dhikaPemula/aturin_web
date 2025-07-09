@@ -1,0 +1,230 @@
+@import "tailwindcss";
+
+.overlay {
+  @apply fixed inset-0 w-screen h-screen bg-black/50 backdrop-blur-sm flex items-center justify-center;
+  z-index: 9999;
+}
+
+.modal {
+  @apply bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto pb-4 px-4 mx-4;
+  z-index: 10000;
+}
+
+@media (min-width: 1024px) {
+  .modal {
+    @apply max-w-xl;
+  }
+}
+
+.header {
+  @apply flex items-start justify-between py-2 md:py-4;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+}
+
+.closeButton {
+  @apply w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors cursor-pointer bg-transparent border-none text-2xl font-light;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  @apply bg-gray-100;
+}
+
+.title {
+  @apply text-lg font-semibold text-gray-900;
+}
+
+/* Penyesuaian agar persis seperti AddEditForm (task) */
+.form {
+  max-height: unset;
+  padding: 0;
+  overflow: visible;
+}
+
+.field {
+  @apply flex flex-col gap-2 mb-4;
+  min-height: unset;
+  padding-top: 0;
+}
+
+.field:nth-child(1) {
+  min-height: 120px;
+  padding-top: 8px;
+}
+
+.field:nth-child(2) {
+  min-height: 110px;
+  padding-top: 8px;
+}
+
+.field:nth-child(4) {
+  min-height: 110px;
+  padding-top: 8px;
+}
+
+.label {
+  @apply block text-sm font-medium text-gray-900 mb-1.5;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Style untuk asterisk merah */
+.label::after {
+  content: " *";
+  color: #ef4444; /* red-500 */
+  font-weight: normal;
+}
+
+.input,
+.dateInput,
+.timeInput {
+  @apply w-full px-3 py-2 border-2 border-gray-300 rounded-lg transition-all duration-200 text-base;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  outline: none;
+}
+
+.inputFocused {
+  border-color: #5263F3;
+}
+
+.inputError {
+  border-color: #ef4444 !important;
+}
+
+.characterCount {
+  @apply text-sm text-gray-500 mt-1;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.errorText {
+  @apply text-sm text-red-500 mt-1;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.4;
+}
+
+.dateInputWrapper,
+.timeInputWrapper {
+  @apply relative;
+}
+
+.timeFields {
+  @apply flex flex-row gap-4;
+  min-height: unset;
+}
+
+.timeFields .field {
+  width: 100%;
+  min-width: 0;
+  min-height: unset;
+  padding-top: 0;
+}
+
+.buttons {
+  @apply flex flex-row gap-3 px-0 mt-6 md:flex-row md:gap-3 md:px-0 mb-2 w-full;
+}
+
+.cancelButton {
+  @apply flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-2xl font-medium cursor-pointer bg-white transition-all duration-200 shadow-[0_6px_0_#9ca3af,0_8px_12px_rgba(0,0,0,0.15)] translate-y-0;
+}
+.cancelButton:hover {
+  @apply bg-gray-50 translate-y-1 shadow-[0_3px_0_#9ca3af,0_5px_8px_rgba(0,0,0,0.2)];
+}
+.cancelButton:active {
+  @apply translate-y-2 shadow-[0_0_0_#9ca3af,0_2px_4px_rgba(0,0,0,0.3)];
+}
+
+.submitButton {
+  @apply flex-1 px-4 py-3 bg-[#5263F3] text-white rounded-2xl font-medium border-0 cursor-pointer transition-all duration-200 shadow-[0_6px_0_#3d4db3,0_8px_12px_rgba(0,0,0,0.15)] translate-y-0;
+}
+.submitButton:hover {
+  @apply bg-[4B5CEA] translate-y-1 shadow-[0_3px_0_#3d4db3,0_5px_8px_rgba(0,0,0,0.2)];
+}
+.submitButton:active {
+  @apply translate-y-2 shadow-[0_0_0_#3d4db3,0_2px_4px_rgba(0,0,0,0.3)];
+}
+.submitButton:disabled {
+  @apply opacity-50 cursor-not-allowed translate-y-0 shadow-[0_2px_0_#9ca3af,0_4px_6px_rgba(0,0,0,0.1)];
+}
+
+.backdrop {
+  @apply fixed inset-0;
+  z-index: 1005;
+}
+
+.categoryWrapper {
+  @apply relative w-full;
+}
+
+.categoryButton {
+  @apply w-full h-12 px-4 py-3 bg-white rounded-xl text-left flex justify-between items-center border-2 border-gray-300;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  outline: none;
+}
+
+.categoryButtonContent {
+  @apply flex items-center gap-2;
+}
+
+.categoryIconImg {
+  @apply w-5 h-5;
+}
+
+.categoryButtonText, .categoryButtonPlaceholder {
+  @apply text-base font-normal text-black leading-relaxed;
+}
+
+.categoryChevron {
+  @apply w-5 h-5 transition-transform opacity-50;
+}
+
+.categoryChevronRotated {
+  @apply rotate-180;
+}
+
+.categoryDropdown {
+  @apply absolute left-0 right-0 mb-1 bg-white border-2 border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto z-50;
+  bottom: 100%;
+  top: auto;
+}
+
+.categoryDropdownItem {
+  @apply w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center justify-between;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.categoryDropdownItemContent {
+  @apply flex items-center gap-2;
+}
+
+.categoryDropdownItemText {
+  @apply text-gray-900;
+}
+
+.categoryCheck {
+  @apply w-4 h-4;
+}
+
+@media (max-width: 640px) {
+  .field {
+    margin-bottom: 6px !important;
+    gap: 4px !important;
+  }
+  .timeFields {
+    gap: 4px !important;
+  }
+  .categoryWrapper {
+    margin-bottom: 6px !important;
+  }
+  .buttons {
+    margin-top: 10px !important;
+    gap: 4px !important;
+  }
+  .categoryDropdownItem {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+}

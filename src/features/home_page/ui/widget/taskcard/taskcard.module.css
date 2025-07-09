@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+.taskCard {
+  @apply bg-white rounded-2xl shadow-sm border border-gray-200 p-4 transition-all cursor-pointer duration-200;
+}
+
+.taskCard:hover {
+  @apply shadow-md;
+}
+
+.taskCard.completed {
+  @apply opacity-70 bg-gray-50;
+}
+
+.taskHeader {
+  @apply mb-3;
+}
+
+.badges {
+  @apply flex flex-wrap gap-2;
+}
+
+.badge {
+  @apply px-2 py-1 rounded-full text-xs font-medium border;
+}
+
+.badgeAkademik {
+  @apply bg-blue-50 text-blue-600 border-blue-200;
+}
+
+.badgeTugas {
+  @apply bg-purple-50 text-purple-600 border-purple-200;
+}
+
+.badgeAktivitas {
+  @apply bg-green-50 text-green-600 border-green-200;
+}
+
+.badgeDefault {
+  @apply bg-gray-50 text-gray-600 border-gray-200;
+}
+
+.taskContent {
+    @apply -mr-12
+}
+
+.taskTitle {
+  @apply text-base font-semibold text-gray-900 mb-3 leading-tight;
+}
+
+.taskContainer {
+  @apply flex flex-row items-center justify-between gap-4;
+}
+
+.taskTitle.completedText {
+  @apply line-through text-gray-500;
+}
+
+.taskFooter {
+  @apply flex items-center justify-between;
+}
+
+.deadline {
+  @apply flex items-center gap-1.5 text-sm;
+}
+
+.dateIcon {
+  @apply w-4 h-4 flex-shrink-0;
+  filter: brightness(0);
+}
+
+.dateText {
+  @apply font-medium;
+}
+
+.statusSection {
+  @apply flex items-center justify-center;
+}
+
+.statusContainer {
+  @apply flex-shrink-0 flex items-center justify-center;
+}
+
+.status {
+  @apply px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-colors duration-200;
+}
+
+.statusSelesai {
+  @apply bg-green-100 text-green-700;
+}
+
+.statusSelesai:hover {
+  @apply bg-green-200;
+}
+
+.statusBelumDikerjakan {
+  @apply bg-orange-100 text-orange-700;
+}
+
+.statusBelumDikerjakan:hover {
+  @apply bg-orange-200;
+}
+
+.statusTerlambat {
+  @apply bg-red-100 text-red-700;
+}
+
+.statusTerlambat:hover {
+  @apply bg-red-200;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .taskCard {
+    @apply p-3;
+  }
+  
+  .taskTitle {
+    @apply text-sm mb-2;
+  }
+  
+  .taskFooter {
+    @apply flex-col items-start gap-2;
+  }
+  
+  .deadline {
+    @apply text-xs;
+  }
+  
+  .status {
+    @apply text-xs px-2 py-1;
+  }
+}

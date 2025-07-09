@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+.container {
+  @apply flex flex-col gap-2;
+}
+
+/* Title */
+.title {
+  @apply text-xl font-bold text-gray-900 m-0 leading-tight md:text-2xl lg:text-3xl;
+}
+
+/* Subtitle */
+.subtitle {
+  @apply text-xs text-gray-600 m-0 flex items-center gap-2 md:text-sm;
+  color: #5263F3;
+}
+
+.infoIcon {
+  @apply w-4 h-4 flex-shrink-0;
+}

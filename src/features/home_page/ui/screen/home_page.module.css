@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+.container {
+  @apply px-4 md:px-8;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.headerSection {
+  @apply flex flex-col md:flex-row md:justify-between items-stretch md:items-center gap-6;
+}
+
+.greetingSection {
+  @apply flex-1 min-w-0;
+}
+
+.addSection {
+  @apply w-full md:w-auto md:flex-shrink-0;
+}
+
+.calendarMobile {
+  @apply block lg:hidden mb-6;
+}
+
+.listandCalendar {
+  display: flex;
+  gap: 1rem;
+}
+
+.listandCalendar > :first-child {
+  flex: 2 2 0;
+  min-width: 0;
+}
+
+.listandCalendar > :last-child {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.calendarDesktop {
+  @apply hidden lg:block;
+}
+
+.taskCountContainer {
+  @apply mb-6;
+}

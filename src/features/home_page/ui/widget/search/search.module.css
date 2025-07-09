@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+.searchContainer {
+  @apply flex items-center shadow-md my-4 p-4 bg-white border border-gray-300 rounded-2xl;
+}
+
+.searchBox {
+  @apply flex items-center border border-gray-300 px-4 py-2 w-full outline-none rounded-lg;
+}
+
+.searchIcon {
+  @apply w-5 h-5 mr-2 text-gray-400;
+}
+
+.searchInput {
+  @apply p-2 rounded-md w-full outline-none border-none;
+}
+
+.clearButton {
+  @apply bg-transparent border-none text-xl text-gray-500 cursor-pointer px-2 py-1 ml-2 rounded flex items-center justify-center min-w-[24px] h-6 transition-all duration-200 ease-in-out;
+}
+
+.clearButton:hover {
+  @apply bg-gray-100 text-gray-700;
+}
+
+.clearButton:active {
+  @apply bg-gray-200;
+}
+
+@media (max-width: 768px) {
+  .searchContainer {
+    @apply p-2;
+  }
+  .searchIcon {
+    @apply w-4 h-4 mr-1;
+  }
+  .searchInput {
+    @apply p-1 text-sm;
+  }
+  .clearButton {
+    @apply text-lg min-w-[20px] h-5 ml-1;
+  }
+}
