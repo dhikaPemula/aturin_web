@@ -94,6 +94,23 @@
   @apply flex space-x-2 ml-4;
   position: relative;
   z-index: 10; /* Ensure buttons are above drag area */
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.taskCard:hover .inlineActionButtons {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (max-width: 640px) {
+  .inlineActionButtons {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 
 .editButton {

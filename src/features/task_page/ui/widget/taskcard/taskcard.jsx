@@ -71,12 +71,7 @@ function TaskCard({
   };
 
   // Handle delete confirmation
-  const handleDeleteConfirm = async (e) => {
-    if (e) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-    
+  const handleDeleteConfirm = async () => {
     if (onDeleteTask) {
       try {
         await onDeleteTask(task);
@@ -107,11 +102,7 @@ function TaskCard({
   };
 
   // Handle delete cancellation
-  const handleDeleteCancel = (e) => {
-    if (e) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
+  const handleDeleteCancel = () => {
     setShowDeleteAlert(false);
   };
   // Format deadline
@@ -233,10 +224,10 @@ function TaskCard({
             {formatDeadline(task.deadline)}
           </span>
           
-          {/* Action Buttons - inline with deadline */}
+          {/* Action Buttons - inline with deadline, hidden by default, show on hover */}
           <div 
             className={styles.inlineActionButtons}
-            data-no-drag="true" // Attribute to identify non-draggable area
+            data-no-drag="true"
           >
             {onEditTask && (
               <button 
