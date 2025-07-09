@@ -4,6 +4,7 @@ import { AturinIcon } from "../../../assets/landing_page/icon.jsx";
 import { useState } from "react";
 import { registerUser } from "../services/authService";
 import { validatePassword } from "../application/passwordValidator";
+import { useNavigate } from "react-router-dom";
 
 // Heroicons components
 const EyeIcon = ({ className }) => (
@@ -92,6 +93,8 @@ const UserIcon = ({ className }) => (
 );
 
 const Register = ({ onSwitchView }) => {
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -128,11 +131,14 @@ const Register = ({ onSwitchView }) => {
     }
 
     setIsLoading(true);
+    setErrorMessage("");
     try {
       await registerUser(formData);
       // Handle successful registration
+      navigate("/auth/login");
     } catch (error) {
       console.error("Registration failed:", error);
+      setErrorMessage(error.message || "Gagal mendaftar.");
     } finally {
       setIsLoading(false);
     }
@@ -200,6 +206,12 @@ const Register = ({ onSwitchView }) => {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
+        {errorMessage && (
+          <div className="mb-4 text-red-600 text-sm bg-red-100 border border-red-300 rounded-lg px-4 py-2">
+            {errorMessage}
+          </div>
+        )}
+
         {/* Name */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">

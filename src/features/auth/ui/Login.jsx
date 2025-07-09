@@ -3,6 +3,7 @@
 import { AturinIcon } from "../../../assets/landing_page/icon.jsx";
 import { useState } from "react";
 import { loginUser } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 // Heroicons components
 const EyeIcon = ({ className }) => (
@@ -75,6 +76,8 @@ const LockClosedIcon = ({ className }) => (
 );
 
 const Login = ({ onSwitchView }) => {
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -97,8 +100,10 @@ const Login = ({ onSwitchView }) => {
     try {
       await loginUser(formData);
       // Handle successful login
+      navigate("/home");
     } catch (error) {
       console.error("Login failed:", error);
+      setErrorMessage(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -147,6 +152,12 @@ const Login = ({ onSwitchView }) => {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
+        {errorMessage && (
+          <div className="mb-4 text-red-600 text-sm bg-red-100 border border-red-300 rounded-lg px-4 py-2">
+            {errorMessage}
+          </div>
+        )}
+
         {/* Email */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
