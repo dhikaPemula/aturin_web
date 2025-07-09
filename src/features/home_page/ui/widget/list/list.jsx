@@ -67,17 +67,11 @@ function List({ currentIndex, searchQuery = "", selectedDate, refreshTrigger }) 
   // Auto-refresh menggunakan global trigger
   useTaskAutoRefresh(fetchAllTasks);
 
-  // Fetch all tasks when component mounts or when refreshTrigger changes (backward compatibility)
+  // Fetch all tasks and activities when component mounts or when refreshTrigger changes
   useEffect(() => {
     fetchAllTasks();
+    fetchAllActivities();
   }, [refreshTrigger]); // Tambahkan refreshTrigger sebagai dependency
-
-  // Auto-refresh activities jika currentIndex 2
-  useEffect(() => {
-    if (currentIndex === 2) {
-      fetchAllActivities();
-    }
-  }, [currentIndex, refreshTrigger]);
 
   // Fungsi untuk mengkonversi data API ke format yang diharapkan komponen
   const convertApiDataToListFormat = (apiData) => {

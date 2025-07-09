@@ -92,7 +92,7 @@
 }
 
 .inputError {
-  border-color: #dc2626;
+  border-color: #ef4444 !important;
 }
 
 .characterCount {

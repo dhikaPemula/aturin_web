@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './calendar.module.css';
 import { getAllTasks } from '../../../../../core/services/api/task_api_service';
+import { getActivities } from '../../../../../core/services/api/activity_api_service';
 import { useTaskAutoRefresh } from '../../../../../core/hooks/useGlobalTaskRefresh';
 
 const daysShort = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
@@ -18,24 +19,29 @@ function Calendar({ today, currentDate, onDateChange }) {
   // today dan currentDate dikontrol dari parent
   const [date, setDate] = useState(currentDate || today || new Date());
   const [tasks, setTasks] = useState([]);
+  const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch tasks untuk menentukan hari mana yang ada tugas
-  const fetchTasks = async () => {
+  // Fetch tasks dan activities untuk menentukan hari mana yang ada tugas/aktivitas
+  const fetchTasksAndActivities = async () => {
     try {
       setLoading(true);
-      const data = await getAllTasks();
-      setTasks(data);
-      console.log('Calendar: Tasks loaded for date indicators');
+      const [tasksData, activitiesData] = await Promise.all([
+        getAllTasks(),
+        getActivities()
+      ]);
+      setTasks(tasksData);
+      setActivities(activitiesData);
+      console.log('Calendar: Tasks & Activities loaded for date indicators');
     } catch (error) {
-      console.error('Calendar: Error fetching tasks:', error);
+      console.error('Calendar: Error fetching tasks/activities:', error);
     } finally {
       setLoading(false);
     }
   };
 
   // Auto-refresh menggunakan global trigger
-  useTaskAutoRefresh(fetchTasks);
+  useTaskAutoRefresh(fetchTasksAndActivities);
 
   useEffect(() => {
     // Sinkronkan tampilan bulan jika currentDate berubah dari parent
@@ -44,7 +50,7 @@ function Calendar({ today, currentDate, onDateChange }) {
 
   // Initial fetch
   useEffect(() => {
-    fetchTasks();
+    fetchTasksAndActivities();
   }, []);
 
   const year = date.getFullYear();
@@ -52,19 +58,33 @@ function Calendar({ today, currentDate, onDateChange }) {
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = getFirstDayOfWeek(year, month);
 
-  // Buat set tanggal yang ada tugasnya di bulan/tahun yang sedang ditampilkan
-  const tasksInCurrentMonth = new Set();
-  
+  // Buat set tanggal yang ada tugas/aktivitas di bulan/tahun yang sedang ditampilkan
+  const eventsInCurrentMonth = new Set();
+  // Tugas
   tasks.forEach(task => {
     if (task.task_deadline) {
       try {
         const taskDate = new Date(task.task_deadline);
         // Cek apakah task ada di bulan dan tahun yang sama dengan calendar
         if (taskDate.getFullYear() === year && taskDate.getMonth() === month) {
-          tasksInCurrentMonth.add(taskDate.getDate());
+          eventsInCurrentMonth.add(taskDate.getDate());
         }
       } catch (error) {
         console.warn('Calendar: Invalid task deadline format:', task.task_deadline);
+      }
+    }
+  });
+  // Aktivitas
+  activities.forEach(act => {
+    const rawDate = act.activity_date || act.tanggal || act.date;
+    if (rawDate) {
+      try {
+        const actDate = new Date(rawDate);
+        if (actDate.getFullYear() === year && actDate.getMonth() === month) {
+          eventsInCurrentMonth.add(actDate.getDate());
+        }
+      } catch (error) {
+        console.warn('Calendar: Invalid activity date format:', rawDate);
       }
     }
   });
@@ -143,7 +163,7 @@ function Calendar({ today, currentDate, onDateChange }) {
           if (d === null) return <div key={i} className={styles.calendarEmpty}>&nbsp;</div>;
           const isToday = isTodayCell(d);
           const isCurrent = isCurrentDateCell(d);
-          const hasTasks = tasksInCurrentMonth.has(d);
+          const hasEvents = eventsInCurrentMonth.has(d);
           return (
             <div
               key={i}
@@ -156,7 +176,7 @@ function Calendar({ today, currentDate, onDateChange }) {
               style={{ cursor: 'pointer' }}
             >
               {d}
-              {hasTasks && <span className={styles.jadwalDot} />}
+              {hasEvents && <span className={styles.jadwalDot} />}
             </div>
           );
         })}

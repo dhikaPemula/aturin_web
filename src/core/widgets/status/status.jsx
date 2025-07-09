@@ -13,6 +13,12 @@ export const statuses = [
     background: "#FFEDD9"
   },
   {
+    name: "belum_selesai",
+    label: "Belum Selesai", 
+    foreground: "#CC6D00",
+    background: "#FFEDD9"
+  },
+  {
     name: "terlambat",
     label: "Terlambat",
     foreground: "#999999",

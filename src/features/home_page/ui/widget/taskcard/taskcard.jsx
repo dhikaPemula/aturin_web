@@ -17,65 +17,6 @@ function TaskCard({
   // Debug: Log alarm_id untuk melihat nilainya
   console.log("TaskCard alarm_id:", alarm_id, "type:", typeof alarm_id);
 
-  // Fungsi untuk menentukan status badge berdasarkan kondisi
-  const getStatusName = () => {
-    // Jika completed, selalu tampilkan selesai
-    if (isCompleted) {
-      return "selesai";
-    }
-
-    // Jika tidak ada deadline, default belum_dikerjakan
-    if (!deadline) {
-      return "belum_dikerjakan";
-    }
-
-    try {
-      const now = new Date();
-      const deadlineDate = new Date(deadline);
-
-      // Set jam ke 00:00:00 untuk perbandingan hari
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const deadlineDay = new Date(
-        deadlineDate.getFullYear(),
-        deadlineDate.getMonth(),
-        deadlineDate.getDate()
-      );
-
-      // Hitung selisih hari
-      const diffTime = deadlineDay.getTime() - today.getTime();
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-      // Debug log
-      console.log("Status calculation:", {
-        title,
-        deadline,
-        now: now.toISOString(),
-        deadlineDate: deadlineDate.toISOString(),
-        diffDays,
-        isCompleted,
-      });
-
-      // Jika deadline sudah lewat dan belum selesai
-      if (deadlineDate < now) {
-        return "terlambat";
-      }
-
-      // Berdasarkan selisih hari
-      if (diffDays === 0) {
-        return "hari_ini";
-      } else if (diffDays === 1) {
-        return "besok";
-      } else if (diffDays === 2) {
-        return "lusa";
-      } else {
-        return "belum_dikerjakan";
-      }
-    } catch (e) {
-      console.error("Error parsing deadline:", e);
-      return "belum_dikerjakan";
-    }
-  };
-
   // Format deadline
   const formatDeadline = (deadlineStr) => {
     if (!deadlineStr) return "Tidak ada deadline";
@@ -160,7 +101,7 @@ function TaskCard({
         <div className={styles.statusSection}>
           <div className={styles.statusContainer}>
             <StatusBadge
-              name={getStatusName()}
+              name={status}
               size="medium"
               onClick={(name, label) => {
                 if (onToggleStatus) onToggleStatus();
