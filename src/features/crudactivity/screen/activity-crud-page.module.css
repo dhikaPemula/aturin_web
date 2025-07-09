@@ -17,7 +17,7 @@
 }
 
 .header {
-  @apply flex items-start justify-between py-4;
+  @apply flex items-start justify-between py-2 md:py-4;
   position: sticky;
   top: 0;
   background: white;
@@ -112,7 +112,7 @@
 }
 
 .timeFields {
-  @apply flex flex-col md:flex-row gap-4;
+  @apply flex flex-row gap-4;
   min-height: unset;
 }
 
@@ -124,7 +124,7 @@
 }
 
 .buttons {
-  @apply flex flex-col gap-3 px-0 mt-6 md:flex-row md:gap-3 md:px-0 mb-2 w-full;
+  @apply flex flex-row gap-3 px-0 mt-6 md:flex-row md:gap-3 md:px-0 mb-2 w-full;
 }
 
 .cancelButton {
@@ -206,4 +206,25 @@
 
 .categoryCheck {
   @apply w-4 h-4;
+}
+
+@media (max-width: 640px) {
+  .field {
+    margin-bottom: 6px !important;
+    gap: 4px !important;
+  }
+  .timeFields {
+    gap: 4px !important;
+  }
+  .categoryWrapper {
+    margin-bottom: 6px !important;
+  }
+  .buttons {
+    margin-top: 10px !important;
+    gap: 4px !important;
+  }
+  .categoryDropdownItem {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
 }
