@@ -14,6 +14,7 @@ import { avatarMap, defaultAvatar } from "../avatars/avatars";
 import Menu from "../menu/menu";
 import NotificationList from "../notificationlist/notification_list";
 import Alert from "../alert/alert";
+import { logoutUser } from "../../../features/auth/services/authService";
 
 function Header({
   currentIndex: propCurrentIndex,
@@ -144,9 +145,16 @@ function Header({
   }, [currentIndex, isMobile]);
 
   // Handle logout
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      navigate("/");
+    } catch (e) {
+      // Fallback: tetap hapus token dan redirect jika API gagal
+      localStorage.removeItem("token");
+      localStorage.removeItem("auth_token");
+      navigate("/");
+    }
   };
 
   // Tentukan avatar dan nama dari banner jika ada

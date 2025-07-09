@@ -99,22 +99,10 @@ function List({
     );
   }
 
-  // Show empty state only when there's no tasks at all AND no filter is applied
-  if (!hasTasksToDisplay() && !searchQuery && !currentCategory && !currentStatus) {
-    return (
-      <div className={styles.noDataContainer}>
-        <img src={noDataIcon} alt="Tidak ada data" className={styles.noDataIcon} />
-        <p className={styles.noDataText}>
-          'Belum ada tugas yang tersedia'
-        </p>
-      </div>
-    );
-  }
-
   const statusesToDisplay = getStatusesToDisplay();
 
   return (
-    <div className={styles.listContainer}>
+    <div className={`${styles.listContainer} gap-4`}>
       {statusesToDisplay.map((status) => {
         const tasksForStatus = getTasksForStatus(status);
         

@@ -12,7 +12,7 @@ import Toast from "../../../../core/widgets/toast/toast"
 import plusIcon from "../../../../assets/activity/icons/plus.svg"
 import infoIcon from "../../../../assets/activity/icons/info.svg"
 // import calendarIcon from "../../../../assets/activity/icons/calendar.svg" // Calendar icon missing
-import calendarIcon from "../../../../assets/activity/icons/clock.svg" // Using clock icon as fallback
+import calendarIcon from "../../../../assets/activity/icons/calendar.svg" // Using clock icon as fallback
 import {
   getActivities,
   createActivity,

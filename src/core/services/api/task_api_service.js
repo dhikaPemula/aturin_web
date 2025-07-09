@@ -1,8 +1,11 @@
 import axios from "axios";
 
 const BASE_URL = "https://aturin-app.com/api/v1/tasks";
-// Inisialisasi token langsung di sini (hardcoded)
-const TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F0dXJpbi1hcHAuY29tL2FwaS92MS9sb2dpbiIsImlhdCI6MTc1MDc1OTMyOCwibmJmIjoxNzUwNzU5MzI4LCJqdGkiOiJjTzBSWmFad1lPQWg0eDlIIiwic3ViIjoiOTciLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.Jdvo2d1RtnyeoQ0NxbzFp2IaxP-6eg5QYzYeXnmMF0g";
+
+// Helper: get token from localStorage
+function getToken() {
+  return localStorage.getItem('token');
+}
 
 // Helper: get user ID from localStorage
 function getUserId() {
@@ -20,14 +23,13 @@ export async function createTask({
   estimatedDuration,
   category,
   status = 'belum_selesai',
-  alarmId,
-  token = TOKEN
+  alarmId
 }) {
   const userId = getUserId();
   if (!userId) {
     throw new Error('User ID tidak ditemukan. Silakan login ulang.');
   }
-
+  const token = getToken();
   const res = await axios.post(BASE_URL, {
     user_id: userId,
     task_title: title,
@@ -54,8 +56,7 @@ export async function updateTask(slug, {
   estimatedDuration,
   status,
   category,
-  alarmId,
-  token = TOKEN
+  alarmId
 }) {
   const updateData = {};
   if (title !== undefined) updateData.task_title = title;
@@ -66,10 +67,7 @@ export async function updateTask(slug, {
   if (category !== undefined) updateData.task_category = category;
   if (alarmId !== undefined) updateData.alarm_id = alarmId;
 
-  console.log('API updateTask - slug:', slug);
-  console.log('API updateTask - updateData:', updateData);
-  console.log('API updateTask - token:', token ? 'Present' : 'Missing');
-
+  const token = getToken();
   const res = await axios.patch(`${BASE_URL}/${slug}`, updateData, {
     headers: {
       "Content-Type": "application/json",
@@ -80,7 +78,8 @@ export async function updateTask(slug, {
 }
 
 // Delete task
-export async function deleteTask(slug, token = TOKEN) {
+export async function deleteTask(slug) {
+  const token = getToken();
   const res = await axios.delete(`${BASE_URL}/${slug}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -93,7 +92,8 @@ export async function deleteTask(slug, token = TOKEN) {
 // FETCH Operations
 
 // Get all tasks
-export async function getAllTasks(token = TOKEN) {
+export async function getAllTasks() {
+  const token = getToken();
   try {
     const res = await axios.get(BASE_URL, {
       headers: {
@@ -101,21 +101,8 @@ export async function getAllTasks(token = TOKEN) {
         Accept: 'application/json',
       },
     });
-
     if (res.data && res.data.data) {
       const tasks = Array.isArray(res.data.data) ? res.data.data : [];
-      
-      // TODO: Implementasi relasi alarm ketika alarm API service sudah siap
-      // import { getAllAlarms } from './alarm_api_service';
-      // const allAlarms = await getAllAlarms(token);
-      // const alarmMap = Object.fromEntries(allAlarms.filter(a => a.id != null).map(a => [a.id, a]));
-      // return tasks.map(task => {
-      //   if (task.alarm_id && alarmMap[task.alarm_id]) {
-      //     return { ...task, alarm: alarmMap[task.alarm_id] };
-      //   }
-      //   return task;
-      // });
-      
       return tasks;
     }
     return [];
@@ -126,7 +113,8 @@ export async function getAllTasks(token = TOKEN) {
 }
 
 // Get tasks for today
-export async function getTasksToday(token = TOKEN) {
+export async function getTasksToday() {
+  const token = getToken();
   try {
     const res = await axios.get(`${BASE_URL}/today`, {
       headers: {
@@ -134,21 +122,8 @@ export async function getTasksToday(token = TOKEN) {
         Accept: 'application/json',
       },
     });
-
     if (res.data && res.data.data) {
       const tasks = Array.isArray(res.data.data) ? res.data.data : [];
-      
-      // TODO: Implementasi relasi alarm ketika alarm API service sudah siap
-      // import { getAllAlarms } from './alarm_api_service';
-      // const allAlarms = await getAllAlarms(token);
-      // const alarmMap = Object.fromEntries(allAlarms.filter(a => a.id != null).map(a => [a.id, a]));
-      // return tasks.map(task => {
-      //   if (task.alarm_id && alarmMap[task.alarm_id]) {
-      //     return { ...task, alarm: alarmMap[task.alarm_id] };
-      //   }
-      //   return task;
-      // });
-      
       return tasks;
     }
     return [];
@@ -159,7 +134,8 @@ export async function getTasksToday(token = TOKEN) {
 }
 
 // Get uncompleted tasks for today
-export async function getUncompletedTasksToday(token = TOKEN) {
+export async function getUncompletedTasksToday() {
+  const token = getToken();
   try {
     const res = await axios.get(`${BASE_URL}/uncompleted-today`, {
       headers: {
@@ -167,21 +143,8 @@ export async function getUncompletedTasksToday(token = TOKEN) {
         Accept: 'application/json',
       },
     });
-
     if (res.data && res.data.data) {
       const tasks = Array.isArray(res.data.data) ? res.data.data : [];
-      
-      // TODO: Implementasi relasi alarm ketika alarm API service sudah siap
-      // import { getAllAlarms } from './alarm_api_service';
-      // const allAlarms = await getAllAlarms(token);
-      // const alarmMap = Object.fromEntries(allAlarms.filter(a => a.id != null).map(a => [a.id, a]));
-      // return tasks.map(task => {
-      //   if (task.alarm_id && alarmMap[task.alarm_id]) {
-      //     return { ...task, alarm: alarmMap[task.alarm_id] };
-      //   }
-      //   return task;
-      // });
-      
       return tasks;
     }
     return [];
@@ -192,7 +155,8 @@ export async function getUncompletedTasksToday(token = TOKEN) {
 }
 
 // Get task by slug
-export async function getTaskBySlug(slug, token = TOKEN) {
+export async function getTaskBySlug(slug) {
+  const token = getToken();
   try {
     const res = await axios.get(`${BASE_URL}/${slug}`, {
       headers: {
@@ -200,7 +164,6 @@ export async function getTaskBySlug(slug, token = TOKEN) {
         Accept: 'application/json',
       },
     });
-
     if (res.data && res.data.data) {
       return res.data.data;
     }
@@ -212,7 +175,8 @@ export async function getTaskBySlug(slug, token = TOKEN) {
 }
 
 // Get dashboard summary
-export async function getDashboardSummary(token = TOKEN) {
+export async function getDashboardSummary() {
+  const token = getToken();
   try {
     const res = await axios.get(`${BASE_URL}/dashboard/summary`, {
       headers: {
@@ -220,7 +184,6 @@ export async function getDashboardSummary(token = TOKEN) {
         Accept: 'application/json',
       },
     });
-
     if (res.data && res.data.data) {
       return res.data.data;
     }
@@ -232,7 +195,8 @@ export async function getDashboardSummary(token = TOKEN) {
 }
 
 // Count late tasks
-export async function countLateTasks(token = TOKEN) {
+export async function countLateTasks() {
+  const token = getToken();
   try {
     const res = await axios.get(`${BASE_URL}/dashboard/late-count`, {
       headers: {
@@ -240,7 +204,6 @@ export async function countLateTasks(token = TOKEN) {
         Accept: 'application/json',
       },
     });
-
     if (res.data && res.data.data) {
       return res.data.data;
     }
@@ -252,7 +215,8 @@ export async function countLateTasks(token = TOKEN) {
 }
 
 // Get tasks by status
-export async function getTasksByStatus(status, token = TOKEN) {
+export async function getTasksByStatus(status) {
+  const token = getToken();
   try {
     const res = await axios.get(`${BASE_URL}/dashboard/by-status`, {
       headers: {
@@ -261,7 +225,6 @@ export async function getTasksByStatus(status, token = TOKEN) {
       },
       params: { status },
     });
-
     if (res.data && res.data.data) {
       return res.data.data;
     }

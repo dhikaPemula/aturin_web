@@ -2,7 +2,7 @@
 
 .listContainer {
   @apply space-y-4;
-  @apply lg:flex lg:space-y-0 lg:space-x-6 lg:items-start lg:gap-4;
+  @apply lg:flex lg:space-y-0 lg:items-start lg:gap-4;
 }
 
 .loadingContainer {
@@ -30,7 +30,7 @@
 }
 
 .noDataIcon {
-  @apply w-16 h-16 md:w-20 md:h-20 text-gray-400 mb-4;
+  @apply w-64 h-64 md:w-20 md:h-20 text-gray-400 mb-4;
 }
 
 .noDataText {

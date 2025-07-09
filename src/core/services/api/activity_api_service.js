@@ -3,10 +3,7 @@ import axios from "axios"
 const BASE_URL = "https://aturin-app.com/api/v1/activities"
 
 const getToken = () => {
-  return (
-    localStorage.getItem("token") ||
-    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F0dXJpbi1hcHAuY29tL2FwaS92MS9sb2dpbiIsImlhdCI6MTc1MDc1OTMyOCwibmJmIjoxNzUwNzU5MzI4LCJqdGkiOiJjTzBSWmFad1lPQWg0eDlIIiwic3ViIjoiOTciLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.Jdvo2d1RtnyeoQ0NxbzFp2IaxP-6eg5QYzYeXnmMF0g"
-  )
+  return localStorage.getItem("token");
 }
 
 const getHeaders = () => ({

@@ -63,3 +63,15 @@ export const resetPassword = async (token, newPassword) => {
     throw new Error(error.response?.data?.message || 'Password reset failed');
   }
 };
+
+export const logoutUser = async () => {
+  try {
+    const response = await api.post('/logout');
+    // Hapus token dari localStorage setelah logout
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('token'); // Untuk kompatibilitas jika ada
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Logout failed');
+  }
+};

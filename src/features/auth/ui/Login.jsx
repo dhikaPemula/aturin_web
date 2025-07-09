@@ -98,7 +98,11 @@ const Login = ({ onSwitchView }) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await loginUser(formData);
+      const response = await loginUser(formData);
+      // Simpan token ke localStorage jika ada
+      if (response && response.data && response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
       // Handle successful login
       navigate("/home");
     } catch (error) {

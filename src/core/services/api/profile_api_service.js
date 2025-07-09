@@ -1,10 +1,14 @@
 import axios from "axios";
 
 const BASE_URL = "https://aturin-app.com/api/v1/profile";
-// Inisialisasi token langsung di sini (hardcoded)
-const TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F0dXJpbi1hcHAuY29tL2FwaS92MS9sb2dpbiIsImlhdCI6MTc1MDc1OTMyOCwibmJmIjoxNzUwNzU5MzI4LCJqdGkiOiJjTzBSWmFad1lPQWg0eDlIIiwic3ViIjoiOTciLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.Jdvo2d1RtnyeoQ0NxbzFp2IaxP-6eg5QYzYeXnmMF0g";
 
-export async function getProfile(token = TOKEN) {
+// Helper: get token from localStorage
+function getToken() {
+  return localStorage.getItem('token');
+}
+
+export async function getProfile() {
+  const token = getToken();
   const res = await axios.get(`${BASE_URL}/me`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -24,7 +28,8 @@ export async function getProfile(token = TOKEN) {
   throw new Error('Data user tidak ditemukan di response');
 }
 
-export async function editProfile(data, token = TOKEN) {
+export async function editProfile(data) {
+  const token = getToken();
   const res = await axios.patch(`${BASE_URL}/edit`, data, {
     headers: {
       "Content-Type": "application/json",
@@ -34,7 +39,8 @@ export async function editProfile(data, token = TOKEN) {
   return res.data;
 }
 
-export async function getBannerProfile(token = TOKEN) {
+export async function getBannerProfile() {
+  const token = getToken();
   const res = await axios.get(`${BASE_URL}/banner`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -44,7 +50,8 @@ export async function getBannerProfile(token = TOKEN) {
   return res.data;
 }
 
-export async function getGlobalAlarmStatus(token = TOKEN) {
+export async function getGlobalAlarmStatus() {
+  const token = getToken();
   const res = await axios.get(`${BASE_URL}/alarmGlobal`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -54,7 +61,8 @@ export async function getGlobalAlarmStatus(token = TOKEN) {
   return res.data;
 }
 
-export async function switchGlobalAlarmStatus(token = TOKEN) {
+export async function switchGlobalAlarmStatus() {
+  const token = getToken();
   const res = await axios.put(`${BASE_URL}/alarmGlobal`, {}, {
     headers: {
       Authorization: `Bearer ${token}`,
