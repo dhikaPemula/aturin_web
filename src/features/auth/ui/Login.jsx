@@ -2,8 +2,9 @@
 
 import { AturinIcon } from "../../../assets/landing_page/icon.jsx";
 import { useState } from "react";
-import { loginUser } from "../services/authService";
-import { useNavigate } from "react-router-dom";
+import { loginUser, loginWithGoogle } from "../services/authService";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../../core/auth/AuthContext.jsx";
 
 // Heroicons components
 const EyeIcon = ({ className }) => (
@@ -78,6 +79,8 @@ const LockClosedIcon = ({ className }) => (
 const Login = ({ onSwitchView }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -87,6 +90,7 @@ const Login = ({ onSwitchView }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleClicked, setIsGoogleClicked] = useState(false);
   const [isLoginClicked, setIsLoginClicked] = useState(false);
+
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -97,17 +101,24 @@ const Login = ({ onSwitchView }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage("");
+    
     try {
       const response = await loginUser(formData);
-      // Simpan token ke localStorage jika ada
+      
       if (response && response.data && response.data.token) {
-        localStorage.setItem("token", response.data.token);
+        // Gunakan fungsi login dari AuthContext
+        login(response.data.token);
+        
+        // Redirect ke halaman yang ingin diakses sebelumnya atau ke home
+        const from = location.state?.from?.pathname || "/home";
+        navigate(from, { replace: true });
+      } else {
+        setErrorMessage("Login gagal. Tidak ada token yang diterima.");
       }
-      // Handle successful login
-      navigate("/home");
     } catch (error) {
       console.error("Login failed:", error);
-      setErrorMessage(error.message);
+      setErrorMessage(error.message || "Login gagal. Silakan coba lagi.");
     } finally {
       setIsLoading(false);
     }
@@ -118,6 +129,7 @@ const Login = ({ onSwitchView }) => {
     console.log("Google login clicked");
     setIsGoogleClicked(true);
     setTimeout(() => setIsGoogleClicked(false), 100);
+    loginWithGoogle();
   };
 
   const handleLoginClick = () => {

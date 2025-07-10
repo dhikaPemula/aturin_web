@@ -75,3 +75,7 @@ export const logoutUser = async () => {
     throw new Error(error.response?.data?.message || 'Logout failed');
   }
 };
+
+export const loginWithGoogle = () => {
+  window.location.href = `${API_CONFIG.baseURL}/auth/redirect/google`;
+};

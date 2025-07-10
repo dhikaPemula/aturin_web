@@ -52,7 +52,8 @@ const ForgotPassword = ({ onSwitchView }) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await sendPasswordResetEmail(email);
+      const response = await sendPasswordResetEmail(email);
+      console.log(response);
       setIsEmailSent(true);
     } catch (error) {
       console.error("Failed to send reset email:", error);
