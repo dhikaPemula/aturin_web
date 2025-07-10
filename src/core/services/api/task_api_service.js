@@ -7,12 +7,6 @@ function getToken() {
   return localStorage.getItem('token');
 }
 
-// Helper: get user ID from localStorage
-function getUserId() {
-  const userId = localStorage.getItem('userId');
-  return userId ? parseInt(userId) : null;
-}
-
 // CRUD Operations
 
 // Create new task
@@ -25,13 +19,8 @@ export async function createTask({
   status = 'belum_selesai',
   alarmId
 }) {
-  const userId = getUserId();
-  if (!userId) {
-    throw new Error('User ID tidak ditemukan. Silakan login ulang.');
-  }
   const token = getToken();
   const res = await axios.post(BASE_URL, {
-    user_id: userId,
     task_title: title,
     task_description: description,
     task_deadline: deadline,
