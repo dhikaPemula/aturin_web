@@ -26,7 +26,7 @@ const LabelKategori = ({ kategori }) => {
     },
     pekerjaan: {
       icon: pekerjaanIcon,
-      textColor: "#F59E0B", 
+      textColor: "#8E5C42", 
       displayName: "Pekerjaan",
     },
     olahraga: {

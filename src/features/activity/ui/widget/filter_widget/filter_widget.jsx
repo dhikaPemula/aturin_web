@@ -29,8 +29,10 @@ const FilterWidget = ({ type, value, onChange, placeholder }) => {
 
   if (type === "date") {
     return (
-      <div className={styles.container}>
-        <input type="date" value={value} onChange={(e) => onChange(e.target.value)} className={styles.dateInput} />
+      <div className={styles.filterContainer}>
+        <div className={styles.filterWrapper}>
+          <input type="date" value={value} onChange={(e) => onChange(e.target.value)} className={styles.dateInput} />
+        </div>
       </div>
     )
   }
@@ -39,57 +41,63 @@ const FilterWidget = ({ type, value, onChange, placeholder }) => {
     const selectedCategory = categories.find((cat) => cat.name === value)
 
     return (
-      <div className={styles.container}>
-        <button onClick={() => setIsOpen(!isOpen)} className={styles.categoryButton}>
-          <div className={styles.categoryButtonContent}>
-            {selectedCategory ? (
-              <>
-                <img
-                  src={selectedCategory.icon || "/placeholder.svg"}
-                  alt={selectedCategory.name}
-                  className={styles.categoryIconImg}
-                />
-                <span className={styles.categoryButtonTextSelected}>{selectedCategory.name}</span>
-              </>
-            ) : (
-              <span className={styles.categoryButtonTextPlaceholder}>{placeholder}</span>
-            )}
-          </div>
-          <img
-            src={chevronDownIcon || "/placeholder.svg"}
-            alt="Chevron"
-            className={`${styles.chevronIcon} ${isOpen ? styles.chevronIconRotated : ""}`}
-          />
-        </button>
+      <div className={styles.filterContainer}>
+        <div className={styles.filterWrapper}>
+          <button onClick={() => setIsOpen(!isOpen)} className={styles.filterButton} type="button">
+            <div className={styles.filterContent}>
+              {selectedCategory ? (
+                <>
+                  <img
+                    src={selectedCategory.icon || "/placeholder.svg"}
+                    alt={selectedCategory.name}
+                    className={styles.categoryIcon}
+                  />
+                  <span className={styles.filterText}>{selectedCategory.name}</span>
+                </>
+              ) : (
+                <span className={styles.filterText}>{placeholder}</span>
+              )}
+            </div>
+            <img
+              src={chevronDownIcon || "/placeholder.svg"}
+              alt="Chevron"
+              className={`${styles.dropdownIcon} ${isOpen ? styles.dropdownIconOpen : ""}`}
+            />
+          </button>
 
-        {isOpen && (
-          <div className={styles.dropdown}>
-            <button
-              onClick={() => {
-                onChange("")
-                setIsOpen(false)
-              }}
-              className={styles.dropdownItem}
-            >
-              <span>Semua kategori</span>
-            </button>
-            {categories.map((category) => (
+          {isOpen && (
+            <div className={styles.dropdownMenu}>
               <button
-                key={category.name}
                 onClick={() => {
-                  onChange(category.name)
+                  onChange("")
                   setIsOpen(false)
                 }}
-                className={styles.dropdownItem}
+                className={`${styles.dropdownItem} ${value === "" ? styles.dropdownItemActive : ""}`}
+                type="button"
               >
-                <img src={category.icon || "/placeholder.svg"} alt={category.name} className={styles.categoryIconImg} />
-                <span>{category.name}</span>
+                <div className={styles.dropdownItemContent}>
+                  <span>Semua kategori</span>
+                </div>
               </button>
-            ))}
-          </div>
-        )}
-
-        {isOpen && <div className={styles.backdrop} onClick={() => setIsOpen(false)} />}
+              {categories.map((category) => (
+                <button
+                  key={category.name}
+                  onClick={() => {
+                    onChange(category.name)
+                    setIsOpen(false)
+                  }}
+                  className={`${styles.dropdownItem} ${value === category.name ? styles.dropdownItemActive : ""}`}
+                  type="button"
+                >
+                  <div className={styles.dropdownItemContent}>
+                    <img src={category.icon || "/placeholder.svg"} alt={category.name} className={styles.categoryIcon} />
+                    <span>{category.name}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     )
   }
