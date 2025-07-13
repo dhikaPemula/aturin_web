@@ -145,7 +145,7 @@ function Calendar({ today, currentDate, onDateChange }) {
     <div className={styles.calendarContainer}>
       <div className={styles.calendarHeader}>
         <span className={styles.calendarTitle}>
-          Kalender {loading && <span className={styles.loadingIndicator}>🔄</span>}
+          Kalender
         </span>
         <div className={styles.calendarNav}>
           <button onClick={handlePrev} className={styles.calendarNavBtn}>&lt;</button>
