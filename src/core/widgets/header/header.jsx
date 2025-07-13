@@ -451,7 +451,7 @@ function Header({
         <span className={styles.avatar}>
           <img src={bannerAvatar} alt="avatar" className={styles.avatarImage} />
         </span>
-        <span className={styles.name}>{bannerName || "Rakha Sigma"}</span>
+        <span className={styles.name}>{bannerName || "Aturin Jaya"}</span>
         <img
           ref={arrowRef}
           src={arrowDownIcon}

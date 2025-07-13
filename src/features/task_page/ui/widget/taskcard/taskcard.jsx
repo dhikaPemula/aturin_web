@@ -161,6 +161,17 @@ function TaskCard({
     return `Estimasi: ${duration}`;
   };
 
+  // Handler untuk menghilangkan ghost drag image
+  const handleDragStart = (e) => {
+    // Buat gambar transparan 1x1px
+    const img = document.createElement("img");
+    img.src =
+      "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciLz4=";
+    e.dataTransfer.setDragImage(img, 0, 0);
+    // DndKit listeners tetap berjalan
+    if (listeners && listeners.onDragStart) listeners.onDragStart(e);
+  };
+
   if (!task) {
     return null;
   }
@@ -171,7 +182,7 @@ function TaskCard({
       ref={setNodeRef}
       className={`${styles.taskCard} ${isDragging ? styles.dragging : ''} ${className ? styles[className] : ''}`}
       style={style}
-      {...(isDraggable ? { ...listeners, ...attributes } : {})}
+      {...(isDraggable ? { ...listeners, ...attributes, onDragStart: handleDragStart } : {})}
     >
       {/* Task Header with Category Badge */}
       <div className={styles.taskHeader}>

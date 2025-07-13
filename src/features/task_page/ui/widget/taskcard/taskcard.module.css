@@ -11,15 +11,8 @@
 
 .taskCard:active {
   @apply cursor-grabbing shadow-lg;
-  transform: scale(0.99);
 }
 
-/* DndKit dragging state */
-.taskCard.dragging {
-  opacity: 0.5;
-  transform: scale(1.05);
-  z-index: 1000;
-}
 
 /* Drag states */
 .taskCard[draggable="true"]:hover {
@@ -42,7 +35,7 @@
 
 /* Additional styling for better drag visibility */
 .taskCard[draggable="true"]:active {
-  transform: scale(1.05);
+  transform: scale(1);
   @apply shadow-2xl border-blue-400;
 }
 
@@ -156,87 +149,6 @@
   .actionIcon {
     @apply w-4 h-4;
   }
-}
-
-/* Drag overlay specific styles */
-.taskCard.dragOverlay {
-  opacity: 1 !important;
-  transform: none !important; /* Remove transform dari TaskCard, biarkan parent yang handle */
-  box-shadow: none !important; /* Shadow ditangani oleh parent wrapper */
-  background: white !important;
-  border: none !important; /* Border ditangani oleh parent wrapper */
-  z-index: 99999 !important;
-  pointer-events: none !important;
-  cursor: grabbing !important;
-  width: 280px !important;
-  min-width: 280px !important;
-  max-width: 280px !important;
-  height: auto !important;
-  max-height: 200px !important; /* Batasi tinggi maksimal */
-  position: relative !important; /* Enable absolute positioning for children */
-  will-change: transform !important;
-  margin: 0 !important;
-  padding: 12px !important; /* Padding lebih kecil */
-  padding-bottom: 48px !important; /* Extra padding at bottom for action buttons */
-  box-sizing: border-box !important;
-  border-radius: 8px !important;
-  overflow: hidden !important; /* Cegah overflow content */
-}
-
-/* Force visibility and consistent sizing in drag overlay */
-.taskCard.dragOverlay * {
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
-/* Ensure category badges are visible in drag overlay */
-.taskCard.dragOverlay .categoryBadges {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 4px !important;
-  margin-bottom: 8px !important;
-}
-
-/* Ensure consistent sizing for drag overlay content */
-.taskCard.dragOverlay .taskTitle {
-  font-size: 1rem !important; /* Sedikit lebih kecil */
-  line-height: 1.4 !important;
-  margin-bottom: 6px !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important; /* Prevent text wrapping */
-}
-
-.taskCard.dragOverlay .taskDescription {
-  font-size: 0.8rem !important; /* Lebih kecil */
-  line-height: 1.3 !important;
-  margin-bottom: 8px !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  display: -webkit-box !important;
-  -webkit-line-clamp: 2 !important; /* Maksimal 2 baris */
-  line-clamp: 2 !important; /* Standard property */
-  -webkit-box-orient: vertical !important;
-}
-
-.taskCard.dragOverlay .detailItem {
-  margin-bottom: 4px !important;
-  font-size: 0.75rem !important; /* Detail lebih kecil */
-}
-
-.taskCard.dragOverlay .detailItem:last-child {
-  margin-bottom: 8px !important; /* Extra margin for last item to avoid overlap with action buttons */
-}
-
-.taskCard.dragOverlay .detailIcon {
-  width: 14px !important;
-  height: 14px !important;
-  margin-right: 6px !important;
-}
-
-/* Hide action buttons completely in drag overlay */
-.taskCard.dragOverlay .inlineActionButtons {
-  display: none !important; /* Hide action buttons in drag overlay */
 }
 
 /* Prevent drag on action buttons */

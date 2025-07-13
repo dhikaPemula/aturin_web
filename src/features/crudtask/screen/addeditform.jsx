@@ -261,9 +261,8 @@ function AddEditForm({
       newErrors.title = 'Judul tugas maksimal 20 karakter';
     }
     
-    if (!formData.description.trim()) {
-      newErrors.description = 'Deskripsi wajib diisi';
-    } else if (formData.description.length > 50) {
+    // Deskripsi tidak wajib diisi, tapi jika diisi tetap validasi panjang
+    if (formData.description && formData.description.length > 50) {
       newErrors.description = 'Deskripsi maksimal 50 karakter';
     }
     
@@ -441,7 +440,7 @@ function AddEditForm({
           {/* Deskripsi */}
           <div className={styles.fieldGroup}>
             <label className={styles.label}>
-              Deskripsi <span className={styles.required}>*</span>
+              Deskripsi
             </label>
             <textarea
               name="description"
