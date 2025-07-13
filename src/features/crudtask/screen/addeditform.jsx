@@ -71,7 +71,6 @@ function AddEditForm({
 
   // Categories for dropdown (sesuai dengan backend validation)
   const categories = [
-    { value: '', label: 'Select category', icon: null },
     { value: 'akademik', label: 'Akademik', icon: akademikIcon },
     { value: 'pekerjaan', label: 'Pekerjaan', icon: pekerjaanIcon },
     { value: 'pribadi', label: 'Pribadi', icon: pribadiIcon },
