@@ -2,7 +2,7 @@
 
 .listContainer {
   @apply space-y-4;
-  @apply lg:flex lg:space-y-0 lg:items-start lg:gap-4 bg-red-100;
+  @apply lg:flex lg:space-y-0 lg:items-start lg:gap-4;
 }
 
 .loadingContainer {
