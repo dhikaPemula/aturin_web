@@ -32,6 +32,14 @@ import warningCircleIcon from "../../../../assets/home/warning-circle.svg";
 const AUTOSCROLL_MARGIN = 80; // px dari tepi atas/bawah window
 const AUTOSCROLL_SPEED = 24; // px per event
 
+// Responsive autoScroll threshold (1 untuk desktop, 0.3 untuk md)
+const getAutoScrollThreshold = () => {
+  if (typeof window !== "undefined" && window.innerWidth <= 900) {
+    return 0.4;
+  }
+  return 0.2;
+};
+
 function TaskPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -45,6 +53,9 @@ function TaskPage() {
     message: "",
   });
   const [activeTask, setActiveTask] = useState(null);
+  const [autoScrollThreshold, setAutoScrollThreshold] = useState(
+    getAutoScrollThreshold()
+  );
 
   const {
     profile,
@@ -215,6 +226,12 @@ function TaskPage() {
     }
   };
 
+  React.useEffect(() => {
+    const handleResize = () => setAutoScrollThreshold(getAutoScrollThreshold());
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <DndContext
       collisionDetection={pointerWithin}
@@ -222,8 +239,8 @@ function TaskPage() {
       onDragEnd={handleDragEndWithOverlay}
       onDragMove={handleDragMove}
       autoScroll={{
-        threshold: { x: 0, y: 0.25 }, // area sensitif 15% atas/bawah
-        acceleration: 1000, // percepatan scroll (default 1, makin besar makin cepat)
+        threshold: { x: 0, y: autoScrollThreshold }, // responsif: 1 (desktop), 0.3 (md)
+        acceleration: 500, // percepatan scroll (default 1, makin besar makin cepat)
         activator: 1, // 0 = Pointer, 1 = DraggableRect
         interval: 5, // ms, interval scroll (default 5)
         layoutShiftCompensation: true, // kompensasi layout shift

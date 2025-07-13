@@ -170,11 +170,16 @@ function AddEditForm({
         category: task.task_category || task.categories?.[0] || ''
       });
     } else {
-      // Reset form for add mode
+      // Reset form for add mode, set deadline_date to today
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const todayStr = `${year}-${month}-${day}`;
       setFormData({
         title: '',
         description: '',
-        deadline_date: '',
+        deadline_date: todayStr,
         deadline_time: '',
         estimated_duration: '',
         category: ''
