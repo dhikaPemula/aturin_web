@@ -481,12 +481,7 @@ function List({ currentIndex, searchQuery = "", selectedDate, refreshTrigger }) 
         </div>
         <div className={styles.listContainer}>
           <div className={styles.loadingState}>
-            <img
-              src={noDataIcon}
-              alt="Loading"
-              className={styles.loadingIcon}
-            />
-            <span className={styles.loadingText}>Loading...</span>
+            <span className={styles.loadingText}>Memuat...</span>
           </div>
         </div>
       </div>

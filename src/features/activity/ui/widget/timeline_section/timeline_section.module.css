@@ -17,7 +17,7 @@
 }
 
 .emptyIconSvg {
-  @apply w-48 h-48 opacity-50;
+  @apply w-64 h-64;
 }
 
 .emptyText {

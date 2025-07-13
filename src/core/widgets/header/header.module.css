@@ -1,10 +1,8 @@
 @import "tailwindcss";
 
 .headerContainer {
-  @apply my-4 mx-auto py-4 border-[2px] border-[#5263F3] rounded-[64px] bg-white shadow flex items-center justify-between;
+  @apply my-4 mx-auto py-4 px-6 border-[2px] border-[#5263F3] rounded-[64px] bg-white shadow flex items-center justify-between;
   width: 100%;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
 }
 
 .leftSection {
