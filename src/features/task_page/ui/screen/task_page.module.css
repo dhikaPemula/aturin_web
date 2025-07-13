@@ -37,7 +37,7 @@
 
 /* List Section */
 .listSection {
-  @apply my-8;
+  @apply mt-8;
 }
 
 /* Toast Notification */

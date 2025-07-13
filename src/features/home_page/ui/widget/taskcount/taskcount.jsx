@@ -230,7 +230,7 @@ function TaskCount({ selectedDate, refreshTrigger }) {
 			<div className={styles.taskCountContainer}>
 				{[1, 2, 3, 4].map((idx) => (
 					<div key={idx} className={`${styles.card} ${styles.cardGray}`}>
-						<div className={styles.label}>Loading...</div>
+						<div className={styles.label}>Memuat...</div>
 						<div className={`${styles.count}`}>...</div>
 						<div className={styles.iconWrapper}>
 							<div className={styles.iconSkeleton}></div>

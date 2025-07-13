@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 .container {
-  @apply px-4 md:px-8;
+  @apply px-4 md:px-8 mb-6;
   max-width: 100%;
   box-sizing: border-box;
   font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
