@@ -1,10 +1,5 @@
-import React, { useState, useRef } from "react";
-import {
-  DndContext,
-  DragOverlay,
-  closestCenter,
-  pointerWithin,
-} from "@dnd-kit/core";
+import React, { useState, useRef, useEffect } from "react";
+import { DndContext, DragOverlay, pointerWithin } from "@dnd-kit/core";
 import { createPortal } from "react-dom";
 import styles from "./task_page.module.css";
 import useTaskList from "../../../../core/hooks/useTaskList.js";
@@ -22,23 +17,8 @@ import List from "../widget/list/list.jsx";
 import AddEditForm from "../../../crudtask/screen/addeditform.jsx";
 import Toast from "../../../../core/widgets/toast/toast.jsx";
 import TaskCard from "../widget/taskcard/taskcard.jsx";
-
-import clockIcon from "../../../../assets/home/clock.svg";
-import jadwalIcon from "../../../../assets/home/jadwal.svg";
-import checkCircleIcon from "../../../../assets/home/check-circle.svg";
-import warningCircleIcon from "../../../../assets/home/warning-circle.svg";
-
-// Autoscroll manual dengan sensitivitas bisa diatur
-const AUTOSCROLL_MARGIN = 80; // px dari tepi atas/bawah window
-const AUTOSCROLL_SPEED = 24; // px per event
-
-// Responsive autoScroll threshold (1 untuk desktop, 0.3 untuk md)
-const getAutoScrollThreshold = () => {
-  if (typeof window !== "undefined" && window.innerWidth <= 900) {
-    return 0.4;
-  }
-  return 0.2;
-};
+import { updateTask } from "../../../../core/services/api/task_api_service";
+import { useGlobalTaskRefresh } from "../../../../core/hooks/useGlobalTaskRefresh";
 
 function TaskPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,9 +33,8 @@ function TaskPage() {
     message: "",
   });
   const [activeTask, setActiveTask] = useState(null);
-  const [autoScrollThreshold, setAutoScrollThreshold] = useState(
-    getAutoScrollThreshold()
-  );
+  const [pointerPercentInList, setPointerPercentInList] = useState(null);
+  const [dynamicThresholdY, setDynamicThresholdY] = useState(0.3);
 
   const {
     profile,
@@ -74,6 +53,8 @@ function TaskPage() {
     refreshTasks,
   } = useTaskList();
 
+  const { triggerTaskRefresh } = useGlobalTaskRefresh();
+
   useTaskAutoRefresh(refreshTasks);
 
   const displayToast = (config) => {
@@ -83,18 +64,12 @@ function TaskPage() {
 
   const { handleDragEnd } = useDndKitTaskDrag(displayToast);
 
-  // Custom autoscroll: scroll window ke bawah dengan requestAnimationFrame jika user hold drag card di 25% bawah layar
+  // Custom scroll
   const isDraggingRef = useRef(false);
   const scrollAnimationRef = useRef(null);
   const shouldScrollRef = useRef(false);
+  const listSectionRef = useRef(null);
 
-  const handleDragStart = (event) => {
-    const taskData = event.active.data.current?.task;
-    setActiveTask(taskData);
-    isDraggingRef.current = true;
-  };
-
-  // Fungsi scroll animasi
   const scrollStep = () => {
     if (shouldScrollRef.current) {
       window.scrollBy({ top: 24, behavior: "auto" });
@@ -102,13 +77,37 @@ function TaskPage() {
     }
   };
 
+  const handleDragStart = (event) => {
+    const taskData = event.active.data.current?.task;
+    setActiveTask(taskData);
+    isDraggingRef.current = true;
+  };
+
   const handleDragMove = (event) => {
-    if (!isDraggingRef.current) return;
-    if (!event || !event.activatorEvent) return;
+    if (!isDraggingRef.current || !event?.activatorEvent) return;
     const y = event.activatorEvent.clientY;
+    // Hitung persentase posisi pointer terhadap tinggi listSection
+    if (listSectionRef.current) {
+      const rect = listSectionRef.current.getBoundingClientRect();
+      const pointerRelativeToContainer = y - rect.top;
+      const percentInContainer = Math.max(0, Math.min(1, pointerRelativeToContainer / rect.height));
+      setPointerPercentInList(percentInContainer);
+      // Konversi: jika pointer di 20% atas layar, threshold y = persentase pointer di container
+      const windowHeight = window.innerHeight;
+      if (y < windowHeight * 0.2) {
+        setDynamicThresholdY(percentInContainer);
+      } else if (y > windowHeight * 0.8) {
+        setDynamicThresholdY(1 - percentInContainer);
+      } else {
+        setDynamicThresholdY(0.3); // default
+      }
+    } else {
+      setPointerPercentInList(null);
+      setDynamicThresholdY(0.3);
+    }
+    // ...existing autoscroll logic...
     const windowHeight = window.innerHeight;
     const bottomThreshold = windowHeight * 0.75;
-
     if (y > bottomThreshold) {
       if (!shouldScrollRef.current) {
         shouldScrollRef.current = true;
@@ -125,7 +124,6 @@ function TaskPage() {
     }
   };
 
-  // Stop autoscroll saat drag selesai
   const handleDragEndWithOverlay = (event) => {
     isDraggingRef.current = false;
     shouldScrollRef.current = false;
@@ -137,23 +135,13 @@ function TaskPage() {
     setActiveTask(null);
   };
 
-  const handleSearchChange = (query) => {
-    setSearchQuery(query);
-  };
-
-  const handleStatusChange = (status) => {
-    setStatusFilter(status);
-  };
-
-  const handleCategoryChange = (category) => {
-    setCategoryFilter(category);
-  };
-
+  const handleSearchChange = (query) => setSearchQuery(query);
+  const handleStatusChange = (status) => setStatusFilter(status);
+  const handleCategoryChange = (category) => setCategoryFilter(category);
   const handleAddNewTask = () => {
     setTaskToEdit(null);
     setIsAddEditFormOpen(true);
   };
-
   const handleEditTask = (task) => {
     setTaskToEdit(task);
     setIsAddEditFormOpen(true);
@@ -162,11 +150,8 @@ function TaskPage() {
   const handleDeleteTask = async (task) => {
     try {
       const result = await deleteTask(task.slug);
-      if (result.success) {
-        return result;
-      } else {
-        throw new Error(result.error || "Gagal menghapus tugas");
-      }
+      if (result.success) return result;
+      else throw new Error(result.error || "Gagal menghapus tugas");
     } catch (error) {
       throw error;
     }
@@ -188,14 +173,12 @@ function TaskPage() {
           category: taskData.task_category,
           status: taskData.task_status,
         };
-
         if (
           taskData.estimated_task_duration &&
           taskData.estimated_task_duration.trim() !== ""
         ) {
           updateData.estimatedDuration = taskData.estimated_task_duration;
         }
-
         result = await updateTask(taskToEdit.slug, updateData);
       } else {
         const createData = {
@@ -205,80 +188,93 @@ function TaskPage() {
           category: taskData.task_category,
           status: taskData.task_status || "belum_selesai",
         };
-
         if (
           taskData.estimated_task_duration &&
           taskData.estimated_task_duration.trim() !== ""
         ) {
           createData.estimatedDuration = taskData.estimated_task_duration;
         }
-
         result = await createTask(createData);
       }
 
-      if (result.success) {
-        handleCloseAddEditForm();
-      } else {
+      if (result.success) handleCloseAddEditForm();
+      else
         console.error("Failed to save task:", result.error || "Unknown error");
-      }
     } catch (error) {
       console.error("Error saving task:", error);
     }
   };
 
-  React.useEffect(() => {
-    const handleResize = () => setAutoScrollThreshold(getAutoScrollThreshold());
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  // Handler untuk toggle status dari TaskCard
+  const handleToggleStatus = async (task) => {
+    try {
+      await updateTask(task.slug, { status: task.status });
+      displayToast({
+        type: 'success',
+        title: 'Status Tugas Diperbarui',
+        message: `Status tugas \"${task.title || task.task_title}\" berhasil diubah menjadi ${task.status.replace('_', ' ')}`
+      });
+      triggerTaskRefresh();
+    } catch (err) {
+      displayToast({
+        type: 'error',
+        title: 'Gagal Update Status',
+        message: 'Terjadi kesalahan saat mengubah status tugas.'
+      });
+    }
+  };
 
   return (
-    <DndContext
-      collisionDetection={pointerWithin}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEndWithOverlay}
-      onDragMove={handleDragMove}
-      autoScroll={{
-        threshold: { x: 0, y: autoScrollThreshold }, // responsif: 1 (desktop), 0.3 (md)
-        acceleration: 500, // percepatan scroll (default 1, makin besar makin cepat)
-        activator: 1, // 0 = Pointer, 1 = DraggableRect
-        interval: 5, // ms, interval scroll (default 5)
-        layoutShiftCompensation: true, // kompensasi layout shift
-        order: 0, // 0 = TreeOrder, 1 = ReversedTreeOrder
-        enabled: true, // aktifkan autoscroll
-      }}
-    >
-      <div className={styles.container}>
-        <div>
-          <div className={styles.upperSection}>
-            <div className={styles.tugas}>
-              <UpperSection />
-            </div>
-            <div className={styles.addSection}>
-              <AddSection onAddTask={handleAddNewTask} />
-            </div>
+    <div className={styles.container}>
+      <div>
+        <div className={styles.upperSection}>
+          <div className={styles.tugas}>
+            <UpperSection />
           </div>
-          <div className={styles.filteringSection}>
-            <div className={styles.searchSection}>
-              <Search
-                onSearchChange={handleSearchChange}
-                placeholder="Cari tugas..."
-              />
-            </div>
-            <div className={styles.filterSection}>
-              <StatusFilter
-                onStatusChange={handleStatusChange}
-                placeholder="Semua status"
-              />
-            </div>
-            <div className={styles.categorySection}>
-              <CategoryFilter
-                onCategoryChange={handleCategoryChange}
-                placeholder="Semua kategori"
-              />
-            </div>
+          <div className={styles.addSection}>
+            <AddSection onAddTask={handleAddNewTask} />
           </div>
-          <div className={styles.listSection}>
+        </div>
+
+        {/* Filtering section tetap di luar DndContext */}
+        <div className={styles.filteringSection}>
+          <div className={styles.searchSection}>
+            <Search
+              onSearchChange={handleSearchChange}
+              placeholder="Cari tugas..."
+            />
+          </div>
+          <div className={styles.filterSection}>
+            <StatusFilter
+              onStatusChange={handleStatusChange}
+              placeholder="Semua status"
+            />
+          </div>
+          <div className={styles.categorySection}>
+            <CategoryFilter
+              onCategoryChange={handleCategoryChange}
+              placeholder="Semua kategori"
+            />
+          </div>
+        </div>
+
+        {/* DndContext hanya membungkus listSection */}
+        <DndContext
+          collisionDetection={pointerWithin}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEndWithOverlay}
+          onDragMove={handleDragMove}
+          autoScroll={{
+            threshold: { x: 0, y: 0.4 },
+            acceleration: 300,
+            activator: 1,
+            interval: 1,
+            layoutShiftCompensation: false,
+            order: 0,
+            enabled: true,
+          }}
+        >
+          <div className={styles.listSection} ref={listSectionRef}>
             <List
               tasks={tasks}
               loading={loading}
@@ -289,57 +285,64 @@ function TaskPage() {
               onEditTask={handleEditTask}
               onDeleteTask={handleDeleteTask}
               onDeleteSuccess={displayToast}
+              onToggleStatus={handleToggleStatus}
             />
-          </div>
-        </div>
-
-        {createPortal(
-          <DragOverlay adjustScale={false} dropAnimation={null}>
-            {activeTask ? (
-              <div
-                style={{
-                  transformOrigin: "0 0",
-                  opacity: 1,
-                  background: "transparent",
-                  borderRadius: "8px",
-                  pointerEvents: "none",
-                  cursor: "grabbing",
-                  zIndex: 99999,
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-              >
-                <TaskCard
-                  task={activeTask}
-                  isDraggable={false}
-                  onEditTask={handleEditTask}
-                  onDeleteTask={handleDeleteTask}
-                  onDeleteSuccess={displayToast}
-                />
+            {/* Print persentase pointer di DndContext
+            {pointerPercentInList !== null && (
+              <div style={{textAlign: 'center', color: '#5263F3', fontWeight: 600, margin: '16px 0'}}>
+                Posisi pointer di DndContext: {(pointerPercentInList * 100).toFixed(1)}%
               </div>
-            ) : null}
-          </DragOverlay>,
-          document.body
-        )}
-
-        <AddEditForm
-          isOpen={isAddEditFormOpen}
-          onClose={handleCloseAddEditForm}
-          task={taskToEdit}
-          onSave={handleSaveTask}
-          onSuccess={displayToast}
-          onError={displayToast}
-        />
-
-        <Toast
-          isOpen={showToastNotification}
-          title={toastConfig.title}
-          message={toastConfig.message}
-          onClose={() => setShowToastNotification(false)}
-          duration={3000}
-        />
+            )} */}
+            {createPortal(
+              <DragOverlay adjustScale={false} dropAnimation={null}>
+                {activeTask && (
+                  <div
+                    style={{
+                      transformOrigin: "0 0",
+                      opacity: 1,
+                      background: "transparent",
+                      borderRadius: "8px",
+                      pointerEvents: "none",
+                      cursor: "grabbing",
+                      zIndex: 99999,
+                      position: "relative",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <TaskCard
+                      task={activeTask}
+                      isDraggable={false}
+                      onEditTask={handleEditTask}
+                      onDeleteTask={handleDeleteTask}
+                      onDeleteSuccess={displayToast}
+                      onToggleStatus={handleToggleStatus}
+                    />
+                  </div>
+                )}
+              </DragOverlay>,
+              document.body
+            )}
+          </div>
+        </DndContext>
       </div>
-    </DndContext>
+
+      <AddEditForm
+        isOpen={isAddEditFormOpen}
+        onClose={handleCloseAddEditForm}
+        task={taskToEdit}
+        onSave={handleSaveTask}
+        onSuccess={displayToast}
+        onError={displayToast}
+      />
+
+      <Toast
+        isOpen={showToastNotification}
+        title={toastConfig.title}
+        message={toastConfig.message}
+        onClose={() => setShowToastNotification(false)}
+        duration={3000}
+      />
+    </div>
   );
 }
 

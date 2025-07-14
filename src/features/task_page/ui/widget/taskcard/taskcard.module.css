@@ -3,6 +3,7 @@
 .taskCard {
   @apply bg-white border border-gray-200 rounded-lg p-4 m-2 shadow-sm hover:shadow-md transition-all duration-200 mb-4 cursor-grab;
   transform: scale(1);
+  position: relative;
 }
 
 .taskCard:hover {
@@ -166,4 +167,39 @@
   user-select: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
+}
+
+.checkBoxWrapper {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  display: inline-flex;
+  align-items: center;
+}
+
+.taskCard:hover .checkBoxWrapper {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (max-width: 1023px) {
+  .checkBoxWrapper {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
+.checkBox {
+  /* base style for checkbox */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkBoxEmpty {
+  /* kotak kosong: putih, border ungu */
+}
+
+.checkBoxChecked {
+  /* kotak dengan icon check */
 }

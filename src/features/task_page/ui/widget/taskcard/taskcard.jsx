@@ -4,6 +4,7 @@ import { CSS } from '@dnd-kit/utilities';
 import styles from './taskcard.module.css';
 import Badge from '../../../../../core/widgets/badge/buildbadge/badge.jsx';
 import Alert from '../../../../../core/widgets/alert/alert.jsx';
+import { updateTask } from '../../../../../core/services/api/task_api_service';
 
 // Import icons
 import clockIcon from '../../../../../assets/home/clock.svg';
@@ -17,10 +18,14 @@ function TaskCard({
   onDeleteTask,
   onDeleteSuccess,
   isDraggable = false,
-  className = ""
+  className = "",
+  showCheck = false, // Tambah prop showCheck
+  onToggleStatus // Tambah prop untuk toggle status
 }) {
   // State for delete confirmation alert
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  // State untuk hover
+  const [isHovered, setIsHovered] = useState(false);
 
   // DndKit draggable setup
   const {
@@ -172,6 +177,71 @@ function TaskCard({
     if (listeners && listeners.onDragStart) listeners.onDragStart(e);
   };
 
+  // Handler untuk toggle status tugas
+  const handleToggleStatus = async (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!task || !task.slug) return;
+    const currentStatus = task.status || task.task_status;
+    let newStatus = currentStatus;
+    if (["belum_selesai", "terlambat"].includes(currentStatus)) {
+      newStatus = "selesai";
+    } else if (currentStatus === "selesai") {
+      // Cek deadline
+      let deadline = task.deadline || task.task_deadline;
+      let isLate = false;
+      if (deadline) {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const deadlineDate = new Date(deadline);
+        deadlineDate.setHours(0,0,0,0);
+        isLate = deadlineDate < today;
+      }
+      newStatus = isLate ? "terlambat" : "belum_selesai";
+    }
+    try {
+      await updateTask(task.slug, { status: newStatus });
+      // Update local state agar langsung re-render
+      if (task.status !== undefined) task.status = newStatus;
+      if (task.task_status !== undefined) task.task_status = newStatus;
+      setLocalStatus(newStatus);
+      if (onToggleStatus) {
+        onToggleStatus({ ...task, status: newStatus, task_status: newStatus });
+      }
+      if (onDeleteSuccess) {
+        onDeleteSuccess({
+          type: 'success',
+          title: 'Status Tugas Diperbarui',
+          message: `Status tugas \"${task.title || task.task_title}\" berhasil diubah menjadi ${newStatus.replace('_', ' ')}`
+        });
+      }
+    } catch (err) {
+      if (onDeleteSuccess) {
+        onDeleteSuccess({
+          type: 'error',
+          title: 'Gagal Update Status',
+          message: 'Terjadi kesalahan saat mengubah status tugas.'
+        });
+      }
+    }
+  };
+
+  // State untuk status lokal agar re-render langsung
+  const [localStatus, setLocalStatus] = useState(task.status || task.task_status);
+  useEffect(() => {
+    setLocalStatus(task.status || task.task_status);
+  }, [task.status, task.task_status]);
+
+  // Cek apakah layar besar (lg) atau tidak
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   if (!task) {
     return null;
   }
@@ -182,6 +252,8 @@ function TaskCard({
       ref={setNodeRef}
       className={`${styles.taskCard} ${isDragging ? styles.dragging : ''} ${className ? styles[className] : ''}`}
       style={style}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       {...(isDraggable ? { ...listeners, ...attributes, onDragStart: handleDragStart } : {})}
     >
       {/* Task Header with Category Badge */}
@@ -190,8 +262,7 @@ function TaskCard({
           <div className={styles.categoryBadges}>
             {(task.categories && task.categories.length > 0 
               ? task.categories 
-              : (task.task_category ? [task.task_category] : [])
-            )
+              : (task.task_category ? [task.task_category] : []))
               .filter(category => 
                 category.toLowerCase() !== 'tugas' && 
                 category.toLowerCase() !== 'task'
@@ -209,7 +280,59 @@ function TaskCard({
 
       {/* Task Content */}
       <div className={styles.taskContent}>
-        <h3 className={styles.taskTitle}>{task.title}</h3>
+        <h3 className={styles.taskTitle} style={{display: 'flex', alignItems: 'center'}}>
+          {/* Kotak check di kiri title, hanya muncul saat hover */}
+          {showCheck && (["belum_selesai", "terlambat", "selesai"].includes(localStatus)) && (
+            <span
+              className={styles.checkBoxWrapper}
+              style={{
+                marginRight: 12,
+                display: isLargeScreen ? (isHovered ? 'inline-flex' : 'none') : 'inline-flex',
+                alignItems: 'center'
+              }}
+            >
+              <span
+                className={
+                  `${styles.checkBox} ` +
+                  (["belum_selesai", "terlambat"].includes(localStatus)
+                    ? styles.checkBoxEmpty
+                    : styles.checkBoxChecked)
+                }
+                onClick={handleToggleStatus}
+                onPointerDown={e => { e.stopPropagation(); }}
+                onMouseDown={e => { e.stopPropagation(); }}
+                onTouchStart={e => { e.stopPropagation(); }}
+                title={["belum_selesai", "terlambat"].includes(localStatus) ? 'Tandai selesai' : 'Tugas selesai'}
+                style={{cursor: 'pointer', display: 'inline-flex', alignItems: 'center'}}
+              >
+                {["belum_selesai", "terlambat"].includes(localStatus) ? (
+                  // Kotak kosong: putih, border ungu
+                  <span style={{
+                    display: 'inline-block',
+                    width: 18,
+                    height: 18,
+                    border: '2px solid #5263F3',
+                    borderRadius: 4,
+                    background: '#fff',
+                  }}></span>
+                ) : (
+                  // Kotak dengan icon check
+                  <span style={{display: 'inline-block', width: 18, height: 18}}>
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="18" height="18" rx="4" fill="#5263F3"/>
+                      <path d="M5 9.5L8 12L13 7" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </span>
+                )}
+              </span>
+            </span>
+          )}
+          {/* Jika tidak showCheck, title menempel ke kiri */}
+          {!showCheck && (
+            <span style={{marginRight: 0}}></span>
+          )}
+          {task.title}
+        </h3>
         {task.description && (
           <p className={styles.taskDescription}>{task.description}</p>
         )}

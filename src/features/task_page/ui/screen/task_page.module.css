@@ -1,11 +1,10 @@
 @import "tailwindcss";
 
 .container {
-  @apply px-4 md:px-8;
+  @apply px-4 md:px-8 overflow-hidden;
   max-width: 100%;
   box-sizing: border-box;
   position: relative;
-  overflow: visible; /* Pastikan tidak ada clipping */
 }
 
 /* Search Section */
