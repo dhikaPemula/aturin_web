@@ -78,7 +78,7 @@ function SubList({
               onDeleteTask={onDeleteTask}
               onDeleteSuccess={onDeleteSuccess}
               isDraggable={true}
-              showCheck={true}
+              showCheck={false}
             />
           ))
         )}
