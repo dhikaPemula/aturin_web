@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styles from './list.module.css';
 import SubList from '../sublist/sublist.jsx';
-import DroppableArea from '../droppable_area/droppable_area.jsx';
 import noDataIcon from '../../../../../assets/home/nodata.svg';
+import TaskCard from '../taskcard/taskcard.jsx';
 
 function List({ 
   tasks = [],
@@ -16,6 +16,10 @@ function List({
   onDeleteSuccess
 }) {
   const [filteredTasks, setFilteredTasks] = useState([]);
+  const [draggedTask, setDraggedTask] = useState(null);
+  const [pointer, setPointer] = useState({ x: 0, y: 0 });
+  // State untuk id card yang sedang di-drag
+  const [draggingCardId, setDraggingCardId] = useState(null);
 
   // Filter tasks based on search query and current filters
   useEffect(() => {
@@ -80,6 +84,19 @@ function List({
     return statusesToShow.some(status => getTasksForStatus(status).length > 0);
   };
 
+  const handleBeforeDragStart = (initial) => {
+    const status = initial.source.droppableId;
+    const index = initial.source.index;
+    const task = filteredTasks.filter(t => t.task_status === status)[index];
+    setDraggedTask(task);
+    // Listen pointer move
+    window.addEventListener('pointermove', handlePointerMove);
+  };
+
+  const handlePointerMove = (e) => {
+    setPointer({ x: e.clientX, y: e.clientY });
+  };
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -99,30 +116,23 @@ function List({
     );
   }
 
-  const statusesToDisplay = getStatusesToDisplay();
-
   return (
-    <div className={`${styles.listContainer} gap-4`}>
-      {statusesToDisplay.map((status) => {
+    <div className={styles.listContainer}>
+      {getStatusesToDisplay().map((status) => {
         const tasksForStatus = getTasksForStatus(status);
-        
         return (
-          <DroppableArea 
+          <SubList
             key={status}
-            id={`droppable-${status}`}
-            status={status}
-            className={styles.droppableSection}
-          >
-            {/* Always show SubList - it has its own empty state handling */}
-            <SubList
-              task_status={status}
-              tasks={tasksForStatus}
-              currentCategory={currentCategory}
-              onEditTask={onEditTask}
-              onDeleteTask={onDeleteTask}
-              onDeleteSuccess={onDeleteSuccess}
-            />
-          </DroppableArea>
+            task_status={status}
+            tasks={tasksForStatus}
+            currentCategory={currentCategory}
+            onEditTask={onEditTask}
+            onDeleteTask={onDeleteTask}
+            onDeleteSuccess={onDeleteSuccess}
+            gap={8}
+            draggingCardId={draggingCardId}
+            setDraggingCardId={setDraggingCardId}
+          />
         );
       })}
     </div>

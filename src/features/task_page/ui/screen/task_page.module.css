@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 .container {
-  @apply px-4 md:px-8 overflow-hidden;
+  @apply px-4 md:px-8; /* overflow-hidden dihapus agar drag overlay bisa muncul */
   max-width: 100%;
   box-sizing: border-box;
   position: relative;
@@ -88,7 +88,6 @@
   top: 0 !important;
   left: 0 !important;
   z-index: 99999 !important;
-  pointer-events: none !important;
   will-change: transform;
 }
 
@@ -97,7 +96,6 @@
   transform: rotate(3deg) translate(-50%, -50%) !important;
   transform-origin: center center !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
-  pointer-events: none !important;
   width: 280px !important;
   height: auto !important;
   cursor: grabbing !important;
@@ -125,7 +123,6 @@ div[role="presentation"] {
   top: 0 !important;
   left: 0 !important;
   z-index: 99999 !important;
-  pointer-events: none !important;
   width: 100vw !important;
   height: 100vh !important;
 }

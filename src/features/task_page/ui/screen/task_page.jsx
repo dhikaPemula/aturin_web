@@ -1,24 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
-import { DndContext, DragOverlay, pointerWithin } from "@dnd-kit/core";
-import { createPortal } from "react-dom";
+import React, { useState, useEffect } from "react";
+import { DragDropContext } from '@hello-pangea/dnd';
 import styles from "./task_page.module.css";
 import useTaskList from "../../../../core/hooks/useTaskList.js";
-import useProfile from "../../../../core/hooks/useProfile.js";
-import { useTaskAutoRefresh } from "../../../../core/hooks/useGlobalTaskRefresh";
-import { useDndKitTaskDrag } from "../../../../core/hooks/useDndKitTaskDrag.js";
-import Badge from "../../../../core/widgets/badge/buildbadge/badge.jsx";
-import StatusBadge from "../../../../core/widgets/status/statusbadge.jsx";
-import UpperSection from "../widget/uppersection/uppersection.jsx";
 import AddSection from "../widget/addbutton/addbutton.jsx";
 import Search from "../widget/search/search.jsx";
 import StatusFilter from "../widget/statusfilter/statusfilter.jsx";
 import CategoryFilter from "../widget/categoryfilter/categoryfilter.jsx";
-import List from "../widget/list/list.jsx";
 import AddEditForm from "../../../crudtask/screen/addeditform.jsx";
 import Toast from "../../../../core/widgets/toast/toast.jsx";
-import TaskCard from "../widget/taskcard/taskcard.jsx";
-import { updateTask } from "../../../../core/services/api/task_api_service";
-import { useGlobalTaskRefresh } from "../../../../core/hooks/useGlobalTaskRefresh";
+import List from "../widget/list/list.jsx";
+import UpperSection from "../widget/uppersection/uppersection.jsx";
 
 function TaskPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,15 +23,7 @@ function TaskPage() {
     title: "",
     message: "",
   });
-  const [activeTask, setActiveTask] = useState(null);
-  const [pointerPercentInList, setPointerPercentInList] = useState(null);
-  const [dynamicThresholdY, setDynamicThresholdY] = useState(0.3);
-
-  const {
-    profile,
-    loading: profileLoading,
-    error: profileError,
-  } = useProfile();
+  const [taskList, setTaskList] = useState([]);
 
   const {
     tasks,
@@ -53,86 +36,81 @@ function TaskPage() {
     refreshTasks,
   } = useTaskList();
 
-  const { triggerTaskRefresh } = useGlobalTaskRefresh();
+  useEffect(() => {
+    setTaskList(tasks || []);
+  }, [tasks]);
 
-  useTaskAutoRefresh(refreshTasks);
-
-  const displayToast = (config) => {
-    setToastConfig(config);
-    setShowToastNotification(true);
-  };
-
-  const { handleDragEnd } = useDndKitTaskDrag(displayToast);
-
-  // Custom scroll
-  const isDraggingRef = useRef(false);
-  const scrollAnimationRef = useRef(null);
-  const shouldScrollRef = useRef(false);
-  const listSectionRef = useRef(null);
-
-  const scrollStep = () => {
-    if (shouldScrollRef.current) {
-      window.scrollBy({ top: 24, behavior: "auto" });
-      scrollAnimationRef.current = requestAnimationFrame(scrollStep);
+  // Filtering logic
+  const filteredTasks = taskList.filter(task => {
+    let match = true;
+    if (searchQuery && searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase();
+      match = match && (
+        (task.task_title || "").toLowerCase().includes(q) ||
+        (task.task_description || "").toLowerCase().includes(q) ||
+        (task.task_category || "").toLowerCase().includes(q)
+      );
     }
-  };
-
-  const handleDragStart = (event) => {
-    const taskData = event.active.data.current?.task;
-    setActiveTask(taskData);
-    isDraggingRef.current = true;
-  };
-
-  const handleDragMove = (event) => {
-    if (!isDraggingRef.current || !event?.activatorEvent) return;
-    const y = event.activatorEvent.clientY;
-    // Hitung persentase posisi pointer terhadap tinggi listSection
-    if (listSectionRef.current) {
-      const rect = listSectionRef.current.getBoundingClientRect();
-      const pointerRelativeToContainer = y - rect.top;
-      const percentInContainer = Math.max(0, Math.min(1, pointerRelativeToContainer / rect.height));
-      setPointerPercentInList(percentInContainer);
-      // Konversi: jika pointer di 20% atas layar, threshold y = persentase pointer di container
-      const windowHeight = window.innerHeight;
-      if (y < windowHeight * 0.2) {
-        setDynamicThresholdY(percentInContainer);
-      } else if (y > windowHeight * 0.8) {
-        setDynamicThresholdY(1 - percentInContainer);
-      } else {
-        setDynamicThresholdY(0.3); // default
-      }
-    } else {
-      setPointerPercentInList(null);
-      setDynamicThresholdY(0.3);
+    if (categoryFilter && categoryFilter !== "") {
+      match = match && (task.task_category || "").toLowerCase() === categoryFilter.toLowerCase();
     }
-    // ...existing autoscroll logic...
-    const windowHeight = window.innerHeight;
-    const bottomThreshold = windowHeight * 0.75;
-    if (y > bottomThreshold) {
-      if (!shouldScrollRef.current) {
-        shouldScrollRef.current = true;
-        scrollAnimationRef.current = requestAnimationFrame(scrollStep);
-      }
+    if (statusFilter && statusFilter !== "") {
+      match = match && (task.task_status === statusFilter);
+    }
+    return match;
+  });
+
+  // Group filteredTasks by status for List
+  const tasksByStatus = {
+    terlambat: [],
+    belum_selesai: [],
+    selesai: [],
+  };
+  filteredTasks.forEach(task => {
+    if (tasksByStatus[task.task_status]) tasksByStatus[task.task_status].push(task);
+  });
+
+  const handleOnDragEnd = async (result) => {
+    const { source, destination } = result;
+    if (!destination) return;
+    if (source.droppableId === destination.droppableId && source.index === destination.index) return;
+    const sourceCol = Array.from(tasksByStatus[source.droppableId]);
+    const destCol = Array.from(tasksByStatus[destination.droppableId]);
+    const [removed] = sourceCol.splice(source.index, 1);
+    if (source.droppableId === destination.droppableId) {
+      sourceCol.splice(destination.index, 0, removed);
+      setTaskList(prev => {
+        const other = prev.filter(t => t.task_status !== source.droppableId);
+        return [...other, ...sourceCol];
+      });
     } else {
-      if (shouldScrollRef.current) {
-        shouldScrollRef.current = false;
-        if (scrollAnimationRef.current) {
-          cancelAnimationFrame(scrollAnimationRef.current);
-          scrollAnimationRef.current = null;
+      // Update status locally
+      removed.task_status = destination.droppableId;
+      destCol.splice(destination.index, 0, removed);
+      setTaskList(prev => {
+        const other = prev.filter(t => t.task_status !== source.droppableId && t.task_status !== destination.droppableId);
+        return [...other, ...sourceCol, ...destCol];
+      });
+      // Persist status change to backend
+      try {
+        const result = await updateTask(removed.slug, { status: destination.droppableId });
+        if (result && result.success !== false) {
+          displayToast({
+            title: 'Berhasil',
+            message: 'Status tugas berhasil diperbarui',
+          });
+        } else {
+          throw new Error(result?.error || 'Gagal memperbarui status tugas');
         }
+      } catch (error) {
+        displayToast({
+          title: 'Gagal',
+          message: error.message || 'Gagal memperbarui status tugas',
+        });
+        // Optionally: revert local state if needed
+        // refreshTasks();
       }
     }
-  };
-
-  const handleDragEndWithOverlay = (event) => {
-    isDraggingRef.current = false;
-    shouldScrollRef.current = false;
-    if (scrollAnimationRef.current) {
-      cancelAnimationFrame(scrollAnimationRef.current);
-      scrollAnimationRef.current = null;
-    }
-    handleDragEnd(event);
-    setActiveTask(null);
   };
 
   const handleSearchChange = (query) => setSearchQuery(query);
@@ -146,7 +124,6 @@ function TaskPage() {
     setTaskToEdit(task);
     setIsAddEditFormOpen(true);
   };
-
   const handleDeleteTask = async (task) => {
     try {
       const result = await deleteTask(task.slug);
@@ -156,12 +133,10 @@ function TaskPage() {
       throw error;
     }
   };
-
   const handleCloseAddEditForm = () => {
     setIsAddEditFormOpen(false);
     setTaskToEdit(null);
   };
-
   const handleSaveTask = async (taskData) => {
     try {
       let result;
@@ -196,7 +171,6 @@ function TaskPage() {
         }
         result = await createTask(createData);
       }
-
       if (result.success) handleCloseAddEditForm();
       else
         console.error("Failed to save task:", result.error || "Unknown error");
@@ -204,24 +178,9 @@ function TaskPage() {
       console.error("Error saving task:", error);
     }
   };
-
-  // Handler untuk toggle status dari TaskCard
-  const handleToggleStatus = async (task) => {
-    try {
-      await updateTask(task.slug, { status: task.status });
-      displayToast({
-        type: 'success',
-        title: 'Status Tugas Diperbarui',
-        message: `Status tugas \"${task.title || task.task_title}\" berhasil diubah menjadi ${task.status.replace('_', ' ')}`
-      });
-      triggerTaskRefresh();
-    } catch (err) {
-      displayToast({
-        type: 'error',
-        title: 'Gagal Update Status',
-        message: 'Terjadi kesalahan saat mengubah status tugas.'
-      });
-    }
+  const displayToast = (config) => {
+    setToastConfig(config);
+    setShowToastNotification(true);
   };
 
   return (
@@ -235,48 +194,34 @@ function TaskPage() {
             <AddSection onAddTask={handleAddNewTask} />
           </div>
         </div>
-
-        {/* Filtering section tetap di luar DndContext */}
         <div className={styles.filteringSection}>
           <div className={styles.searchSection}>
-            <Search
-              onSearchChange={handleSearchChange}
-              placeholder="Cari tugas..."
-            />
+            <Search onSearchChange={handleSearchChange} placeholder="Cari tugas..." />
           </div>
           <div className={styles.filterSection}>
-            <StatusFilter
-              onStatusChange={handleStatusChange}
-              placeholder="Semua status"
-            />
+            <StatusFilter onStatusChange={handleStatusChange} placeholder="Semua status" />
           </div>
           <div className={styles.categorySection}>
-            <CategoryFilter
-              onCategoryChange={handleCategoryChange}
-              placeholder="Semua kategori"
-            />
+            <CategoryFilter onCategoryChange={handleCategoryChange} placeholder="Semua kategori" />
           </div>
         </div>
-
-        {/* DndContext hanya membungkus listSection */}
-        <DndContext
-          collisionDetection={pointerWithin}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEndWithOverlay}
-          onDragMove={handleDragMove}
-          autoScroll={{
-            threshold: { x: 0, y: 0.4 },
-            acceleration: 300,
-            activator: 1,
-            interval: 1,
-            layoutShiftCompensation: false,
-            order: 0,
-            enabled: true,
-          }}
+        <DragDropContext
+          onDragEnd={handleOnDragEnd}
         >
-          <div className={styles.listSection} ref={listSectionRef}>
+          <div
+            className={styles.listSection}
+            style={{
+              display: 'flex',
+              gap: 32,
+              minHeight: 500,
+              alignItems: 'flex-start',
+              paddingBottom: 16,
+              width: '100%',
+              maxWidth: '100vw',
+            }}
+          >
             <List
-              tasks={tasks}
+              tasks={filteredTasks}
               loading={loading}
               error={error}
               searchQuery={searchQuery}
@@ -285,47 +230,10 @@ function TaskPage() {
               onEditTask={handleEditTask}
               onDeleteTask={handleDeleteTask}
               onDeleteSuccess={displayToast}
-              onToggleStatus={handleToggleStatus}
             />
-            {/* Print persentase pointer di DndContext
-            {pointerPercentInList !== null && (
-              <div style={{textAlign: 'center', color: '#5263F3', fontWeight: 600, margin: '16px 0'}}>
-                Posisi pointer di DndContext: {(pointerPercentInList * 100).toFixed(1)}%
-              </div>
-            )} */}
-            {createPortal(
-              <DragOverlay adjustScale={false} dropAnimation={null}>
-                {activeTask && (
-                  <div
-                    style={{
-                      transformOrigin: "0 0",
-                      opacity: 1,
-                      background: "transparent",
-                      borderRadius: "8px",
-                      pointerEvents: "none",
-                      cursor: "grabbing",
-                      zIndex: 99999,
-                      position: "relative",
-                      overflow: "hidden",
-                    }}
-                  >
-                    <TaskCard
-                      task={activeTask}
-                      isDraggable={false}
-                      onEditTask={handleEditTask}
-                      onDeleteTask={handleDeleteTask}
-                      onDeleteSuccess={displayToast}
-                      onToggleStatus={handleToggleStatus}
-                    />
-                  </div>
-                )}
-              </DragOverlay>,
-              document.body
-            )}
           </div>
-        </DndContext>
+        </DragDropContext>
       </div>
-
       <AddEditForm
         isOpen={isAddEditFormOpen}
         onClose={handleCloseAddEditForm}
@@ -334,7 +242,6 @@ function TaskPage() {
         onSuccess={displayToast}
         onError={displayToast}
       />
-
       <Toast
         isOpen={showToastNotification}
         title={toastConfig.title}

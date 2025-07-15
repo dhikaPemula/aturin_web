@@ -2,15 +2,33 @@
 
 .subListContainer {
   @apply rounded-lg border-1 border-[#E2E8F0] overflow-hidden;
-  /* Responsive width for horizontal layout */
   @apply md:flex-1 md:min-w-0 shadow-lg;
+  width: 100%;
+  max-width: 100%;
+  /* Hapus min-height agar tinggi sublist mengikuti jumlah card */
+  /* min-height: unset; */
   transition: all 0.2s ease-in-out;
+}
+
+@media (max-width: 767px) {
+  .subListContainer {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0.75rem;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
 }
 
 /* Drag over state */
 .subListContainer.dragOver {
   @apply border-2 border-blue-400 bg-blue-50;
   transform: scale(1.02);
+}
+
+.subListContainer.isDraggingOver {
+  min-height: 400px;
+  transition: min-height 0.2s;
 }
 
 .headerSection {
