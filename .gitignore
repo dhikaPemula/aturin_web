@@ -7,18 +7,107 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Dependency directories
+node_modules/
+.pnpm/
+.pnp/
+.pnp.js
+
+# Build output
+dist/
+dist-ssr/
+build/
+out/
+.vite/
+
+# Vite
+vite
+vite.*
+
+# Optional npm cache directory
+.npm/
+
+# dotenv environment variables
+.env
+.env.*.local
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
 
 # Editor directories and files
-.vscode/*
+.vscode/
 !.vscode/extensions.json
-.idea
-.DS_Store
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Coverage output
+coverage/
+
+# Next.js
+.next/
+
+# Nuxt
+.nuxt/
+.output/
+
+# Svelte
+.svelte-kit/
+
+# Storybook
+.storybook-out/
+.storybook-static/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Firebase
+.firebase/
+.firebaserc
+
+# VS Code settings (optional whitelist .vscode/extensions.json only)
+.vscode/*
+!.vscode/extensions.json
+
+# Mac system files
+.DS_Store
+
+# Windows system files
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Linux files
+*~
+
+# Misc
+*.local
+*.lock
+*.bak
+*.tmp
+*.swp
+*.tgz
+*.gz
+
+# Ignore debug files
+debug.log
+
+# Ignore generated Prisma files (optional)
+prisma/migrations/
+prisma/dev.db
+
+# Ignore public/temp folders (if any)
+public/temp/
+temp/
+
+# Ignore eslint cache (optional)
+.eslintcache
