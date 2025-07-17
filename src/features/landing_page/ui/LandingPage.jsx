@@ -1,7 +1,7 @@
 import { useState } from "react";
 import React from "react";
 import "../App.css";
-import Header from "../application/header.jsx";
+import Header from "../application/Header.jsx";
 import HeroSection from "../application/HeroSection.jsx";
 import FeatureSection from "../application/FeatureSection.jsx";
 import SpecialFeatureSection from "../application/SpecialFeatureSection.jsx";

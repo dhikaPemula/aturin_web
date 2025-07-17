@@ -1,4 +1,4 @@
-import Assets from "../../../core/lib/assets.jsx";
+import Assets from "../../../core/lib/Assets.jsx";
 import ScrollingTestimonials from "./ScrollingTestimonials.jsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
