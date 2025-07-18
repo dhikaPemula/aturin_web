@@ -3,6 +3,7 @@ import styles from './sublist.module.css';
 import TaskCard from '../taskcard/taskcard.jsx';
 import { getStatusByName } from './status.jsx';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
+import clock from '../../../../../assets/home/clock.svg';
 
 // Import icons
 import noDataIcon from '../../../../../assets/home/nodata.svg';
@@ -37,7 +38,7 @@ function SubList({
     label: task_status.charAt(0).toUpperCase() + task_status.slice(1).replace('_', ' '),
     foreground: "#666666",
     background: "#F3F4F6",
-    iconPath: "/src/assets/home/clock.svg"
+    iconPath: clock
   };
   const displayTitle = title || currentStatus.label;
 

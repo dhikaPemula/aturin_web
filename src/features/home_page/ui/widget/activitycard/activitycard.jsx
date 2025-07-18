@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./activitycard.module.css";
 import Badge from "../../../../../core/widgets/badge/buildbadge/badge.jsx";
+import clock from '../../../../../assets/home/clock.svg'
 
 /**
  * ActivityCard - Card untuk menampilkan aktivitas di homepage.
@@ -65,7 +66,7 @@ function ActivityCard({
           <div className={styles.activityFooter}>
             <div className={styles.timeRange}>
               <img
-                src="/src/assets/home/clock.svg"
+                src={clock}
                 alt="Waktu"
                 className={styles.timeIcon}
               />

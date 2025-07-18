@@ -1,25 +1,29 @@
 // Array list activity, task, alarm dengan nama, label, foreground, background, dan iconpath
+import task from '../../../../assets/home/categories/task.svg';
+import activity from '../../../../assets/home/categories/activity.svg';
+import alarm from '../../../../assets/home/categories/alarm.svg';
+
 export const activityTaskAlarm = [
   {
     name: "task",
     label: "Tugas",
     foreground: "#5263F3",
     background: "#DFEAFF",
-    iconPath: "/src/assets/home/categories/task.svg"
+    iconPath: task
   },
   {
     name: "activity",
     label: "Aktivitas",
     foreground: "#5263F3", 
     background: "#DFEAFF",
-    iconPath: "/src/assets/home/categories/activity.svg"
+    iconPath: activity
   },
   {
     name: "alarm",
     label: "Alarm",
     foreground: "#5263F3",
     background: "#DFEAFF",
-    iconPath: "/src/assets/home/categories/alarm.svg"
+    iconPath: alarm
   }
 ];
 

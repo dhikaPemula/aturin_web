@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./taskcard.module.css";
 import Badge from "../../../../../core/widgets/badge/buildbadge/badge.jsx";
 import StatusBadge from "../../../../../core/widgets/status/statusbadge.jsx";
+import jadwal from "../../../../../assets/home/jadwal.svg";
 
 function TaskCard({
   title,
@@ -88,7 +89,7 @@ function TaskCard({
           <div className={styles.taskFooter}>
             <div className={styles.deadline}>
               <img
-                src="/src/assets/home/jadwal.svg"
+                src={jadwal}
                 alt="Jadwal"
                 className={styles.dateIcon}
               />

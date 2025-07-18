@@ -1,32 +1,36 @@
 // Array list status dengan nama, label, icon, foreground, dan background
+import clock from '../../../../../assets/home/clock.svg';
+import checkCircle from '../../../../../assets/home/check-circle.svg';
+import warningCircle from '../../../../../assets/home/warning-circle.svg';
+
 export const statuses = [
   {
     name: "belum_selesai",
     label: "Belum Selesai", 
     foreground: "#CC6D00",
     background: "#FFEDD9",
-    iconPath: "/src/assets/home/clock.svg"
+    iconPath: clock
   },
   {
     name: "belum_dikerjakan",
     label: "Belum Dikerjakan", 
     foreground: "#CC6D00",
     background: "#FFEDD9",
-    iconPath: "/src/assets/home/clock.svg"
+    iconPath: clock
   },
   {
     name: "selesai",
     label: "Selesai",
     foreground: "#3DA755",
     background: "#C5E9CD",
-    iconPath: "/src/assets/home/check-circle.svg"
+    iconPath: checkCircle
   },
   {
     name: "terlambat",
     label: "Terlambat",
     foreground: "#999999",
     background: "#E4E4E7",
-    iconPath: "/src/assets/home/warning-circle.svg"
+    iconPath: warningCircle
   },
 ];
 
