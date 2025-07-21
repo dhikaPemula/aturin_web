@@ -50,6 +50,7 @@ function SubList({
   return (
     <Droppable
       droppableId={task_status}
+      isDropDisabled={task_status === 'terlambat'}
       renderClone={(provided, snapshot, rubric) => {
         // Ambil task dari props.tasks, agar clone tetap muncul walau sublist kosong
         const task = tasks[rubric.source.index];

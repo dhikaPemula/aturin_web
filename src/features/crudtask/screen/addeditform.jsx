@@ -473,6 +473,13 @@ function AddEditForm({
                   type="date"
                   name="deadline_date"
                   value={formData.deadline_date}
+                  min={(() => {
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    const day = String(today.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                  })()}
                   onChange={(e) => {
                     const { value } = e.target;
                     setFormData(prev => ({ ...prev, deadline_date: value }));
