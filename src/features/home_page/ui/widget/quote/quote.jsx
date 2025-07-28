@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './quote.module.css';
-import panaIcon from '../../../../../assets/home/pana.svg';
+import panaIcon from '/assets/home/pana.svg';
 
 function Quote() {
   return (

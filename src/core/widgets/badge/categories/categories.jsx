@@ -1,12 +1,12 @@
 // Array list categories dengan nama, foreground, background, dan iconpath
-import akademik from '../../../../assets/home/categories/akademik.svg'
-import hiburan from '../../../../assets/home/categories/hiburan.svg'
-import pekerjaan from '../../../../assets/home/categories/pekerjaan.svg'
-import olahraga from '../../../../assets/home/categories/olahraga.svg'
-import sosial from '../../../../assets/home/categories/sosial.svg'
-import spiritual from '../../../../assets/home/categories/spiritual.svg'
-import pribadi from '../../../../assets/home/categories/pribadi.svg'
-import istirahat from '../../../../assets/home/categories/istirahat.svg'
+import akademik from '/assets/home/categories/akademik.svg'
+import hiburan from '/assets/home/categories/hiburan.svg'
+import pekerjaan from '/assets/home/categories/pekerjaan.svg'
+import olahraga from '/assets/home/categories/olahraga.svg'
+import sosial from '/assets/home/categories/sosial.svg'
+import spiritual from '/assets/home/categories/spiritual.svg'
+import pribadi from '/assets/home/categories/pribadi.svg'
+import istirahat from '/assets/home/categories/istirahat.svg'
 
 export const categories = [
   {

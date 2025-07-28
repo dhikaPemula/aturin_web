@@ -1,4 +1,4 @@
-import { Icon1, Icon2, Icon3 } from "../../../assets/landing_page/icon.jsx";
+import { Icon1, Icon2, Icon3 } from "../../../../public/assets/landing_page/icon.jsx";
 import AnimatedContent from "../lib/AnimatedContent.jsx";
 
 function FeatureSection() {

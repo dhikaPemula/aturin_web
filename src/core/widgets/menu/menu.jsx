@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import useProfile from '../../hooks/useProfile';
 import { avatarMap, defaultAvatar } from '../avatars/avatars';
-import settingsIcon from '../../../assets/home/settings.svg';
-import logoutIcon from '../../../assets/home/log-out.svg';
+import settingsIcon from '/assets/home/settings.svg';
+import logoutIcon from '/assets/home/log-out.svg';
 import styles from './menu.module.css';
 
 function Menu({ open, onClose, anchorRef, onLogout }) {

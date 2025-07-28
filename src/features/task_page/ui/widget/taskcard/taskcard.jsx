@@ -5,10 +5,10 @@ import Alert from "../../../../../core/widgets/alert/alert.jsx";
 import { updateTask } from "../../../../../core/services/api/task_api_service";
 
 // Import icons
-import clockIcon from "../../../../../assets/home/clock.svg";
-import jadwalIcon from "../../../../../assets/home/jadwal.svg";
-import editIcon from "../../../../../assets/task/edit.svg";
-import deleteIcon from "../../../../../assets/task/delete.svg";
+import clockIcon from "/assets/home/clock.svg";
+import jadwalIcon from "/assets/home/jadwal.svg";
+import editIcon from "/assets/task/edit.svg";
+import deleteIcon from "/assets/task/delete.svg";
 
 function TaskCard({
   provided, // dari Draggable atau renderClone

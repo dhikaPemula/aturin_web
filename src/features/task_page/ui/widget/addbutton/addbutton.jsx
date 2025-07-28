@@ -1,6 +1,6 @@
 import styles from './addbutton.module.css';
-import Tugas from '../../../../../assets/home/addtask.svg';
-import Aktivitas from '../../../../../assets/home/addactivity.svg';
+import Tugas from '/assets/home/addtask.svg';
+import Aktivitas from '/assets/home/addactivity.svg';
 import AddEditForm from '../../../../crudtask/screen/addeditform.jsx';
 import React from 'react';
 

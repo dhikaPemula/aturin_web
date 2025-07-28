@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './uppersection.module.css';
-import warningCirclePurple from '../../../../../assets/task/warning-circle-purple.svg';
+import warningCirclePurple from '/assets/task/warning-circle-purple.svg';
 
 function UpperSection() {
   return (

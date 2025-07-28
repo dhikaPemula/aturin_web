@@ -2,7 +2,7 @@
 
 .quoteContainer {
   @apply w-full min-h-[120px] rounded-xl overflow-hidden my-6 flex;
-  background-image: url('../../../../../assets/home/bg-quote.svg');
+  background-image: url('../../../../../../public/assets/home/bg-quote.svg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

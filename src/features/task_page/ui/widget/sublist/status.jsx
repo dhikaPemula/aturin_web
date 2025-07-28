@@ -1,7 +1,7 @@
 // Array list status dengan nama, label, icon, foreground, dan background
-import clock from '../../../../../assets/home/clock.svg';
-import checkCircle from '../../../../../assets/home/check-circle.svg';
-import warningCircle from '../../../../../assets/home/warning-circle.svg';
+import clock from '/assets/home/clock.svg';
+import checkCircle from '/assets/home/check-circle.svg';
+import warningCircle from '/assets/home/warning-circle.svg';
 
 export const statuses = [
   {

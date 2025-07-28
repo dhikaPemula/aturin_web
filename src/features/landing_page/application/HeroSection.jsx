@@ -9,7 +9,7 @@ import {
   Icon11,
   Icon12,
   GplayIcon,
-} from "../../../assets/landing_page/icon.jsx";
+} from "../../../../public/assets/landing_page/icon.jsx";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";

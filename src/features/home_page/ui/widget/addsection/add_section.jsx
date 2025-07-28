@@ -1,6 +1,6 @@
 import styles from './add_section.module.css';
-import Tugas from '../../../../../assets/home/addtask.svg';
-import Aktivitas from '../../../../../assets/home/addactivity.svg';
+import Tugas from '/assets/home/addtask.svg';
+import Aktivitas from '/assets/home/addactivity.svg';
 import AddEditForm from '../../../../crudtask/screen/addeditform.jsx';
 import Toast from '../../../../../core/widgets/toast/toast.jsx';
 import { createTask } from '../../../../../core/services/api/task_api_service.js';

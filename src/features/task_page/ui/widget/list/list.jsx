@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './list.module.css';
 import SubList from '../sublist/sublist.jsx';
-import noDataIcon from '../../../../../assets/home/nodata.svg';
+import noDataIcon from '/assets/home/nodata.svg';
 import TaskCard from '../taskcard/taskcard.jsx';
 
 function List({ 

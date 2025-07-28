@@ -1,7 +1,7 @@
 // Array list activity, task, alarm dengan nama, label, foreground, background, dan iconpath
-import task from '../../../../assets/home/categories/task.svg';
-import activity from '../../../../assets/home/categories/activity.svg';
-import alarm from '../../../../assets/home/categories/alarm.svg';
+import task from '/assets/home/categories/task.svg';
+import activity from '/assets/home/categories/activity.svg';
+import alarm from '/assets/home/categories/alarm.svg';
 
 export const activityTaskAlarm = [
   {

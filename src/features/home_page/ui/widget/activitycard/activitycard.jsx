@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./activitycard.module.css";
 import Badge from "../../../../../core/widgets/badge/buildbadge/badge.jsx";
-import clock from '../../../../../assets/home/clock.svg'
+import clock from '/assets/home/clock.svg'
 
 /**
  * ActivityCard - Card untuk menampilkan aktivitas di homepage.

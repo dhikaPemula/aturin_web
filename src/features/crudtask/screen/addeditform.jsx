@@ -4,14 +4,14 @@ import styles from './addeditform.module.css';
 import { useGlobalTaskRefresh } from '../../../core/hooks/useGlobalTaskRefresh';
 
 // Import category icons
-import akademikIcon from '../../../assets/home/categories/akademik.svg';
-import pekerjaanIcon from '../../../assets/home/categories/pekerjaan.svg';
-import pribadiIcon from '../../../assets/home/categories/pribadi.svg';
-import olahragaIcon from '../../../assets/home/categories/olahraga.svg';
-import hiburanIcon from '../../../assets/home/categories/hiburan.svg';
-import sosialIcon from '../../../assets/home/categories/sosial.svg';
-import spiritualIcon from '../../../assets/home/categories/spiritual.svg';
-import istirahatIcon from '../../../assets/home/categories/istirahat.svg';
+import akademikIcon from '/assets/home/categories/akademik.svg';
+import pekerjaanIcon from '/assets/home/categories/pekerjaan.svg';
+import pribadiIcon from '/assets/home/categories/pribadi.svg';
+import olahragaIcon from '/assets/home/categories/olahraga.svg';
+import hiburanIcon from '/assets/home/categories/hiburan.svg';
+import sosialIcon from '/assets/home/categories/sosial.svg';
+import spiritualIcon from '/assets/home/categories/spiritual.svg';
+import istirahatIcon from '/assets/home/categories/istirahat.svg';
 
 // Utility functions for timezone handling
 const formatLocalDateTime = (date) => {

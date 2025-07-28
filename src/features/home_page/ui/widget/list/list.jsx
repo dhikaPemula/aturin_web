@@ -6,10 +6,10 @@ import { getActivities } from "../../../../../core/services/api/activity_api_ser
 import { useTaskAutoRefresh } from "../../../../../core/hooks/useGlobalTaskRefresh";
 import TaskCard from "../taskcard/taskcard.jsx";
 import ActivityCard from "../activitycard/activitycard.jsx";
-import noDataIcon from "../../../../../assets/home/nodata.svg";
-import jadwalIcon from "../../../../../assets/home/list/jadwal.svg";
-import taskIcon from "../../../../../assets/home/list/task.svg";
-import activityIcon from "../../../../../assets/home/list/activity.svg";
+import noDataIcon from "/assets/home/nodata.svg";
+import jadwalIcon from "/assets/home/list/jadwal.svg";
+import taskIcon from "/assets/home/list/task.svg";
+import activityIcon from "/assets/home/list/activity.svg";
 import Activity from "../../../../../core/models/activity";
 
 function List({ currentIndex, searchQuery = "", selectedDate, refreshTrigger }) {

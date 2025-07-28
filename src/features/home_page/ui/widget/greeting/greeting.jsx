@@ -4,7 +4,7 @@ import useBannerProfile from '../../../../../core/hooks/useBannerProfile';
 function Greeting() {
   const { banner } = useBannerProfile();
   
-  let name = 'Rakha Sigma';
+  let name = 'Aturin Jaya';
   if (banner && banner.data && banner.data.user && banner.data.user.name) {
     name = banner.data.user.name;
   }

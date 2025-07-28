@@ -1,6 +1,6 @@
 import {
   Gif, Icon13, Icon14, Icon15, Icon16
-} from "../../../assets/landing_page/icon.jsx";
+} from "../../../../public/assets/landing_page/icon.jsx";
 
 function SpecialFeatureSection() {
   return (

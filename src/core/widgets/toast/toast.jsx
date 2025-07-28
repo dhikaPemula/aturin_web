@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './toast.module.css';
-import checkCircleIcon from '../../../assets/task/check-circle.svg';
+import checkCircleIcon from '/assets/task/check-circle.svg';
 
 function Toast({ 
   isOpen = false,

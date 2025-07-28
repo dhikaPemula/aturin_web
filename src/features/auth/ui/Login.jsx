@@ -1,6 +1,6 @@
 "use client";
 
-import { AturinIcon } from "../../../assets/landing_page/icon.jsx";
+import { AturinIcon } from "../../../../public/assets/landing_page/icon.jsx";
 import { useState } from "react";
 import { loginUser, loginWithGoogle } from "../services/authService";
 import { useNavigate, useLocation } from "react-router-dom";

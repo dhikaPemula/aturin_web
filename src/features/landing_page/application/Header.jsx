@@ -1,4 +1,4 @@
-import { AturinIcon, Icon17 } from "../../../assets/landing_page/icon.jsx";
+import { AturinIcon, Icon17 } from "../../../../public/assets/landing_page/icon.jsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 

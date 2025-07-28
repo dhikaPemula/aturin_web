@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import styles from './search.module.css';
-import searchIcon from '../../../../../assets/home/search.svg';
+import searchIcon from '/assets/home/search.svg';
 
 function Search({ onSearchChange, value, placeholder = "Cari Tugas atau Aktivitas..." }) {
   const [searchValue, setSearchValue] = useState(value || '');

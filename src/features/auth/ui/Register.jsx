@@ -1,6 +1,6 @@
 "use client";
 
-import { AturinIcon } from "../../../assets/landing_page/icon.jsx";
+import { AturinIcon } from "../../../../public/assets/landing_page/icon.jsx";
 import { useState } from "react";
 import { registerUser } from "../services/authService";
 import { validatePassword } from "../application/passwordValidator";

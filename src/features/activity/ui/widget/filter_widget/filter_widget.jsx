@@ -2,16 +2,16 @@
 
 import { useState } from "react"
 import styles from "./filter_widget.module.css"
-import chevronDownIcon from "../../../../../assets/activity/icons/chevron-down.svg"
+import chevronDownIcon from "/assets/activity/icons/chevron-down.svg"
 // Import ikon kategori
-import akademikIcon from "../../../../../assets/activity/categories/akademik.svg"
-import hiburanIcon from "../../../../../assets/activity/categories/hiburan.svg"
-import pekerjaanIcon from "../../../../../assets/activity/categories/pekerjaan.svg"
-import olahragaIcon from "../../../../../assets/activity/categories/olahraga.svg"
-import sosialIcon from "../../../../../assets/activity/categories/sosial.svg"
-import spiritualIcon from "../../../../../assets/activity/categories/spiritual.svg"
-import pribadiIcon from "../../../../../assets/activity/categories/pribadi.svg"
-import istirahatIcon from "../../../../../assets/activity/categories/istirahat.svg"
+import akademikIcon from "/assets/activity/categories/akademik.svg"
+import hiburanIcon from "/assets/activity/categories/hiburan.svg"
+import pekerjaanIcon from "/assets/activity/categories/pekerjaan.svg"
+import olahragaIcon from "/assets/activity/categories/olahraga.svg"
+import sosialIcon from "/assets/activity/categories/sosial.svg"
+import spiritualIcon from "/assets/activity/categories/spiritual.svg"
+import pribadiIcon from "/assets/activity/categories/pribadi.svg"
+import istirahatIcon from "/assets/activity/categories/istirahat.svg"
 
 const FilterWidget = ({ type, value, onChange, placeholder }) => {
   const [isOpen, setIsOpen] = useState(false)

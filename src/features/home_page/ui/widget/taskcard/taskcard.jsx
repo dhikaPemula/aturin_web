@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./taskcard.module.css";
 import Badge from "../../../../../core/widgets/badge/buildbadge/badge.jsx";
 import StatusBadge from "../../../../../core/widgets/status/statusbadge.jsx";
-import jadwal from "../../../../../assets/home/jadwal.svg";
+import jadwal from "/assets/home/jadwal.svg";
 
 function TaskCard({
   title,

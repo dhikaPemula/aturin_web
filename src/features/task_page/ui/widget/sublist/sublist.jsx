@@ -3,10 +3,10 @@ import styles from './sublist.module.css';
 import TaskCard from '../taskcard/taskcard.jsx';
 import { getStatusByName } from './status.jsx';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
-import clock from '../../../../../assets/home/clock.svg';
+import clock from '/assets/home/clock.svg';
 
 // Import icons
-import noDataIcon from '../../../../../assets/home/nodata.svg';
+import noDataIcon from '/assets/home/nodata.svg';
 
 function SubList({ 
   task_status = "belum_selesai", 

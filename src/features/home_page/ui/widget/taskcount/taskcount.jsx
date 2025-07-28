@@ -3,10 +3,10 @@ import { useState, useEffect, useMemo } from 'react';
 import { getAllTasks } from '../../../../../core/services/api/task_api_service';
 import { useTaskAutoRefresh } from '../../../../../core/hooks/useGlobalTaskRefresh';
 // Import SVG as image path
-import countIcon from '../../../../../assets/home/count.svg';
-import checkCircleIcon from '../../../../../assets/home/check-circle.svg';
-import clockIcon from '../../../../../assets/home/clock.svg';
-import warningCircleIcon from '../../../../../assets/home/warning-circle.svg';
+import countIcon from '/assets/home/count.svg';
+import checkCircleIcon from '/assets/home/check-circle.svg';
+import clockIcon from '/assets/home/clock.svg';
+import warningCircleIcon from '/assets/home/warning-circle.svg';
 
 function TaskCount({ selectedDate, refreshTrigger }) {
 	const [allTasks, setAllTasks] = useState([]);
