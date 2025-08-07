@@ -54,7 +54,7 @@ function AppContent() {
           />
         </Routes>
       ) : (
-        //<ProtectedRoute>
+        <ProtectedRoute>
           <DragDropContext>
             <Header
               currentIndex={currentIndex}
@@ -92,7 +92,7 @@ function AppContent() {
               </div>
             </div>
           </DragDropContext>
-        //</ProtectedRoute>
+        </ProtectedRoute>
       )}
     </>
   );

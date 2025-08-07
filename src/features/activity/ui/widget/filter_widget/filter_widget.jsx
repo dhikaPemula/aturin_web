@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import styles from "./filter_widget.module.css"
-import chevronDownIcon from "/assets/activity/icons/chevron-down.svg"
+import chevronDownIcon from "/assets/home/arrow-down.svg"
 // Import ikon kategori
 import akademikIcon from "/assets/activity/categories/akademik.svg"
 import hiburanIcon from "/assets/activity/categories/hiburan.svg"

@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react"
 import { createPortal } from "react-dom"
 import styles from "./activity-crud-page.module.css"
-import chevronDownIcon from "/assets/activity/icons/chevron-down.svg"
-import checkIcon from "/assets/activity/icons/check.svg"
+import chevronDownIcon from "/assets/home/arrow-down.svg"
+import checkIcon from "/assets/home/check-circle.svg"
 
 // Import ikon kategori
 import akademikIcon from "/assets/activity/categories/akademik.svg"

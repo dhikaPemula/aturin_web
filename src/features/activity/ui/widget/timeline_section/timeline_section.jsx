@@ -1,14 +1,14 @@
 "use client"
 import LabelKategori from "../label_kategori/label_kategori"
 import styles from "./timeline_section.module.css"
-import sunIcon from "/assets/activity/icons/sun.svg"
-import sunriseIcon from "/assets/activity/icons/sunrise.svg"
-import sunsetIcon from "/assets/activity/icons/sunset.svg"
-import moonIcon from "/assets/activity/icons/moon.svg"
-import editIcon from "/assets/activity/icons/edit.svg"
-import trashIcon from "/assets/activity/icons/trash.svg"
-import nodataIcon from "/assets/activity/icons/nodata.svg"
-import clockIcon from "/assets/activity/icons/clock.svg"
+import sunIcon from "/assets/user_preference/sun-light.svg"
+import sunriseIcon from "/assets/user_preference/sea-and-sun.svg"
+import sunsetIcon from "/assets/user_preference/cloud-sunny.svg"
+import moonIcon from "/assets/user_preference/half-moon.svg"
+import editIcon from "/assets/task/edit.svg"
+import trashIcon from "/assets/task/delete.svg"
+import nodataIcon from "/assets/home/nodata.svg"
+import clockIcon from "/assets/home/clock.svg"
 
 const TimelineSection = ({ activities, loading, onEdit, onDelete }) => {
   console.log("🎯 TimelineSection received:", {
