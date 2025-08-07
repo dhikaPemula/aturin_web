@@ -1,18 +1,21 @@
 import styles from './add_section.module.css';
 import Tugas from '/assets/home/addtask.svg';
 import Aktivitas from '/assets/home/addactivity.svg';
+import Settings from '/assets/icons/settings.svg';
 import AddEditForm from '../../../../crudtask/screen/addeditform.jsx';
 import Toast from '../../../../../core/widgets/toast/toast.jsx';
 import { createTask } from '../../../../../core/services/api/task_api_service.js';
 import { createActivity } from '../../../../../core/services/api/activity_api_service.js';
 import React from 'react';
 import ActivityCrudPage from '../../../../crudactivity/screen/activity-crud-page.jsx';
+import UserPreference from '../../../../user_preference/screen/user-preference.jsx';
 
 function AddSection({ onTaskAdded }) {
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [showToast, setShowToast] = React.useState(false);
   const [toastConfig, setToastConfig] = React.useState({ title: '', message: '' });
   const [isActivityModalOpen, setIsActivityModalOpen] = React.useState(false);
+  const [isUserPreferenceOpen, setIsUserPreferenceOpen] = React.useState(false);
 
   // Debug log untuk track state changes
   React.useEffect(() => {
@@ -92,6 +95,32 @@ function AddSection({ onTaskAdded }) {
     setIsActivityModalOpen(true);
   };
 
+  // Handle user preference button click
+  const handleUserPreferenceClick = () => {
+    setIsUserPreferenceOpen(true);
+  };
+
+  // Handle user preference save
+  const handleUserPreferenceSave = async (preferenceData) => {
+    try {
+      // TODO: Implement API call to save user preferences
+      console.log('Saving user preferences:', preferenceData);
+      
+      setToastConfig({ 
+        title: 'Berhasil', 
+        message: 'Preferensi pengguna berhasil disimpan' 
+      });
+      setShowToast(true);
+      setIsUserPreferenceOpen(false);
+    } catch (error) {
+      setToastConfig({ 
+        title: 'Gagal', 
+        message: error.message || 'Gagal menyimpan preferensi pengguna' 
+      });
+      setShowToast(true);
+    }
+  };
+
   // Simpan aktivitas ke backend dan tampilkan toast
   const handleActivitySave = async (activityData) => {
     try {
@@ -109,6 +138,13 @@ function AddSection({ onTaskAdded }) {
   return (
     <>
       <div className={styles.addSection}>
+        <button 
+          className={styles.addTask + ' ' + styles.purpleButton}
+          onClick={handleUserPreferenceClick}
+        >
+          <img src={Settings} alt="Settings" className={styles.whiteIcon} />
+          {'Preferensi Pengguna'}
+        </button>
         <button 
           className={styles.addTask + ' ' + styles.purpleButton}
           onClick={handleAddTaskClick}
@@ -131,6 +167,14 @@ function AddSection({ onTaskAdded }) {
         onSave={handleActivitySave}
         activity={null}
       />
+
+      {/* User Preference Modal */}
+      <UserPreference
+        isOpen={isUserPreferenceOpen}
+        onClose={() => setIsUserPreferenceOpen(false)}
+        onSave={handleUserPreferenceSave}
+      />
+
       {/* Add/Edit Form Popup */}
       <AddEditForm
         isOpen={isFormOpen}

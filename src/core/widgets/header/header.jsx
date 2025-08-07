@@ -346,16 +346,6 @@ function Header({
   return (
     <header
       className={`${styles.headerContainer}`}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 100,
-        background: "#fff",
-        width: "92vw",
-        boxSizing: "border-box",
-      }}
     >
       <div className={`${styles.leftSection}`}>
         <img

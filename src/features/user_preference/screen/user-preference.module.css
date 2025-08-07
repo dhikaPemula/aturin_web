@@ -1,0 +1,421 @@
+@import "tailwindcss";
+
+/* Custom Properties */
+:root {
+  --primary-color: #5263F3;
+  --primary-hover: #4B5CEA;
+}
+
+/* Backdrop */
+.backdrop {
+  @apply fixed inset-0 w-screen h-screen bg-black/50 backdrop-blur-sm flex items-center justify-center p-4;
+  z-index: 9999;
+}
+
+/* Modal */
+.modal {
+  @apply bg-white rounded-2xl w-full max-w-md max-h-screen overflow-hidden relative;
+  z-index: 10000;
+}
+
+/* Close Button */
+.closeButton {
+  @apply absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 text-2xl font-light cursor-pointer bg-transparent border-none;
+  z-index: 10001;
+}
+
+.closeButton:hover {
+  @apply text-gray-700;
+}
+
+/* Responsive modal width */
+@media (min-width: 1024px) {
+  .modal {
+    @apply max-w-xl; /* Lebih lebar untuk lg screen */
+  }
+}
+
+/* Header */
+.header {
+  @apply flex items-center justify-between px-6 py-2 md:py-4;
+}
+
+.title {
+  @apply text-lg font-semibold text-gray-900;
+}
+
+/* Progress Indicator */
+.progressContainer {
+  @apply px-6 pb-4;
+}
+
+.progressTitle {
+  @apply text-sm mb-1 mt-6;
+}
+
+.progressBar {
+  @apply w-full bg-gray-200 rounded-full h-2 mb-2;
+}
+
+.progressFill {
+  @apply bg-[var(--primary-color)] h-2 rounded-full transition-all duration-300 ease-in-out;
+}
+
+.progressText {
+  @apply text-sm text-gray-600 text-center block;
+}
+
+/* Mascot Section */
+.mascotSection {
+  @apply flex items-start gap-4 px-6 py-3;
+}
+
+.mascotIcon {
+  @apply md:w-32 md:h-32 w-24 h-24 flex-shrink-0;
+}
+
+.chatBubble {
+  @apply rounded-lg px-4 py-3 shadow-md border border-gray-200 relative flex-1;
+  background-color: #DFEAFF;
+}
+
+.chatBubble::before {
+  content: '';
+  @apply absolute left-0 top-4 w-0 h-0 -ml-2;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid #DFEAFF;
+}
+
+.questionText {
+  @apply text-sm md:text-base font-medium text-gray-700 leading-relaxed text-justify;
+}
+
+/* Maximum Selection Info */
+.maxSelectionText {
+  @apply text-xs text-[var(--primary-color)] mt-2;
+}
+
+/* Step Container */
+.stepContainer {
+  @apply flex flex-col justify-center;
+}
+
+/* Form */
+.form {
+  @apply px-6 pt-2 overflow-y-auto;
+  max-height: calc(90vh - 200px);
+  padding-bottom: 0;
+}
+
+/* Sections */
+.section {
+  @apply mb-6;
+}
+
+.sectionTitle {
+  @apply text-base font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200;
+}
+
+/* Field Groups */
+.field {
+  @apply mb-4;
+}
+
+.label {
+  @apply block text-sm font-medium text-gray-900 mb-1.5;
+}
+
+.required {
+  color: #dc2626;
+}
+
+/* Inputs */
+.input {
+  @apply w-full px-3 py-2 border-2 border-gray-300 rounded-lg transition-all duration-200;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.inputFocused {
+  border-color: var(--primary-color);
+}
+
+.inputError {
+  border-color: #ef4444 !important;
+}
+
+.inputError:focus {
+  border-color: #ef4444 !important;
+}
+
+.errorText {
+  @apply text-sm text-red-600 mt-1;
+}
+
+/* Time Fields */
+.timeFields {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  width: 100%;
+}
+
+.timeFields > * {
+  flex: 1;
+}
+
+/* Sleep Period Styles */
+.sleepPeriodHeader {
+  @apply mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-0;
+}
+
+.sleepPeriodTitle {
+  @apply text-lg font-semibold text-gray-900 sm:text-xl;
+}
+
+.sleepPeriodToggles {
+  @apply flex gap-4 sm:gap-4 flex-nowrap;
+}
+
+.sleepPeriodToggle {
+  @apply flex items-center cursor-pointer py-2 text-sm sm:px-4 sm:text-base;
+}
+
+.sleepSection {
+  /* Empty but defined for modularity */
+}
+
+.sleepSectionHeader {
+  @apply flex items-center gap-2 mb-3;
+}
+
+.sleepIcon {
+  @apply w-5 h-5;
+}
+
+.sleepSectionTitle {
+  @apply text-base font-medium;
+}
+
+/* Categories Grid */
+.categoriesGrid {
+  @apply flex flex-col gap-3 mb-20 md:mb-4;
+}
+
+/* Focus Period Grid - Vertical Layout */
+.focusPeriodGrid {
+  @apply flex flex-col gap-3 mb-4;
+}
+
+/* Checkbox Styles */
+.checkboxLabel {
+  @apply flex items-center cursor-pointer p-3 border-2 border-gray-200 rounded-xl transition-all duration-200;
+}
+
+.checkbox {
+  @apply w-6 h-6 mr-3 accent-[var(--primary-color)];
+}
+
+.checkboxText {
+  @apply text-base font-normal;
+}
+
+.timeText {
+  @apply text-base font-normal;
+}
+
+/* Focus Period Cards */
+.focusPeriodCard {
+  @apply flex items-center cursor-pointer p-3 border-2 border-gray-200 rounded-xl transition-shadow duration-300;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.focusPeriodCard:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.focusPeriodCardSelected {
+  border-color: var(--primary-color);
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.focusPeriodIcon {
+  @apply w-6 h-6 mr-3 flex-shrink-0;
+}
+
+.focusPeriodCardSelected .focusPeriodIcon {
+  filter: brightness(0) invert(1);
+}
+
+.focusPeriodText {
+  @apply flex items-center gap-2;
+}
+
+.focusPeriodCardSelected .timeText {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Category Cards - Smaller version */
+.categoryCard {
+  @apply flex items-center cursor-pointer p-2 border-2 border-gray-200 rounded-lg transition-shadow duration-300;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.categoryCard:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+.categoryCardSelected {
+  border-color: var(--primary-color);
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.categoryIcon {
+  @apply w-5 h-5 mr-2 flex-shrink-0;
+}
+
+.categoryCardSelected .categoryIcon {
+  filter: brightness(0) invert(1);
+}
+
+.categoryText {
+  @apply flex items-center;
+}
+
+/* Frequency Cards - Layout for text in row */
+.frequencyText {
+  @apply flex items-center gap-2;
+}
+
+.frequencyDescription {
+  @apply text-sm text-gray-500 font-normal;
+}
+
+.categoryCardSelected .frequencyDescription {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Checkbox checked state */
+.checkboxLabel:has(.checkbox:checked) {
+  @apply border-[var(--primary-color)] bg-blue-50;
+}
+
+.checkboxLabel:has(.checkbox:checked) .checkboxText {
+  @apply text-blue-800 font-medium;
+}
+
+/* Buttons */
+.buttons {
+  @apply flex gap-3 px-6 pt-4 pb-8 bg-white;
+  position: sticky;
+  bottom: 0;
+}
+
+.buttons > *:only-child {
+  margin-left: auto;
+}
+
+.cancelButton {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid #d1d5db;
+  color: #374151;
+  border-radius: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: white;
+  transition: all 0.2s;
+  /* 3D effect */
+  box-shadow: 0 6px 0 #9ca3af, 0 8px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.cancelButton:hover {
+  background-color: #f9fafb;
+  /* Pressed effect - move down and reduce shadow */
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 #9ca3af, 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cancelButton:active {
+  /* Full pressed effect */
+  transform: translateY(6px);
+  box-shadow: 0 0 0 #9ca3af, 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.saveButton {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 1rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  /* 3D effect */
+  box-shadow: 0 6px 0 #3d4db3, 0 8px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.saveButton:hover {
+  background-color: var(--primary-hover);
+  /* Pressed effect - move down and reduce shadow */
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 #3d4db3, 0 5px 8px rgba(0, 0, 0, 0.2);
+}
+
+.saveButton:active {
+  /* Full pressed effect */
+  transform: translateY(6px);
+  box-shadow: 0 0 0 #3d4db3, 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.saveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  /* Reset 3D effect when disabled */
+  transform: translateY(0);
+  box-shadow: 0 2px 0 #9ca3af, 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.buttonIcon {
+  @apply w-6 h-6;
+}
+
+.checkIcon {
+  @apply w-6 h-6 ml-auto flex-shrink-0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .modal {
+    @apply mx-2 max-w-none;
+  }
+  
+  .form {
+    @apply p-4;
+  }
+  
+  .title {
+    @apply text-lg;
+  }
+  
+  .categoriesGrid {
+    @apply grid-cols-1;
+  }
+}

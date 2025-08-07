@@ -178,10 +178,18 @@
 }
 
 .categoryChevron {
-  @apply w-5 h-5 transition-transform opacity-50;
+  @apply w-4 h-4 transition-transform opacity-70;
 }
 
 .categoryChevronRotated {
+  @apply rotate-180;
+}
+
+.dropdownArrow {
+  @apply transition-transform duration-200 text-gray-500;
+}
+
+.dropdownArrowOpen {
   @apply rotate-180;
 }
 

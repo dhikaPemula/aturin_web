@@ -133,7 +133,7 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
         tanggal: normalizeDate(activity.tanggal),
         waktuMulai: activity.waktuMulai || "",
         waktuSelesai: activity.waktuSelesai || "",
-        kategori: normalizeCategory(activity.kategori),
+        kategori: normalizeCategory(activity.kategori) || "Akademik", // default Akademik jika kosong
       }
       setFormData(normalizedData)
     } else if (isOpen) {
@@ -143,7 +143,7 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
         tanggal: defaultDate || new Date().toISOString().split("T")[0],
         waktuMulai: "",
         waktuSelesai: "",
-        kategori: "",
+        kategori: "Akademik", // default Akademik
       })
     }
     // Reset state lainnya
@@ -377,11 +377,15 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
                   ) : (
                     <span className={styles.categoryButtonPlaceholder}>Pilih kategori</span>
                   )}
-                  <img
-                    src={chevronDownIcon || "/placeholder.svg"}
-                    alt="Chevron"
-                    className={`${styles.categoryChevron} ${showCategoryDropdown ? styles.categoryChevronRotated : ""}`}
-                  />
+                  <svg 
+                    className={`${styles.dropdownArrow} ${showCategoryDropdown ? styles.dropdownArrowOpen : ''}`}
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 20 20" 
+                    fill="currentColor"
+                  >
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
                 </button>
                 {errors.kategori && <span className={styles.errorText}>{errors.kategori}</span>}
 

@@ -54,13 +54,13 @@ function AppContent() {
           />
         </Routes>
       ) : (
-        <ProtectedRoute>
+        //<ProtectedRoute>
           <DragDropContext>
             <Header
               currentIndex={currentIndex}
               setCurrentIndex={setCurrentIndex}
             />
-            <div className="h-[20vh]" />
+            <div className="h-[16vh] md:h-[20vh]" />
             <div
               className="overflow-hidden w-full"
               style={{ margin: 0, padding: 0 }}
@@ -92,7 +92,7 @@ function AppContent() {
               </div>
             </div>
           </DragDropContext>
-        </ProtectedRoute>
+        //</ProtectedRoute>
       )}
     </>
   );

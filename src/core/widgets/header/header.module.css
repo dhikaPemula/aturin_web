@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
 .headerContainer {
-  @apply my-4 mx-auto py-4 px-6 border-[2px] border-[#5263F3] rounded-[64px] bg-white shadow flex items-center justify-between;
-  width: 100%;
+  @apply my-4 mx-8 py-3 px-6 border-[2px] border-[#5263F3] rounded-[64px] bg-white shadow flex items-center justify-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: #fff;
+  box-sizing: border-box;
 }
 
 .leftSection {
@@ -10,7 +16,7 @@
 }
 
 .logoAturin {
-  @apply h-16;
+  @apply h-12.5;
 }
 
 .aturinText {
@@ -37,7 +43,7 @@
 .menuNav::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  bottom: 8px;
   height: 4px;
   border-radius: 2px;
   background: #5263F3;
@@ -63,7 +69,7 @@
 }
 
 .bellIcon {
-  @apply h-8 w-8 cursor-pointer;
+  @apply h-7 w-7 cursor-pointer;
 }
 
 .name {
@@ -75,7 +81,7 @@
 }
 
 .avatar {
-  @apply h-12 w-12 rounded-full cursor-pointer;
+  @apply h-11 w-11 rounded-full cursor-pointer;
 }
 @media (max-width: 768px) {
   .headerContainer {

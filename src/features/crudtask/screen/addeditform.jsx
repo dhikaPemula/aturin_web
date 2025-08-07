@@ -181,7 +181,7 @@ function AddEditForm({
         deadline_date: todayStr,
         deadline_time: '',
         estimated_duration: '',
-        category: ''
+        category: 'akademik' // default kategori
       });
     }
     setErrors({});
