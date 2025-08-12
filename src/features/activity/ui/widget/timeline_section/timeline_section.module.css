@@ -62,6 +62,10 @@
   @apply w-6 h-6;
 }
 
+.moonIcon {
+  filter: brightness(0) invert(1);
+}
+
 .timeSlotInfo {
   @apply ml-4;
 }

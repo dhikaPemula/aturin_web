@@ -11,7 +11,7 @@ import Alert from "../../../../core/widgets/alert/alert"
 import Toast from "../../../../core/widgets/toast/toast"
 import plusIcon from "/assets/home/addactivity.svg"
 import infoIcon from "/assets/home/warning-circle.svg"
-import calendarIcon from "/assets/home/clock.svg"
+import calendarIcon from "/assets/activity/calendar.svg"
 import {
   getActivities,
   createActivity,

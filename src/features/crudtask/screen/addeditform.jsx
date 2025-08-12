@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './addeditform.module.css';
 import { useGlobalTaskRefresh } from '../../../core/hooks/useGlobalTaskRefresh';
+import TimePicker from '../../../core/widgets/TimePicker/TimePicker';
 
 // Import category icons
 import akademikIcon from '/assets/home/categories/akademik.svg';
@@ -42,6 +43,15 @@ const parseDeadlineString = (deadlineString) => {
   } else {
     return new Date(deadlineString);
   }
+};
+
+// Helper function to get default deadline time (1 hour from now)
+const getDefaultDeadlineTime = () => {
+  const now = new Date();
+  now.setHours(now.getHours() + 1); // Add 1 hour
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
 };
 
 function AddEditForm({ 
@@ -169,18 +179,19 @@ function AddEditForm({
         category: task.task_category || task.categories?.[0] || ''
       });
     } else {
-      // Reset form for add mode, set deadline_date to today
+      // Reset form for add mode, set deadline_date to today and deadline_time to 1 hour from now
       const today = new Date();
       const year = today.getFullYear();
       const month = String(today.getMonth() + 1).padStart(2, '0');
       const day = String(today.getDate()).padStart(2, '0');
       const todayStr = `${year}-${month}-${day}`;
+      
       setFormData({
         title: '',
         description: '',
         deadline_date: todayStr,
-        deadline_time: '',
-        estimated_duration: '',
+        deadline_time: getDefaultDeadlineTime(), // Set default time to 1 hour from now
+        estimated_duration: '01:00', // Default to 1 hour
         category: 'akademik' // default kategori
       });
     }
@@ -517,12 +528,9 @@ function AddEditForm({
                 />
               </div>
               <div className={styles.timeInputContainer}>
-                <input
-                  type="time"
-                  name="deadline_time"
+                <TimePicker
                   value={formData.deadline_time}
-                  onChange={(e) => {
-                    const { value } = e.target;
+                  onChange={(value) => {
                     setFormData(prev => ({ ...prev, deadline_time: value }));
                     
                     // Clear error when user selects a time
@@ -553,7 +561,9 @@ function AddEditForm({
                       }
                     }
                   }}
-                  className={`${styles.input} ${styles.timeInput} ${(errors.deadline_time || (errors.deadline_date === 'Batas waktu harus minimal 1 menit dari waktu saat ini')) ? styles.inputError : ''}`}
+                  selectedDate={formData.deadline_date}
+                  placeholder="-- : --"
+                  error={!!(errors.deadline_time || (errors.deadline_date === 'Batas waktu harus minimal 1 menit dari waktu saat ini'))}
                   disabled={isSubmitting}
                 />
               </div>
@@ -571,9 +581,7 @@ function AddEditForm({
               Estimasi Durasi Pengerjaan<span className={styles.required}>*</span>
             </label>
             <div className={styles.timeInputContainer}>
-              <input
-                type="time"
-                name="estimated_duration"
+              <TimePicker
                 value={formData.estimated_duration ? (() => {
                   // Display as received from backend (no forced formatting)
                   try {
@@ -582,9 +590,8 @@ function AddEditForm({
                   } catch (e) {
                     return formData.estimated_duration;
                   }
-                })() : ''}
-                onChange={(e) => {
-                  const { value } = e.target;
+                })() : '01:00'}
+                onChange={(value) => {
                   setFormData(prev => ({ ...prev, estimated_duration: value }));
                   
                   // Clear error when user selects a duration
@@ -592,8 +599,8 @@ function AddEditForm({
                     setErrors(prev => ({ ...prev, estimated_duration: '' }));
                   }
                 }}
-                placeholder="HH:MM"
-                className={`${styles.input} ${styles.timeInput} ${errors.estimated_duration ? styles.inputError : ''}`}
+                placeholder="-- : --"
+                error={!!errors.estimated_duration}
                 disabled={isSubmitting}
               />
             </div>

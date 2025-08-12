@@ -12,6 +12,7 @@ import arrowLeftIcon from "/assets/user_preference/arrow-left.svg"
 import arrowRightIcon from "/assets/user_preference/arrow-right.svg"
 import checkCircleIcon from "/assets/user_preference/check-circle.svg"
 import { categories } from "../categories/categories.jsx"
+import TimePicker from "../../../core/widgets/TimePicker/TimePicker"
 
 const UserPreference = ({ isOpen, onClose, onSave }) => {
   // State untuk form data
@@ -360,29 +361,25 @@ const UserPreference = ({ isOpen, onClose, onSave }) => {
                 <div className={styles.timeFields}>
                   <div className={styles.field}>
                     <label className={styles.label}>Jam Tidur</label>
-                    <input
-                      type="time"
+                    <TimePicker
                       value={formData.sleepTimes.malam.jamTidur}
-                      onChange={(e) => handleSleepTimeChange('malam', 'jamTidur', e.target.value)}
+                      onChange={(value) => handleSleepTimeChange('malam', 'jamTidur', value)}
                       onFocus={() => handleFocus("malamTidur")}
                       onBlur={handleBlur}
-                      className={`${styles.input} ${
-                        focusedField === "malamTidur" ? styles.inputFocused : ""
-                      } ${errors.malamTidur ? styles.inputError : ""}`}
+                      placeholder="-- : --"
+                      error={!!errors.malamTidur}
                     />
                     {errors.malamTidur && <span className={styles.errorText}>{errors.malamTidur}</span>}
                   </div>
                   <div className={styles.field}>
                     <label className={styles.label}>Jam Bangun</label>
-                    <input
-                      type="time"
+                    <TimePicker
                       value={formData.sleepTimes.malam.jamBangun}
-                      onChange={(e) => handleSleepTimeChange('malam', 'jamBangun', e.target.value)}
+                      onChange={(value) => handleSleepTimeChange('malam', 'jamBangun', value)}
                       onFocus={() => handleFocus("malamBangun")}
                       onBlur={handleBlur}
-                      className={`${styles.input} ${
-                        focusedField === "malamBangun" ? styles.inputFocused : ""
-                      } ${errors.malamBangun ? styles.inputError : ""}`}
+                      placeholder="-- : --"
+                      error={!!errors.malamBangun}
                     />
                     {errors.malamBangun && <span className={styles.errorText}>{errors.malamBangun}</span>}
                   </div>
@@ -400,29 +397,25 @@ const UserPreference = ({ isOpen, onClose, onSave }) => {
                 <div className={styles.timeFields}>
                   <div className={styles.field}>
                     <label className={styles.label}>Jam Tidur</label>
-                    <input
-                      type="time"
+                    <TimePicker
                       value={formData.sleepTimes.siang.jamTidur}
-                      onChange={(e) => handleSleepTimeChange('siang', 'jamTidur', e.target.value)}
+                      onChange={(value) => handleSleepTimeChange('siang', 'jamTidur', value)}
                       onFocus={() => handleFocus("siangTidur")}
                       onBlur={handleBlur}
-                      className={`${styles.input} ${
-                        focusedField === "siangTidur" ? styles.inputFocused : ""
-                      } ${errors.siangTidur ? styles.inputError : ""}`}
+                      placeholder="-- : --"
+                      error={!!errors.siangTidur}
                     />
                     {errors.siangTidur && <span className={styles.errorText}>{errors.siangTidur}</span>}
                   </div>
                   <div className={styles.field}>
                     <label className={styles.label}>Jam Bangun</label>
-                    <input
-                      type="time"
+                    <TimePicker
                       value={formData.sleepTimes.siang.jamBangun}
-                      onChange={(e) => handleSleepTimeChange('siang', 'jamBangun', e.target.value)}
+                      onChange={(value) => handleSleepTimeChange('siang', 'jamBangun', value)}
                       onFocus={() => handleFocus("siangBangun")}
                       onBlur={handleBlur}
-                      className={`${styles.input} ${
-                        focusedField === "siangBangun" ? styles.inputFocused : ""
-                      } ${errors.siangBangun ? styles.inputError : ""}`}
+                      placeholder="-- : --"
+                      error={!!errors.siangBangun}
                     />
                     {errors.siangBangun && <span className={styles.errorText}>{errors.siangBangun}</span>}
                   </div>

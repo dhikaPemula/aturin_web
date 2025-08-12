@@ -37,6 +37,7 @@
 
 .infoIcon {
   @apply w-4 h-4;
+  filter: brightness(0) saturate(100%) invert(39%) sepia(99%) saturate(4682%) hue-rotate(229deg) brightness(96%) contrast(96%);
 }
 
 .filterSection {

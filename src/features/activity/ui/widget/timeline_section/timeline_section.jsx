@@ -130,7 +130,11 @@ const TimelineSection = ({ activities, loading, onEdit, onDelete }) => {
             <div key={timeSlot} className={styles.timeSlot}>
               <div className={styles.timeSlotHeader}>
                 <div className={styles.timeSlotIcon} style={{ backgroundColor: group.bgColor }}>
-                  <img src={group.icon || "/placeholder.svg"} alt={group.label} className={styles.timeSlotIconImg} />
+                  <img 
+                    src={group.icon || "/placeholder.svg"} 
+                    alt={group.label} 
+                    className={`${styles.timeSlotIconImg} ${timeSlot === 'malam' ? styles.moonIcon : ''}`} 
+                  />
                 </div>
                 <div className={styles.timeSlotInfo}>
                   <div className={styles.timeSlotLabel}>{group.label}</div>

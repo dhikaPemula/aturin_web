@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { createPortal } from "react-dom"
 import styles from "./activity-crud-page.module.css"
 import chevronDownIcon from "/assets/home/arrow-down.svg"
-import checkIcon from "/assets/home/check-circle.svg"
+import TimePicker from "../../../core/widgets/TimePicker/TimePicker"
 
 // Import ikon kategori
 import akademikIcon from "/assets/activity/categories/akademik.svg"
@@ -23,6 +23,23 @@ const getTodayDate = () => {
 
 const getCurrentTime = () => {
   const now = new Date()
+  const hours = String(now.getHours()).padStart(2, "0")
+  const minutes = String(now.getMinutes()).padStart(2, "0")
+  return `${hours}:${minutes}`
+}
+
+const getDefaultStartTime = () => {
+  const now = new Date()
+  now.setMinutes(now.getMinutes() + 1) // Tambah 1 menit
+  const hours = String(now.getHours()).padStart(2, "0")
+  const minutes = String(now.getMinutes()).padStart(2, "0")
+  return `${hours}:${minutes}`
+}
+
+const getDefaultEndTime = () => {
+  const now = new Date()
+  now.setMinutes(now.getMinutes() + 1) // Tambah 1 menit (sama seperti start time)
+  now.setHours(now.getHours() + 1) // Tambah 1 jam dari start time
   const hours = String(now.getHours()).padStart(2, "0")
   const minutes = String(now.getMinutes()).padStart(2, "0")
   return `${hours}:${minutes}`
@@ -137,12 +154,15 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
       }
       setFormData(normalizedData)
     } else if (isOpen) {
-      // Mode tambah - reset form
+      // Mode tambah - reset form dengan waktu default
+      const selectedDate = defaultDate || new Date().toISOString().split("T")[0]
+      const isSelectedDateToday = selectedDate === getTodayDate()
+      
       setFormData({
         judul: "",
-        tanggal: defaultDate || new Date().toISOString().split("T")[0],
-        waktuMulai: "",
-        waktuSelesai: "",
+        tanggal: selectedDate,
+        waktuMulai: isSelectedDateToday ? getDefaultStartTime() : "",
+        waktuSelesai: isSelectedDateToday ? getDefaultEndTime() : "",
         kategori: "Akademik", // default Akademik
       })
     }
@@ -225,7 +245,32 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
 
   // Handle perubahan input
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    if (field === "tanggal") {
+      // Jika tanggal berubah ke hari ini dan mode tambah (bukan edit)
+      const isSelectedDateToday = value === getTodayDate()
+      const isAddMode = !activity
+      
+      if (isSelectedDateToday && isAddMode) {
+        // Set waktu default untuk hari ini
+        setFormData((prev) => ({ 
+          ...prev, 
+          [field]: value,
+          waktuMulai: getDefaultStartTime(),
+          waktuSelesai: getDefaultEndTime()
+        }))
+      } else {
+        // Reset waktu jika bukan hari ini atau mode edit
+        setFormData((prev) => ({ 
+          ...prev, 
+          [field]: value,
+          waktuMulai: isAddMode ? "" : prev.waktuMulai,
+          waktuSelesai: isAddMode ? "" : prev.waktuSelesai
+        }))
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }))
+    }
+    
     // Clear error saat user mulai mengetik
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }))
@@ -315,38 +360,29 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
             <div className={styles.timeFields}>
               <div className={styles.field}>
                 <label className={styles.label}>Waktu mulai</label>
-                <input
-                  type="time"
+                <TimePicker
                   value={formData.waktuMulai}
-                  onChange={(e) => handleInputChange("waktuMulai", e.target.value)}
+                  onChange={(value) => handleInputChange("waktuMulai", value)}
                   onFocus={() => handleFocus("waktuMulai")}
                   onBlur={handleBlur}
-                  min={isToday(formData.tanggal) ? getCurrentTime() : undefined} // Disable waktu masa lampau jika hari ini
-                  className={`${styles.timeInput} ${
-                    focusedField === "waktuMulai" ? styles.inputFocused : ""
-                  } ${errors.waktuMulai ? styles.inputError : ""}`}
+                  selectedDate={formData.tanggal}
+                  hasError={!!errors.waktuMulai}
+                  placeholder="-- : --"
                 />
                 {errors.waktuMulai && <span className={styles.errorText}>{errors.waktuMulai}</span>}
               </div>
 
               <div className={styles.field}>
                 <label className={styles.label}>Waktu selesai</label>
-                <input
-                  type="time"
+                <TimePicker
                   value={formData.waktuSelesai}
-                  onChange={(e) => handleInputChange("waktuSelesai", e.target.value)}
+                  onChange={(value) => handleInputChange("waktuSelesai", value)}
                   onFocus={() => handleFocus("waktuSelesai")}
                   onBlur={handleBlur}
-                  min={
-                    isToday(formData.tanggal)
-                      ? formData.waktuMulai && formData.waktuMulai >= getCurrentTime()
-                        ? formData.waktuMulai
-                        : getCurrentTime()
-                      : formData.waktuMulai || undefined
-                  } // Disable waktu selesai yang tidak valid
-                  className={`${styles.timeInput} ${
-                    focusedField === "waktuSelesai" ? styles.inputFocused : ""
-                  } ${errors.waktuSelesai ? styles.inputError : ""}`}
+                  selectedDate={formData.tanggal}
+                  hasError={!!errors.waktuSelesai}
+                  placeholder="-- : --"
+                  minTime={formData.waktuMulai} // Waktu selesai tidak boleh sebelum waktu mulai
                 />
                 {errors.waktuSelesai && <span className={styles.errorText}>{errors.waktuSelesai}</span>}
               </div>
@@ -359,10 +395,8 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
                 <button
                   type="button"
                   onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-                  onFocus={() => handleFocus("kategori")}
-                  onBlur={handleBlur}
                   className={`${styles.categoryButton} ${
-                    focusedField === "kategori" ? styles.inputFocused : ""
+                    showCategoryDropdown ? styles.categoryButtonOpen : ""
                   } ${errors.kategori ? styles.inputError : ""}`}
                 >
                   {selectedCategory ? (
@@ -400,7 +434,9 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
                           handleInputChange("kategori", category.name)
                           setShowCategoryDropdown(false)
                         }}
-                        className={styles.categoryDropdownItem}
+                        className={`${styles.categoryDropdownItem} ${
+                          formData.kategori === category.name ? styles.categoryDropdownItemSelected : ''
+                        }`}
                       >
                         <div className={styles.categoryDropdownItemContent}>
                           <img
@@ -410,9 +446,6 @@ const ActivityCrudPage = ({ isOpen, onClose, onSave, activity, defaultDate }) =>
                           />
                           <span className={styles.categoryDropdownItemText}>{category.name}</span>
                         </div>
-                        {formData.kategori === category.name && (
-                          <img src={checkIcon || "/placeholder.svg"} alt="Check" className={styles.categoryCheck} />
-                        )}
                       </button>
                     ))}
                   </div>

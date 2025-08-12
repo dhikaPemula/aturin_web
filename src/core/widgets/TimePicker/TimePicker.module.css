@@ -1,0 +1,243 @@
+/* TimePicker Styles */
+.container {
+  position: relative;
+  width: 100%;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+.display {
+  width: 100%;
+  height: 44px;
+  padding: 8px 12px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Hover effect disabled */
+/* .display:hover {
+  border-color: #5263F3;
+} */
+
+.display.focused {
+  border-color: #5263F3;
+  outline: none;
+}
+
+.display.error {
+  border-color: #ef4444;
+}
+
+.disabled .display {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.timeDisplay {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.timeInput {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #374151;
+  font-weight: 400;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Focus effect for input */
+.timeInput:focus {
+  outline: none;
+}
+
+/* Focus effect for container when input is focused */
+.display:focus-within {
+  border-color: #5263F3;
+  outline: none;
+}
+
+/* Hide time input icons/spinners */
+.timeInput::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
+
+.timeInput::-webkit-inner-spin-button,
+.timeInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.timeInput::-webkit-time-picker-indicator {
+  display: none;
+}
+
+/* Firefox */
+.timeInput {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.timeInput::placeholder {
+  color: #9ca3af;
+}
+
+.timeInput:disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.timeValue {
+  font-size: 1rem;
+  color: #374151;
+  font-weight: 400;
+}
+
+.icon {
+  color: #6b7280;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.dropdown {
+  background: white;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.dropdownPortal {
+  pointer-events: auto;
+}
+
+.timeColumns {
+  display: flex;
+  height: 200px;
+}
+
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.optionsList {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.optionsList::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.option {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: white;
+  font-size: 1.125rem;
+  font-weight: 500;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.option:hover {
+  background: #f3f4f6;
+}
+
+.option.selected {
+  background: #eff6ff;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.option.optionDisabled {
+  background: #f9fafb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.option.optionDisabled:hover {
+  background: #f9fafb;
+}
+
+/* Action Buttons */
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.cancelButton {
+  flex: 1;
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  color: #374151;
+  font-size: 0.875rem;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelButton:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.saveButton {
+  flex: 1;
+  padding: 8px 16px;
+  border: 1px solid #5263F3;
+  border-radius: 6px;
+  background: #5263F3;
+  color: white;
+  font-size: 0.875rem;
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.saveButton:hover {
+  background: #4f56e8;
+  border-color: #4f56e8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .dropdown {
+    height: 180px;
+  }
+  
+  .timeColumns {
+    height: 180px;
+  }
+  
+  .option {
+    padding: 10px 12px;
+    font-size: 1rem;
+  }
+}

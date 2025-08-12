@@ -197,60 +197,33 @@ function TaskCount({ selectedDate, refreshTrigger }) {
 	const cardData = [
 		{
 			label: `Total Tugas`,
-			count: taskCounts.total,
+			count: loading || error ? '...' : taskCounts.total,
 			icon: countIcon,
 			color: styles.cardBlue,
 			countClass: styles.countPrimary,
 		},
 		{
 			label: `Selesai`,
-			count: taskCounts.completed,
+			count: loading || error ? '...' : taskCounts.completed,
 			icon: checkCircleIcon,
 			color: styles.cardGreen,
 			countClass: styles.countSuccess,
 		},
 		{
 			label: `Belum Dikerjakan`,
-			count: taskCounts.uncompleted,
+			count: loading || error ? '...' : taskCounts.uncompleted,
 			icon: clockIcon,
 			color: styles.cardOrange,
 			countClass: styles.countWarning,
 		},
 		{
 			label: `Terlambat`,
-			count: taskCounts.late,
+			count: loading || error ? '...' : taskCounts.late,
 			icon: warningCircleIcon,
 			color: styles.cardRed,
 			countClass: styles.countDanger,
 		},
 	];
-
-	if (loading) {
-		return (
-			<div className={styles.taskCountContainer}>
-				{[1, 2, 3, 4].map((idx) => (
-					<div key={idx} className={`${styles.card} ${styles.cardGray}`}>
-						<div className={styles.label}>Memuat...</div>
-						<div className={`${styles.count}`}>...</div>
-						<div className={styles.iconWrapper}>
-							<div className={styles.iconSkeleton}></div>
-						</div>
-					</div>
-				))}
-			</div>
-		);
-	}
-
-	if (error) {
-		return (
-			<div className={styles.taskCountContainer}>
-				<div className={`${styles.card} ${styles.cardGray}`}>
-					<div className={styles.label}>Error</div>
-					<div className={styles.count}>Gagal memuat data</div>
-				</div>
-			</div>
-		);
-	}
 
 	return (
 		<div className={styles.taskCountContainer}>

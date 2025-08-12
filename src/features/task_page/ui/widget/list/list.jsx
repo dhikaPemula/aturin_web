@@ -100,7 +100,7 @@ function List({
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
-        <div className={styles.loadingText}>Memuat data tugas...</div>
+        <div className={styles.loadingSpinner}></div>
       </div>
     );
   }

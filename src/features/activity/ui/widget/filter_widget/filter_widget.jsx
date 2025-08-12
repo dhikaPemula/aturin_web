@@ -58,11 +58,14 @@ const FilterWidget = ({ type, value, onChange, placeholder }) => {
                 <span className={styles.filterText}>{placeholder}</span>
               )}
             </div>
-            <img
-              src={chevronDownIcon || "/placeholder.svg"}
-              alt="Chevron"
-              className={`${styles.dropdownIcon} ${isOpen ? styles.dropdownIconOpen : ""}`}
-            />
+            <svg 
+              className={`${styles.dropdownIcon} ${isOpen ? styles.dropdownIconOpen : ''}`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
           </button>
 
           {isOpen && (

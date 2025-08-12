@@ -165,6 +165,14 @@
   outline: none;
 }
 
+.categoryButton:focus {
+  border-color: #5263F3;
+}
+
+.categoryButtonOpen {
+  border-color: #5263F3;
+}
+
 .categoryButtonContent {
   @apply flex items-center gap-2;
 }
@@ -204,16 +212,20 @@
   font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
 }
 
+.categoryDropdownItemSelected {
+  @apply bg-blue-50 text-blue-800;
+}
+
+.categoryDropdownItemSelected:hover {
+  @apply bg-blue-100;
+}
+
 .categoryDropdownItemContent {
   @apply flex items-center gap-2;
 }
 
 .categoryDropdownItemText {
   @apply text-gray-900;
-}
-
-.categoryCheck {
-  @apply w-4 h-4;
 }
 
 @media (max-width: 640px) {

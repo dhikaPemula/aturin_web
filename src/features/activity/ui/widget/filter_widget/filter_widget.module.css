@@ -29,7 +29,7 @@
 }
 
 .dropdownIcon {
-  @apply w-4 h-4 text-gray-400 ml-2 transition-transform duration-200 flex-shrink-0;
+  @apply w-6 h-6 text-gray-400 ml-2 transition-transform duration-200 flex-shrink-0;
 }
 
 .dropdownIconOpen {
