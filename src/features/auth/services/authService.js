@@ -77,5 +77,6 @@ export const logoutUser = async () => {
 };
 
 export const loginWithGoogle = () => {
-  window.location.href = `${API_CONFIG.baseURL}/auth/redirect/google`;
+  const backendBaseURL = API_CONFIG.baseURL.replace('/api/v1', '');
+  window.location.href = `${backendBaseURL}/auth/redirect/google`;
 };

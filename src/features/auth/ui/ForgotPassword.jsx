@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { sendPasswordResetEmail } from "../services/authService";
 import { AturinIcon } from "../../../../public/assets/landing_page/icon.jsx";
+import backButton from "../../../../public/assets/auth/kembali.svg";
 
 // Heroicons components
 const EnvelopeIcon = ({ className }) => (
@@ -43,10 +44,10 @@ const ForgotPassword = ({ onSwitchView }) => {
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [isKirimClicked, setIsKirimClicked] = useState(false);
 
- const handleKirimClick = () => {
-  setIsKirimClicked(true);
+  const handleKirimClick = () => {
+    setIsKirimClicked(true);
     setTimeout(() => setIsKirimClicked(false), 100);
- }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -97,6 +98,15 @@ const ForgotPassword = ({ onSwitchView }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md mx-auto">
+      {/* Navigasi untuk kembali */}
+
+      <button
+        onClick={() => onSwitchView("login")}
+        className="text-blue-500 hover:text-blue-700 font-medium transition-colors duration-200 text-sm flex gap-3 mb-2"
+      >
+        <img src={backButton}></img>
+        Kembali
+      </button>
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center mb-4">
@@ -149,15 +159,6 @@ const ForgotPassword = ({ onSwitchView }) => {
           <p className="text-sm text-gray-600 mb-4">
             Kami akan kirimkan notifikasi email! Kami siap.
           </p>
-
-          <button
-            type="button"
-            onClick={() => onSwitchView("login")}
-            className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors duration-200"
-          >
-            <ArrowLeftIcon className="w-4 h-4 mr-1" />
-            Kembali ke Login
-          </button>
         </div>
       </form>
     </div>

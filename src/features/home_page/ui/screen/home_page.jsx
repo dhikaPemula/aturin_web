@@ -8,6 +8,8 @@ import TaskCount from "../widget/taskcount/taskcount.jsx";
 import List from "../widget/list/list.jsx";
 import Quote from "../widget/quote/quote.jsx";
 import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../../../core/auth/AuthContext.jsx"; 
 
 function HomePage() {
   const [filterIndex, setFilterIndex] = React.useState(0);
@@ -16,6 +18,23 @@ function HomePage() {
   const [currentTime, setCurrentTime] = React.useState(new Date());
   const [refreshTrigger, setRefreshTrigger] = React.useState(0); // Trigger untuk refresh data
   const today = React.useMemo(() => new Date(), []);
+  const { login } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+   React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get("token");
+
+    if (token) {
+      // Simpan token ke localStorage
+      localStorage.setItem("auth_token", token);
+      // Update AuthContext
+      login(token);
+      // Bersihkan query string agar URL rapi
+      navigate("/home", { replace: true });
+    }
+  }, [location, navigate, login]);
 
   // Update waktu setiap detik
   React.useEffect(() => {
