@@ -5,6 +5,7 @@ import { useState } from "react";
 import { loginUser, loginWithGoogle } from "../services/authService";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../core/auth/AuthContext.jsx";
+import backButton from "../../../../public/assets/auth/kembali.svg";
 
 // Heroicons components
 const EyeIcon = ({ className }) => (
@@ -102,14 +103,14 @@ const Login = ({ onSwitchView }) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage("");
-    
+
     try {
       const response = await loginUser(formData);
-      
+
       if (response && response.data && response.data.token) {
         // Gunakan fungsi login dari AuthContext
         login(response.data.token);
-        
+
         // Redirect ke halaman yang ingin diakses sebelumnya atau ke home
         const from = location.state?.from?.pathname || "/home";
         navigate(from, { replace: true });
@@ -139,6 +140,16 @@ const Login = ({ onSwitchView }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md mx-auto">
+      {/* Navigasi untuk kembali */}
+
+      <button
+        onClick={() => navigate("/")}
+        className="text-blue-500 hover:text-blue-700 font-medium transition-colors duration-200 text-sm flex gap-3 mb-2"
+      >
+        <img src={backButton}></img>
+        Kembali
+      </button>
+
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center mb-4">

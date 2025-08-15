@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import LandingPage from "./features/landing_page/ui/LandingPage.jsx";
 import AuthPage from "./features/auth/AuthPage.jsx";
 import HomePage from "./features/home_page/ui/screen/home_page.jsx";
@@ -6,10 +6,28 @@ import TaskPage from "./features/task_page/ui/screen/task_page.jsx";
 import ActivityPage from "./features/activity/ui/screen/activity_page.jsx";
 import Header from "./core/widgets/header/header.jsx";
 import ProtectedRoute from "./core/auth/ProtectedRoute.jsx";
-import { AuthProvider } from "./core/auth/AuthContext.jsx";
+import { AuthProvider, useAuth } from "./core/auth/AuthContext.jsx";
 import { DragDropContext } from "@hello-pangea/dnd";
 import React, { useState, useEffect } from "react";
 import "./App.css";
+
+function TokenHandler() {
+  const { login } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get("token");
+
+    if (token) {
+      login(token); // Simpan ke localStorage & set isAuthenticated = true
+      navigate(location.pathname, { replace: true }); // Hapus query string
+    }
+  }, [location, login, navigate]);
+
+  return null; // Tidak render apapun
+}
 
 function AppContent() {
   const location = useLocation();
@@ -36,35 +54,17 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth" element={<AuthPage />} />
-          <Route
-            path="/auth/login"
-            element={<AuthPage initialView="login" />}
-          />
-          <Route
-            path="/auth/register"
-            element={<AuthPage initialView="register" />}
-          />
-          <Route
-            path="/auth/forgot-password"
-            element={<AuthPage initialView="forgot-password" />}
-          />
-          <Route
-            path="/auth/reset-password"
-            element={<AuthPage initialView="reset-password" />}
-          />
+          <Route path="/auth/login" element={<AuthPage initialView="login" />} />
+          <Route path="/auth/register" element={<AuthPage initialView="register" />} />
+          <Route path="/auth/forgot-password" element={<AuthPage initialView="forgot-password" />} />
+          <Route path="/password-reset/𝗨𝗦𝗘𝗥-𝗧𝗢𝗞𝗘𝗡?email=𝗨𝗦𝗘𝗥-𝗠𝗔𝗜𝗟" element={<AuthPage initialView="reset-password" />} />
         </Routes>
       ) : (
         <ProtectedRoute>
           <DragDropContext>
-            <Header
-              currentIndex={currentIndex}
-              setCurrentIndex={setCurrentIndex}
-            />
+            <Header currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
             <div className="h-[16vh] md:h-[20vh]" />
-            <div
-              className="overflow-hidden w-full"
-              style={{ margin: 0, padding: 0 }}
-            >
+            <div className="overflow-hidden w-full" style={{ margin: 0, padding: 0 }}>
               <div
                 className="flex transition-transform duration-500 ease-in-out"
                 style={{
@@ -101,6 +101,7 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
+      <TokenHandler /> {/* Tangani token sebelum ProtectedRoute */}
       <AppContent />
     </AuthProvider>
   );

@@ -3,6 +3,8 @@
 import { AturinIcon } from "../../../../public/assets/landing_page/icon.jsx";
 import { useState } from "react";
 import { resetPassword } from "../services/authService";
+import backButton from "../../../../public/assets/auth/kembali.svg"
+
 
 // Heroicons components
 const EyeIcon = ({ className }) => (
@@ -101,6 +103,14 @@ const ResetPassword = ({ onSwitchView }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md mx-auto">
+      {/* Navigasi untuk kembali */}
+       <button
+        onClick={() => navigate("/")}
+        className="text-blue-500 hover:text-blue-700 font-medium transition-colors duration-200 text-sm flex gap-3 mb-2"
+      >
+        <img src={backButton}></img>
+        Kembali
+      </button>
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center mb-4">
